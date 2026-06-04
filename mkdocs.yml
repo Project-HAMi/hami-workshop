@@ -1,0 +1,81 @@
+site_name: HAMi Workshop
+site_description: Hands-on workshop for HAMi GPU virtualization on Kubernetes
+site_url: https://workshop.project-hami.io
+
+repo_name: Project-HAMi/hami-workshop
+repo_url: https://github.com/Project-HAMi/hami-workshop
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tracking
+    - navigation.expand
+    - navigation.top
+    - navigation.path
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+plugins:
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+          site_name: HAMi Workshop
+          nav_translations:
+            Home: Home
+            Concepts: Concepts
+            Labs: Labs
+        - locale: zh
+          name: 中文
+          build: true
+          site_name: HAMi Workshop
+          nav_translations:
+            Home: 首页
+            Concepts: 概念
+            Labs: 实验
+
+nav:
+  - Home: index.md
+  - Concepts:
+    - concepts/gpu-stack.md
+    - concepts/gpu-driver.md
+    - concepts/hami-architecture.md
+  - Labs:
+    - labs/online-install.md
+    - labs/local-fake-gpu.md
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+  - javascripts/mermaid-zoom.js

@@ -1,0 +1,39 @@
+:root,
+[data-md-color-scheme="default"],
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: rgba(16, 208, 93, 1);
+  --md-primary-fg-color--light: rgba(16, 208, 93, 1);
+  --md-primary-fg-color--dark: rgba(10, 175, 74, 1);
+  --md-accent-fg-color: rgba(12, 175, 72, 1);
+}
+
+.md-header,
+.md-header[data-md-state="shadow"] {
+  background-color: rgba(16, 208, 93, 1) !important;
+}
+
+.md-tabs {
+  background-color: rgba(14, 188, 83, 1) !important;
+}
+
+/* Mermaid diagrams: override material's figure width: fit-content */
+.md-typeset .mermaid-figure {
+  width: 100% !important;
+  margin: 1.5em 0 !important;
+  text-align: left;
+}
+
+.mermaid-figure svg {
+  display: block;
+  width: 100% !important;
+  max-width: none !important;
+  height: auto;
+}
+
+.mermaid-caption {
+  text-align: center;
+  font-size: 0.85em;
+  color: var(--md-default-fg-color--light);
+  margin-top: 0.5em;
+  font-style: italic;
+}
