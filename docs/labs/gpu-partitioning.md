@@ -102,22 +102,6 @@ GPU-859b872c-0ba2-97b0-10b4-8b7185c55039,NVIDIA,4000,0:;
 
 > Same device UUID, 4000 MiB each. Two Pods, one physical T4. The annotation format is `{UUID},{vendor},{VRAM MiB},{compute %}`.
 
-You can also watch the HAMi scheduler make the decision:
-
-```bash
-kubectl describe pod gpumem-pod-a | grep -A3 Events
-```
-
-```plaintext
-Events:
-  Type    Reason            Age   From            Message
-  ----    ------            ----  ----            -------
-  Normal  FilteringSucceed  96s   hami-scheduler  find fit node(hami-workshop), 0 nodes not fit, 1 nodes fit(hami-workshop:7.21)
-  Normal  BindingSucceed    96s   hami-scheduler  Successfully binding node [hami-workshop] to default/gpumem-pod-a
-```
-
-> `FilteringSucceed` shows the scheduler scoring nodes (here `hami-workshop:7.21`), and `BindingSucceed` shows it binding the Pod. These events come from hami-scheduler, not the default scheduler.
-
 ## Step 3: The VRAM Ceiling
 
 The critical question: what does the GPU look like from **inside** a Pod?
@@ -139,19 +123,6 @@ kubectl exec gpumem-pod-a -- nvidia-smi
 ```
 
 > **`0MiB / 4000MiB`**: the container sees a 4000 MiB GPU, not the physical 15360 MiB. This is HAMi-core at work, a library injected into the container via `LD_PRELOAD` that intercepts CUDA and NVML calls and rewrites the memory numbers. The other Pod sees its own independent 4000 MiB ceiling on the same physical card.
-
-Check which environment variables HAMi injected to make this happen:
-
-```bash
-kubectl exec gpumem-pod-a -- env | grep CUDA_DEVICE
-```
-
-```plaintext
-CUDA_DEVICE_MEMORY_LIMIT_0=4000m
-CUDA_DEVICE_MEMORY_SHARED_CACHE=/usr/local/vgpu/....cache
-```
-
-> `CUDA_DEVICE_MEMORY_LIMIT_0` is read by HAMi-core to enforce the VRAM ceiling for device 0. The shared cache file coordinates usage accounting between Pods sharing the same card.
 
 ## Step 4: Prove Memory Isolation with an OOM Test
 
@@ -189,7 +160,25 @@ spec:
 
 ```bash
 kubectl apply -f oom-test-pod.yaml
-# wait for it to complete, then:
+```
+
+While the image pulls, watch the HAMi scheduler make its decision:
+
+```bash
+kubectl describe pod oom-test-pod | tail -3
+```
+
+```plaintext
+  Normal  FilteringSucceed  96s   hami-scheduler  find fit node(hami-workshop), 0 nodes not fit, 1 nodes fit(hami-workshop:7.21)
+  Normal  BindingSucceed    96s   hami-scheduler  Successfully binding node [hami-workshop] to default/oom-test-pod
+  Normal  Pulling           95s   kubelet         Pulling image "pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime"
+```
+
+> `FilteringSucceed` shows the scheduler scoring nodes (here `hami-workshop:7.21`), and `BindingSucceed` shows it binding the Pod. These events come from hami-scheduler, not the default scheduler. Note it found a fit even though two Pods already occupy the GPU: 8000 of 15360 MiB are reserved, so a third 4000 MiB slice still fits.
+
+Wait for the Pod to complete, then read its logs:
+
+```bash
 kubectl logs oom-test-pod | tail -8
 ```
 
@@ -239,7 +228,20 @@ VRAM is one dimension; compute is the other. `gpucores-pod.yaml` requests 30% of
 kubectl apply -f gpucores-pod.yaml
 ```
 
-HAMi injects `CUDA_DEVICE_SM_LIMIT=30` into the container. Watch the GPU utilization from the host side (via the driver Pod) while the workload runs:
+Check the environment HAMi injected into the container:
+
+```bash
+kubectl exec gpucores-pod -- env | grep -E 'CUDA_DEVICE|NVIDIA_VISIBLE'
+```
+
+```plaintext
+NVIDIA_VISIBLE_DEVICES=GPU-859b872c-0ba2-97b0-10b4-8b7185c55039
+CUDA_DEVICE_MEMORY_LIMIT_0=4000m
+CUDA_DEVICE_SM_LIMIT=30
+CUDA_DEVICE_MEMORY_SHARED_CACHE=/usr/local/vgpu/b08c450f-718b-4c25-ae0b-e02251097ed9.cache
+```
+
+> `CUDA_DEVICE_MEMORY_LIMIT_0` and `CUDA_DEVICE_SM_LIMIT` are read by HAMi-core to enforce the VRAM ceiling and the compute cap. The shared cache file coordinates usage accounting between Pods on the same card. Watch the GPU utilization from the host side (via the driver Pod) while the workload runs:
 
 ```bash
 DRIVER_POD=$(kubectl get pods -n gpu-operator -l app=nvidia-driver-daemonset -o name | head -1)

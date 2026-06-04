@@ -191,6 +191,8 @@ flowchart LR
 ```bash
 apt-get install -y apt-transport-https ca-certificates curl gpg
 
+mkdir -p /etc/apt/keyrings
+
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.34/deb/Release.key | \
     gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
