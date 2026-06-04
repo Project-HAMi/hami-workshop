@@ -397,7 +397,7 @@ helm repo add hami-charts https://project-hami.github.io/HAMi/
 helm install hami hami-charts/hami -n kube-system --version 2.9.0
 ```
 
-> The HAMi open-source edition is installed in the `kube-system` namespace. After installation, HAMi automatically detects nodes with GPUs and starts the device-plugin.
+> The HAMi open-source edition is installed in the `kube-system` namespace.
 
 Verify:
 
