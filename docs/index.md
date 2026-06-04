@@ -34,6 +34,8 @@ Hands-on exercises.
 
 - [Lab 1: Online Installation](labs/online-install.md): Install HAMi on a live cluster.
 - [Lab 2: Local Fake GPU Setup](labs/local-fake-gpu.md): Set up HAMi locally on macOS.
+- [Lab 3: GPU Partitioning](labs/gpu-partitioning.md): Run multiple Pods on one GPU with enforced VRAM and compute limits.
+- [Lab 4: GPU Slicing with DRA](labs/hami-dra.md): Slice GPUs through Kubernetes-native Dynamic Resource Allocation (experimental).
 
 ## About HAMi
 

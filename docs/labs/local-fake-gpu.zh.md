@@ -82,7 +82,7 @@ NAME       STATUS   ROLES                  AGE    VERSION        INTERNAL-IP    
 orbstack   Ready    control-plane,master   148d   v1.33.9+orb1   192.168.139.2   <none>        OrbStack   7.0.5-orbstack-00330-ge3df4e19b0a0-dirty   docker://29.4.0
 ```
 
-> 节点名称 `orbstack`，角色 `control-plane,master`，这是单节点集群，，同时充当控制面和工作节点。`STATUS` 为 `Ready` 说明集群正常。
+> 节点名称 `orbstack`，角色 `control-plane,master`，这是单节点集群，同时充当控制面和工作节点。`STATUS` 为 `Ready` 说明集群正常。
 
 检查 Helm（后面安装 fake-gpu-operator 和 HAMi 都需要）：
 
@@ -114,7 +114,7 @@ namespace/gpu-operator created
 namespace/gpu-operator labeled
 ```
 
-> `gpu-operator` 命名空间专门放 fake-gpu-operator 相关组件。`privileged` 标签允许 Pod 以特权模式运行，，fake-gpu-operator 的 device-plugin 需要访问宿主机设备文件。
+> `gpu-operator` 命名空间专门放 fake-gpu-operator 相关组件。`privileged` 标签允许 Pod 以特权模式运行，fake-gpu-operator 的 device-plugin 需要访问宿主机设备文件。
 
 ### 2.2 给节点打标签
 
@@ -418,7 +418,7 @@ DCGM_FI_DEV_GPU_UTIL{..., device="nvidia1", ..., modelName="Tesla-K80", ...} => 
 DCGM_FI_DEV_GPU_UTIL{..., device="nvidia0", ..., modelName="Tesla-K80", ...} => 0
 ```
 
-> 看到 `DCGM_FI_DEV_GPU_UTIL` 数据说明 Prometheus 已经在采集 fake GPU 指标了。利用率为 0 是正常的，，当前没有真实 GPU 计算任务在运行。
+> 看到 `DCGM_FI_DEV_GPU_UTIL` 数据说明 Prometheus 已经在采集 fake GPU 指标了。利用率为 0 是正常的，当前没有真实 GPU 计算任务在运行。
 
 ## 步骤 5: 运行模拟 GPU 工作负载
 
@@ -528,7 +528,7 @@ Allocated resources:
 
 ### 5.5 执行模拟 nvidia-smi
 
-这是最关键的验证步骤，，在 Pod 内执行 `nvidia-smi`，看 fake-gpu-operator 是否成功注入了模拟 GPU 工具：
+这是最关键的验证步骤，在 Pod 内执行 `nvidia-smi`，看 fake-gpu-operator 是否成功注入了模拟 GPU 工具：
 
 ```bash
 kubectl exec fake-gpu-pod -- nvidia-smi
@@ -597,11 +597,11 @@ node/orbstack labeled
 
 ```bash
 kubectl annotate node ${NODE_NAME} \
-  hami.io/node-nvidia-register='GPU-3cef3724-8228-5a66-b391-b0901788f5d0,10,11441,100,NVIDIA-Tesla-K80,0,true,0,hami-core:GPU-5127182e-f297-5a25-bb44-0444c3be540c,10,11441,100,NVIDIA-Tesla-K80,0,true,1,hami-core:' \
+  hami.io/node-nvidia-register='[{"id":"GPU-3cef3724-8228-5a66-b391-b0901788f5d0","count":10,"devmem":11441,"devcore":100,"type":"NVIDIA-Tesla-K80","mode":"hami-core","health":true},{"id":"GPU-5127182e-f297-5a25-bb44-0444c3be540c","index":1,"count":10,"devmem":11441,"devcore":100,"type":"NVIDIA-Tesla-K80","mode":"hami-core","health":true}]' \
   hami.io/node-handshake="Requesting_$(date '+%Y.%m.%d %H:%M:%S')"
 ```
 
-> annotation 格式说明：每块 GPU 用冒号分隔，字段含义为 `GPU-<UUID>,<切分数量>,<显存MiB>,<算力%>,<型号>,<NUMA节点>,<是否健康>,<序号>,<模式>`。第二个字段是每张卡的 vGPU 切分数量（HAMi 默认 10），序号是倒数第二个字段，模式 `hami-core` 表示软件层切分。这里的 UUID 和显存值来自 fake-gpu-operator 的 dcgm-exporter 指标。
+> annotation 格式说明：每块 GPU 一个 JSON 对象，与 HAMi v2.9.0 device plugin 在真实 GPU 节点上写入的格式一致。`id` 是设备 UUID，`count` 是每张卡的 vGPU 切分数量（HAMi 默认 10），`devmem` 是显存（MiB），`devcore` 是算力容量（%），`mode` 为 `hami-core` 表示软件层切分。这里的 UUID 和显存值来自 fake-gpu-operator 的 dcgm-exporter 指标。
 
 ### 6.4 安装 HAMi WebUI
 

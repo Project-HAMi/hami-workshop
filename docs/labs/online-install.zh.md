@@ -41,7 +41,7 @@ flowchart LR
 
 ### 目的
 
-创建一台带 GPU 的虚拟机，作为整个实验的基础环境。HAMi 需要物理 GPU 硬件（或直通虚拟 GPU）才能工作，，它不是模拟 GPU，而是在真实 GPU 之上做切分和共享。
+创建一台带 GPU 的虚拟机，作为整个实验的基础环境。HAMi 需要物理 GPU 硬件（或直通虚拟 GPU）才能工作，它不是模拟 GPU，而是在真实 GPU 之上做切分和共享。
 
 ### 操作
 
@@ -73,7 +73,7 @@ gcloud compute instances create ${VM_NAME} \
     --boot-disk-type=pd-ssd
 ```
 
-> `--maintenance-policy=TERMINATE` 是必须的，，GPU 不支持在线迁移，如果 GCP 要维护宿主机，VM 会被终止而不是迁移。
+> `--maintenance-policy=TERMINATE` 是必须的，GPU 不支持在线迁移，如果 GCP 要维护宿主机，VM 会被终止而不是迁移。
 
 SSH 登录：
 
@@ -191,10 +191,10 @@ flowchart LR
 ```bash
 apt-get install -y apt-transport-https ca-certificates curl gpg
 
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | \
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.34/deb/Release.key | \
     gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | \
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.34/deb/ /' | \
     tee /etc/apt/sources.list.d/kubernetes.list
 
 apt-get update
@@ -224,10 +224,12 @@ Pod 之间需要网络通信。Calico 是一个 CNI（Container Network Interfac
 
 ```bash
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml
+
+curl -fsSL https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml | \
+    sed 's|192.168.0.0/16|10.244.0.0/16|' | kubectl create -f -
 ```
 
-> 第一个 manifest 安装 tigera-operator，负责管理 Calico 的生命周期。第二个创建 `Installation` 资源，告诉 operator 部署 Calico 本身。各 Calico 组件的职责参见 [HAMi 集群架构](../concepts/hami-architecture.md)。
+> 第一个 manifest 安装 tigera-operator，负责管理 Calico 的生命周期。第二个创建 `Installation` 资源，告诉 operator 部署 Calico 本身。`sed` 把 Calico 默认的 IP 池（`192.168.0.0/16`）替换为 `kubeadm init` 时指定的 `--pod-network-cidr` 网段。如果不替换，tigera-operator 会报 `Degraded`（`IPPool 192.168.0.0/16 is not within the platform's configured pod network CIDR(s)`），节点永远不会变成 Ready。各 Calico 组件的职责参见 [HAMi 集群架构](../concepts/hami-architecture.md)。
 
 等待 Calico Pod 就绪：
 
@@ -253,14 +255,14 @@ kubectl get nodes
 
 ```plaintext
 NAME            STATUS   ROLES           AGE    VERSION
-hami-workshop   Ready    control-plane   2m     v1.31.x
+hami-workshop   Ready    control-plane   2m     v1.34.8
 ```
 
 ## 步骤 4: 安装 Prometheus
 
 ### 目的
 
-Prometheus 是集群监控系统，负责采集和存储所有组件的指标数据。HAMi 和 GPU Operator 都依赖 Prometheus，，HAMi 的调度器指标、设备插件指标、GPU 利用率指标都需要 Prometheus 来采集。
+Prometheus 是集群监控系统，负责采集和存储所有组件的指标数据。HAMi 和 GPU Operator 都依赖 Prometheus，HAMi 的调度器指标、设备插件指标、GPU 利用率指标都需要 Prometheus 来采集。
 
 ### 为什么先装 Prometheus
 
@@ -275,10 +277,13 @@ helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack \
     -n monitoring --create-namespace \
     --set grafana.enabled=false \
+    --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
     --version=75.15.1
 ```
 
 > `--set grafana.enabled=false` 禁用了 Grafana，因为后续 HAMi WebUI 会提供 GPU 可视化界面。
+>
+> `serviceMonitorSelectorNilUsesHelmValues=false` 让 Prometheus 采集所有命名空间的 ServiceMonitor，不受标签限制。如果不加这个参数，Prometheus 只会选择带 `release: prometheus` 标签的 ServiceMonitor，GPU Operator 为 dcgm-exporter 创建的 ServiceMonitor 会被静默忽略，最终一条 GPU 指标都采不到。
 
 验证 Prometheus 组件状态：
 
@@ -330,20 +335,23 @@ helm install --wait --generate-name \
 kubectl get pods -n gpu-operator
 ```
 
-预期输出：
+预期输出（驱动编译耗时最长，整个软件栈大约 10 分钟达到这个状态）：
 
 ```plaintext
-NAME                                             READY   STATUS      RESTARTS   AGE
-gpu-operator-xxxxxxxxxx-xxxxx                    1/1     Running     0          5m
-nvidia-container-toolkit-daemonset-xxxxx         1/1     Running     0          4m
-nvidia-cuda-validator-xxxxx                      0/1     Completed   0          3m
-nvidia-dcgm-exporter-xxxxx                       1/1     Running     0          4m
-nvidia-driver-daemonset-xxxxx                    1/1     Running     0          5m
-nvidia-gpu-feature-discovery-xxxxx               1/1     Running     0          4m
-nvidia-operator-validator-xxxxx                  1/1     Running     0          3m
+NAME                                                              READY   STATUS      RESTARTS   AGE
+gpu-feature-discovery-4hjmc                                       1/1     Running     0          8m47s
+gpu-operator-1780588875-node-feature-discovery-gc-585cccbdtvxgf   1/1     Running     0          9m34s
+gpu-operator-1780588875-node-feature-discovery-master-d7cdrtkgv   1/1     Running     0          9m34s
+gpu-operator-1780588875-node-feature-discovery-worker-2t5nw       1/1     Running     0          9m34s
+gpu-operator-75ccfb6b7b-zmctx                                     1/1     Running     0          9m34s
+nvidia-container-toolkit-daemonset-phf4g                          1/1     Running     0          8m47s
+nvidia-cuda-validator-jdcsm                                       0/1     Completed   0          23s
+nvidia-dcgm-exporter-f5tdt                                        1/1     Running     0          8m47s
+nvidia-driver-daemonset-bccs7                                     1/1     Running     0          9m13s
+nvidia-operator-validator-2jctf                                   1/1     Running     0          8m47s
 ```
 
-> `nvidia-cuda-validator` 状态为 `Completed` 是正常的，，它是一个一次性 Job，验证 CUDA 可用后退出。
+> `nvidia-cuda-validator` 状态为 `Completed` 是正常的，它是一个一次性 Job，验证 CUDA 可用后退出。`node-feature-discovery` 系列 Pod 是 GPU Operator 的依赖组件，负责检测硬件特征并给节点打标签。
 
 ### 验证 GPU 驱动
 
@@ -357,13 +365,13 @@ kubectl -n gpu-operator exec -it $(kubectl get pods -n gpu-operator -l app=nvidi
 
 ```plaintext
 +-----------------------------------------------------------------------------------------+
-| NVIDIA-SMI 550.144.03             Driver Version: 550.144.03     CUDA Version: 12.4     |
+| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 12.8     |
 |-----------------------------------------+------------------------+----------------------+
 | GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |=========================================+========================+======================|
-|   0  Tesla T4                       On  |   00000000:00:04.0 Off |                  Off |
-| N/A   35C    P8              10W /  70W |      2MiB /  15360MiB |      0%      Default |
+|   0  Tesla T4                       On  |   00000000:00:04.0 Off |                    0 |
+| N/A   64C    P8             17W /   70W |       1MiB /  15360MiB |      0%      Default |
 +-----------------------------------------------------------------------------------------+
 ```
 
@@ -387,20 +395,21 @@ helm repo add hami-charts https://project-hami.github.io/HAMi/
 helm install hami hami-charts/hami -n kube-system --version 2.9.0
 ```
 
-> HAMi 开源版安装在 `kube-system` 命名空间中。安装完成后，HAMi 会自动检测带有 GPU 的节点并启动 device-plugin。
+> HAMi 开源版安装在 `kube-system` 命名空间中。
 
 验证：
 
 ```bash
-kubectl get pods -n kube-system | grep hami
+kubectl get pods -n kube-system | grep -E 'hami-scheduler|hami-device'
 ```
 
 预期输出：
 
 ```plaintext
-hami-device-plugin-xxxxx          2/2     Running   0          2m
-hami-scheduler-xxxxxxxxxx-xxxxx   1/1     Running   0          2m
+hami-scheduler-6d659887fc-j5ngc   2/2     Running   0          1m
 ```
+
+> 此时只有 scheduler 在运行。device plugin DaemonSet 的节点选择器是 `gpu=on`，要等下一步给节点打标签后才会启动。
 
 ### 开启 GPU 节点
 
@@ -414,27 +423,42 @@ NODE_NAME=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
 kubectl label nodes ${NODE_NAME} gpu=on
 ```
 
+打完标签后，device plugin 在节点上启动：
+
+```bash
+kubectl get pods -n kube-system | grep -E 'hami-scheduler|hami-device'
+```
+
+```plaintext
+hami-device-plugin-bbrjj          2/2     Running   0          30s
+hami-scheduler-6d659887fc-j5ngc   2/2     Running   0          95s
+```
+
 验证 GPU 注册信息：
 
 ```bash
 kubectl get node ${NODE_NAME} -o jsonpath='{.metadata.annotations.hami\.io/node-nvidia-register}'
 ```
 
-预期输出类似：
+预期输出是每张 GPU 一个 JSON 对象：
 
-```plaintext
-GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,10,15360,100,NVIDIA-Tesla T4,0,true,0,hami-core:
+```json
+[{"id":"GPU-859b872c-0ba2-97b0-10b4-8b7185c55039","count":10,"devmem":15360,"devcore":100,"type":"NVIDIA-Tesla T4","mode":"hami-core","health":true,"devicepairscore":{}}]
 ```
 
-这个 annotation 的格式是：
+这个 annotation 的字段含义：
 
-```text
-{设备 UUID},{切分数量},{显存上限 MB},{算力上限%},{GPU 型号},{NUMA},{健康状态},{序号},{模式}
-```
+| 字段 | 含义 |
+| --- | --- |
+| `id` | 设备 UUID |
+| `count` | 这张卡的 vGPU 切分数量 |
+| `devmem` | 显存（MiB） |
+| `devcore` | 算力容量（%） |
+| `type` | GPU 型号 |
+| `mode` | `hami-core` 表示软件层切分；配置了 MIG 的卡显示 `mig` |
+| `health` | 设备健康状态 |
 
-`模式` 为 `hami-core` 表示软件层切分；在配置了 MIG 的卡上显示为 `mig`。
-
-其中 **切分数量=10** 表示这张 GPU 被虚拟化为 10 个 vGPU，可以被最多 10 个 Pod 共享。
+其中 **count=10** 表示这张 GPU 被虚拟化为 10 个 vGPU，可以被最多 10 个 Pod 共享。节点的 allocatable 资源中 `nvidia.com/gpu` 会从 `1` 变成 `10`。HAMi v2.9.0 以 JSON 格式写入这个 annotation，旧版本使用逗号分隔的字符串格式。
 
 ### （可选）安装 HAMi WebUI
 

@@ -191,10 +191,10 @@ flowchart LR
 ```bash
 apt-get install -y apt-transport-https ca-certificates curl gpg
 
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | \
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.34/deb/Release.key | \
     gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | \
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.34/deb/ /' | \
     tee /etc/apt/sources.list.d/kubernetes.list
 
 apt-get update
@@ -224,10 +224,12 @@ Pods need network connectivity to communicate with each other. Calico is a CNI (
 
 ```bash
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml
+
+curl -fsSL https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml | \
+    sed 's|192.168.0.0/16|10.244.0.0/16|' | kubectl create -f -
 ```
 
-> The first manifest installs the tigera-operator, which manages Calico's lifecycle. The second creates the `Installation` resource that tells the operator to deploy Calico itself. The role of each Calico component is described in [HAMi Cluster Architecture](../concepts/hami-architecture.md).
+> The first manifest installs the tigera-operator, which manages Calico's lifecycle. The second creates the `Installation` resource that tells the operator to deploy Calico itself. The `sed` replaces Calico's default IP pool (`192.168.0.0/16`) with the `--pod-network-cidr` range passed to `kubeadm init`. Without it, the tigera-operator reports `Degraded` with `IPPool 192.168.0.0/16 is not within the platform's configured pod network CIDR(s)` and the node never becomes Ready. The role of each Calico component is described in [HAMi Cluster Architecture](../concepts/hami-architecture.md).
 
 Wait for the Calico Pods to be ready:
 
@@ -253,7 +255,7 @@ Expected output (STATUS of Ready indicates the cluster is ready):
 
 ```plaintext
 NAME            STATUS   ROLES           AGE    VERSION
-hami-workshop   Ready    control-plane   2m     v1.31.x
+hami-workshop   Ready    control-plane   2m     v1.34.8
 ```
 
 ## Step 4: Install Prometheus
@@ -275,10 +277,13 @@ helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack \
     -n monitoring --create-namespace \
     --set grafana.enabled=false \
+    --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
     --version=75.15.1
 ```
 
 > `--set grafana.enabled=false` disables Grafana because the HAMi WebUI installed later will provide GPU visualization.
+>
+> `serviceMonitorSelectorNilUsesHelmValues=false` makes Prometheus pick up ServiceMonitors from all namespaces regardless of labels. Without it, Prometheus only selects ServiceMonitors labeled `release: prometheus`, silently ignores the one the GPU Operator creates for dcgm-exporter, and you end up with no GPU metrics at all.
 
 Verify Prometheus component status:
 
@@ -330,18 +335,23 @@ Wait for all Pods to be ready:
 kubectl get pods -n gpu-operator
 ```
 
-Expected output:
+Expected output (the driver compile takes the longest; the full stack reaches this state in about 10 minutes):
 
 ```plaintext
-NAME                                             READY   STATUS      RESTARTS   AGE
-gpu-operator-xxxxxxxxxx-xxxxx                    1/1     Running     0          5m
-nvidia-container-toolkit-daemonset-xxxxx         1/1     Running     0          4m
-nvidia-cuda-validator-xxxxx                      0/1     Completed   0          3m
-nvidia-dcgm-exporter-xxxxx                       1/1     Running     0          4m
-nvidia-driver-daemonset-xxxxx                    1/1     Running     0          5m
-nvidia-gpu-feature-discovery-xxxxx               1/1     Running     0          4m
-nvidia-operator-validator-xxxxx                  1/1     Running     0          3m
+NAME                                                              READY   STATUS      RESTARTS   AGE
+gpu-feature-discovery-4hjmc                                       1/1     Running     0          8m47s
+gpu-operator-1780588875-node-feature-discovery-gc-585cccbdtvxgf   1/1     Running     0          9m34s
+gpu-operator-1780588875-node-feature-discovery-master-d7cdrtkgv   1/1     Running     0          9m34s
+gpu-operator-1780588875-node-feature-discovery-worker-2t5nw       1/1     Running     0          9m34s
+gpu-operator-75ccfb6b7b-zmctx                                     1/1     Running     0          9m34s
+nvidia-container-toolkit-daemonset-phf4g                          1/1     Running     0          8m47s
+nvidia-cuda-validator-jdcsm                                       0/1     Completed   0          23s
+nvidia-dcgm-exporter-f5tdt                                        1/1     Running     0          8m47s
+nvidia-driver-daemonset-bccs7                                     1/1     Running     0          9m13s
+nvidia-operator-validator-2jctf                                   1/1     Running     0          8m47s
 ```
+
+> The `node-feature-discovery` Pods are a GPU Operator dependency that detects hardware features and labels the node, so gpu-feature-discovery and the scheduler know what hardware is present.
 
 > The `nvidia-cuda-validator` status of `Completed` is normal, it is a one-time Job that exits after verifying CUDA availability.
 
@@ -357,13 +367,13 @@ The expected output includes GPU information (driver version, CUDA version, GPU 
 
 ```plaintext
 +-----------------------------------------------------------------------------------------+
-| NVIDIA-SMI 550.144.03             Driver Version: 550.144.03     CUDA Version: 12.4     |
+| NVIDIA-SMI 570.124.06             Driver Version: 570.124.06     CUDA Version: 12.8     |
 |-----------------------------------------+------------------------+----------------------+
 | GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |=========================================+========================+======================|
-|   0  Tesla T4                       On  |   00000000:00:04.0 Off |                  Off |
-| N/A   35C    P8              10W /  70W |      2MiB /  15360MiB |      0%      Default |
+|   0  Tesla T4                       On  |   00000000:00:04.0 Off |                    0 |
+| N/A   64C    P8             17W /   70W |       1MiB /  15360MiB |      0%      Default |
 +-----------------------------------------------------------------------------------------+
 ```
 
@@ -392,15 +402,16 @@ helm install hami hami-charts/hami -n kube-system --version 2.9.0
 Verify:
 
 ```bash
-kubectl get pods -n kube-system | grep hami
+kubectl get pods -n kube-system | grep -E 'hami-scheduler|hami-device'
 ```
 
 Expected output:
 
 ```plaintext
-hami-device-plugin-xxxxx          2/2     Running   0          2m
-hami-scheduler-xxxxxxxxxx-xxxxx   1/1     Running   0          2m
+hami-scheduler-6d659887fc-j5ngc   2/2     Running   0          1m
 ```
+
+> At this point only the scheduler is running. The device plugin DaemonSet uses a `gpu=on` node selector, so it does not start until you label the node in the next step.
 
 ### Enable GPU Node
 
@@ -414,27 +425,42 @@ NODE_NAME=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
 kubectl label nodes ${NODE_NAME} gpu=on
 ```
 
+The device plugin starts on the labeled node:
+
+```bash
+kubectl get pods -n kube-system | grep -E 'hami-scheduler|hami-device'
+```
+
+```plaintext
+hami-device-plugin-bbrjj          2/2     Running   0          30s
+hami-scheduler-6d659887fc-j5ngc   2/2     Running   0          95s
+```
+
 Verify GPU registration information:
 
 ```bash
 kubectl get node ${NODE_NAME} -o jsonpath='{.metadata.annotations.hami\.io/node-nvidia-register}'
 ```
 
-Expected output is similar to:
+Expected output is one JSON object per GPU:
 
-```plaintext
-GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,10,15360,100,NVIDIA-Tesla T4,0,true,0,hami-core:
+```json
+[{"id":"GPU-859b872c-0ba2-97b0-10b4-8b7185c55039","count":10,"devmem":15360,"devcore":100,"type":"NVIDIA-Tesla T4","mode":"hami-core","health":true,"devicepairscore":{}}]
 ```
 
-The format of this annotation is:
+The fields of this annotation are:
 
-```text
-{Device UUID},{Number of partitions},{VRAM limit in MB},{Compute limit %},{GPU model},{NUMA},{Health status},{Index},{Mode}
-```
+| Field | Meaning |
+| --- | --- |
+| `id` | Device UUID |
+| `count` | Number of vGPU partitions for this card |
+| `devmem` | VRAM in MiB |
+| `devcore` | Compute capacity in % |
+| `type` | GPU model |
+| `mode` | `hami-core` for software-level partitioning; `mig` on MIG-configured cards |
+| `health` | Device health status |
 
-`Mode` is `hami-core` for software-level partitioning; on MIG-capable cards configured for MIG it shows `mig` instead.
-
-Here, **Number of partitions = 10** means this GPU is virtualized into 10 vGPUs, which can be shared by up to 10 Pods.
+Here, **count = 10** means this GPU is virtualized into 10 vGPUs, which can be shared by up to 10 Pods. The node's allocatable resources now show `nvidia.com/gpu: 10` instead of `1`. HAMi v2.9.0 writes this annotation as JSON; older releases used a comma-separated string.
 
 ### (Optional) Install HAMi WebUI
 

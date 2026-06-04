@@ -34,6 +34,8 @@ HAMi 背景知识。
 
 - [实验 1: 在线安装 HAMi](labs/online-install.md)，在线环境安装 HAMi
 - [实验 2: 本地 Fake GPU 安装](labs/local-fake-gpu.md)，macOS 本地 Fake GPU 环境
+- [实验 3: GPU 切分](labs/gpu-partitioning.md)，多个 Pod 共享一张 GPU，显存和算力限制可验证
+- [实验 4: 用 DRA 切分 GPU](labs/hami-dra.md)，通过 Kubernetes 原生 Dynamic Resource Allocation 切分 GPU（实验性）
 
 ## 关于 HAMi
 

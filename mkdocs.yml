@@ -82,6 +82,8 @@ nav:
 - Labs:
   - labs/online-install.md
   - labs/local-fake-gpu.md
+  - labs/gpu-partitioning.md
+  - labs/hami-dra.md
 
 extra_css:
 - stylesheets/extra.css
