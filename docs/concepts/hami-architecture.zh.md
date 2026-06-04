@@ -11,7 +11,7 @@
 flowchart TB
     subgraph Infra["Kubernetes 基础设施层"]
         K8s["Kubernetes Control Plane"]
-        Cilium["Cilium 网络"]
+        Calico["Calico 网络"]
     end
     subgraph GPUStack["NVIDIA GPU Runtime Stack"]
         Driver["NVIDIA Driver"]
@@ -58,28 +58,28 @@ flowchart TB
 ```text
 NAMESPACE      NAME                        CHART                              STATUS
 gpu-operator   gpu-operator-xxxxxxxxxx     gpu-operator-v25.3.0               deployed
-kube-system    hami                        hami-2.x.x                         deployed
+kube-system    hami                        hami-2.9.0                         deployed
 monitoring     prometheus                  kube-prometheus-stack-75.15.1      deployed
 kube-system    my-hami-webui               hami-webui-x.x.x                   deployed
-kube-system    cilium                      cilium-x.x.x                       deployed
 ```
 
 ### 各 Release 的职责
 
 | Release | 命名空间 | 职责 | 安装时机 |
 | --------- | ---------- | ------ | ---------- |
-| **cilium** | kube-system | CNI 网络插件，为 Pod 提供网络连通性 | 安装 K8s 后，替代 Calico |
 | **gpu-operator** | gpu-operator | NVIDIA GPU 软件栈的自动化管理，自动部署驱动、工具包、指标采集器 | 安装 Prometheus 后 |
 | **hami** | kube-system | GPU 虚拟化与调度增强，支持显存切分和多 Pod 共享 GPU | 安装 GPU Operator 后 |
 | **prometheus** | monitoring | 集群监控，采集和存储所有组件的指标数据 | 安装 K8s 后，最先安装的监控组件 |
 | **my-hami-webui** | kube-system | GPU 资源可视化界面，展示 GPU 使用情况和调度状态 | 安装 HAMi 后（可选） |
 
+> CNI 插件（Calico）不会出现在 `helm list` 中，因为它是通过 `kubectl create` 应用 tigera-operator manifests 安装的，不经过 Helm。
+
 它们之间的安装顺序是有依赖关系的：
 
 ```mermaid
-%% title: Helm Release 安装依赖
+%% title: 组件安装依赖
 flowchart LR
-    Cilium["cilium<br/>CNI 网络"] --> GPUOp["gpu-operator<br/>GPU Runtime"]
+    Calico["calico<br/>CNI 网络"] --> GPUOp["gpu-operator<br/>GPU Runtime"]
     GPUOp --> HAMi["hami<br/>GPU 调度"]
     HAMi --> WebUI["my-hami-webui<br/>可视化"]
     Prometheus["prometheus<br/>监控"] --> GPUOp
@@ -113,16 +113,19 @@ Prometheus 必须先于 GPU Operator 和 HAMi WebUI 安装，因为它们都依�
 
 ### 网络组件
 
-由 Cilium Helm Release 创建。
+由 Calico manifests（tigera-operator）创建。
 
 | Pod | 作用 |
 | ----- | ------ |
-| **cilium** | DaemonSet，每个节点运行一个，负责 Pod 之间的网络连通性、网络策略、负载均衡 |
-| **cilium-operator** | Deployment，管理 Cilium 的控制面逻辑（IP 地址分配、Node 间路由、垃圾回收） |
+| **tigera-operator** | Deployment，管理 Calico 的生命周期，监听 `Installation` 资源并部署、调和所有 Calico 组件 |
+| **calico-node** | DaemonSet，每个节点运行一个，负责 Pod 之间的网络连通性、IP 地址管理、路由和网络策略执行 |
+| **calico-kube-controllers** | Deployment，运行 Calico 的控制面逻辑（策略、命名空间、端点同步，IPAM 垃圾回收） |
+| **calico-typha** | Deployment，聚合 datastore watch 连接，避免大规模集群压垮 Kubernetes API |
+| **csi-node-driver** | DaemonSet，Calico 的 CSI 驱动，为高级策略功能挂载 Pod 级别的卷 |
 
 **如果没有它们**：Pod 之间无法通信。Kubernetes 的 Service 机制完全失效，DNS 解析不通，跨 Pod 的分布式训练无法进行。
 
-**对 AI 基础设施的意义**：AI 训练经常涉及分布式工作负载（多 Pod 协同训练），网络性能直接影响训练效率。Cilium 基于 eBPF 技术，提供高性能的网络转发。
+**对 AI 基础设施的意义**：AI 训练经常涉及分布式工作负载（多 Pod 协同训练），网络性能直接影响训练效率。Calico 提供高性能路由（BGP/VXLAN）和 NetworkPolicy 隔离能力，让不同工作负载互不干扰。
 
 ### NVIDIA GPU Runtime Stack
 
@@ -236,8 +239,8 @@ flowchart TB
     end
 
     subgraph Network["网络层"]
-        Cilium["cilium DaemonSet"]
-        CiliumOp["cilium-operator"]
+        CalicoNode["calico-node DaemonSet"]
+        TigeraOp["tigera-operator"]
     end
 
     subgraph GPURuntime["NVIDIA GPU Runtime Stack"]
@@ -273,7 +276,7 @@ flowchart TB
     %% 硬件到 Runtime
     GPU -->|"内核驱动"| Driver
     CPU --> NodeExp
-    NIC --> Cilium
+    NIC --> CalicoNode
 
     %% Runtime 内部
     Driver --> Toolkit
@@ -348,7 +351,7 @@ sequenceDiagram
 
 | 层级 | 核心组件 | 解决的核心问题 |
 | ------ | ---------- | --------------- |
-| Kubernetes 基础设施层 | kube-apiserver, kube-scheduler, etcd, cilium | 容器编排和网络通信 |
+| Kubernetes 基础设施层 | kube-apiserver, kube-scheduler, etcd, calico | 容器编排和网络通信 |
 | NVIDIA GPU Runtime Stack | driver, toolkit, dcgm-exporter, gfd | 让容器能访问 GPU |
 | GPU 调度层 | hami-scheduler, hami-device-plugin | GPU 资源切分和共享 |
 | 监控层 | prometheus, node-exporter, kube-state-metrics | 指标采集和告警 |

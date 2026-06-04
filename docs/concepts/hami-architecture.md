@@ -11,7 +11,7 @@ The cluster after installation consists of 5 layers, each providing services to 
 flowchart TB
     subgraph Infra["Kubernetes Infrastructure Layer"]
         K8s["Kubernetes Control Plane"]
-        Cilium["Cilium Network"]
+        Calico["Calico Network"]
     end
     subgraph GPUStack["NVIDIA GPU Runtime Stack"]
         Driver["NVIDIA Driver"]
@@ -58,28 +58,28 @@ Run `helm list -A` to see all Releases:
 ```text
 NAMESPACE      NAME                        CHART                              STATUS
 gpu-operator   gpu-operator-xxxxxxxxxx     gpu-operator-v25.3.0               deployed
-kube-system    hami                        hami-2.x.x                         deployed
+kube-system    hami                        hami-2.9.0                         deployed
 monitoring     prometheus                  kube-prometheus-stack-75.15.1      deployed
 kube-system    my-hami-webui               hami-webui-x.x.x                   deployed
-kube-system    cilium                      cilium-x.x.x                       deployed
 ```
 
 ### Responsibilities of Each Release
 
 | Release | Namespace | Responsibility | Installation Timing |
 |---------|-----------|----------------|---------------------|
-| **cilium** | kube-system | CNI network plugin, provides network connectivity for Pods | After K8s installation, replacing Calico |
 | **gpu-operator** | gpu-operator | Automated management of the NVIDIA GPU software stack, automatically deploys drivers, toolkits, and metrics collectors | After Prometheus installation |
 | **hami** | kube-system | GPU virtualization and scheduling enhancement, supports VRAM partitioning and multi-Pod GPU sharing | After GPU Operator installation |
 | **prometheus** | monitoring | Cluster monitoring, collects and stores metrics data from all components | After K8s installation, the first monitoring component installed |
 | **my-hami-webui** | kube-system | GPU resource visualization interface, displays GPU usage and scheduling status | After HAMi installation (optional) |
 
+> The CNI plugin (Calico) does not appear in `helm list` because it is installed via `kubectl create` with the tigera-operator manifests, not through Helm.
+
 The installation order has dependency relationships:
 
 ```mermaid
-%% title: Helm Release Installation Dependencies
+%% title: Component Installation Dependencies
 flowchart LR
-    Cilium["cilium<br/>CNI Network"] --> GPUOp["gpu-operator<br/>GPU Runtime"]
+    Calico["calico<br/>CNI Network"] --> GPUOp["gpu-operator<br/>GPU Runtime"]
     GPUOp --> HAMi["hami<br/>GPU Scheduling"]
     HAMi --> WebUI["my-hami-webui<br/>Visualization"]
     Prometheus["prometheus<br/>Monitoring"] --> GPUOp
@@ -113,16 +113,19 @@ These are Kubernetes control plane components, created by kubeadm during cluster
 
 ### Network Components
 
-Created by the Cilium Helm Release.
+Created by the Calico manifests (tigera-operator).
 
 | Pod | Role |
 |-----|------|
-| **cilium** | DaemonSet, one per node, responsible for Pod-to-Pod network connectivity, network policies, and load balancing |
-| **cilium-operator** | Deployment, manages Cilium's control plane logic (IP address allocation, inter-node routing, garbage collection) |
+| **tigera-operator** | Deployment, manages Calico's lifecycle; watches the `Installation` resource and deploys or reconciles all Calico components |
+| **calico-node** | DaemonSet, one per node, responsible for Pod-to-Pod network connectivity, IP address management, routing, and network policy enforcement |
+| **calico-kube-controllers** | Deployment, runs Calico's control plane logic (policy, namespace, and endpoint synchronization, IPAM garbage collection) |
+| **calico-typha** | Deployment, aggregates datastore watch connections so large clusters do not overload the Kubernetes API |
+| **csi-node-driver** | DaemonSet, Calico's CSI driver, mounts per-Pod volumes used by advanced policy features |
 
 **Without them**: Pods cannot communicate with each other. Kubernetes' Service mechanism completely fails, DNS resolution doesn't work, and cross-Pod distributed training cannot proceed.
 
-**Significance for AI Infrastructure**: AI training often involves distributed workloads (multi-Pod collaborative training), and network performance directly affects training efficiency. Cilium is based on eBPF technology, providing high-performance network forwarding.
+**Significance for AI Infrastructure**: AI training often involves distributed workloads (multi-Pod collaborative training), and network performance directly affects training efficiency. Calico provides high-performance routing (BGP/VXLAN) and NetworkPolicy enforcement to keep workloads isolated from each other.
 
 ### NVIDIA GPU Runtime Stack
 
@@ -236,8 +239,8 @@ flowchart TB
     end
 
     subgraph Network["Network Layer"]
-        Cilium["cilium DaemonSet"]
-        CiliumOp["cilium-operator"]
+        CalicoNode["calico-node DaemonSet"]
+        TigeraOp["tigera-operator"]
     end
 
     subgraph GPURuntime["NVIDIA GPU Runtime Stack"]
@@ -273,7 +276,7 @@ flowchart TB
     %% Hardware to Runtime
     GPU -->|"Kernel driver"| Driver
     CPU --> NodeExp
-    NIC --> Cilium
+    NIC --> CalicoNode
 
     %% Runtime internal
     Driver --> Toolkit
@@ -348,7 +351,7 @@ Throughout this process, each layer fulfills its role: Kubernetes provides the s
 
 | Layer | Core Components | Core Problem Solved |
 |-------|-----------------|---------------------|
-| Kubernetes Infrastructure Layer | kube-apiserver, kube-scheduler, etcd, cilium | Container orchestration and network communication |
+| Kubernetes Infrastructure Layer | kube-apiserver, kube-scheduler, etcd, calico | Container orchestration and network communication |
 | NVIDIA GPU Runtime Stack | driver, toolkit, dcgm-exporter, gfd | Enabling containers to access GPUs |
 | GPU Scheduling Layer | hami-scheduler, hami-device-plugin | GPU resource partitioning and sharing |
 | Monitoring Layer | prometheus, node-exporter, kube-state-metrics | Metrics collection and alerting |

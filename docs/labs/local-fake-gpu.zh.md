@@ -597,11 +597,11 @@ node/orbstack labeled
 
 ```bash
 kubectl annotate node ${NODE_NAME} \
-  hami.io/node-nvidia-register='GPU-3cef3724-8228-5a66-b391-b0901788f5d0,0,11441,100,NVIDIA-Tesla-K80,0,true:GPU-5127182e-f297-5a25-bb44-0444c3be540c,1,11441,100,NVIDIA-Tesla-K80,0,true:' \
+  hami.io/node-nvidia-register='GPU-3cef3724-8228-5a66-b391-b0901788f5d0,10,11441,100,NVIDIA-Tesla-K80,0,true,0,hami-core:GPU-5127182e-f297-5a25-bb44-0444c3be540c,10,11441,100,NVIDIA-Tesla-K80,0,true,1,hami-core:' \
   hami.io/node-handshake="Requesting_$(date '+%Y.%m.%d %H:%M:%S')"
 ```
 
-> annotation 格式说明：每块 GPU 用冒号分隔，字段含义为 `GPU-<UUID>,<索引>,<显存MiB>,<算力>,<型号>,<NUMA节点>,<是否健康>`。这里的 UUID 和显存值来自 fake-gpu-operator 的 dcgm-exporter 指标。
+> annotation 格式说明：每块 GPU 用冒号分隔，字段含义为 `GPU-<UUID>,<切分数量>,<显存MiB>,<算力%>,<型号>,<NUMA节点>,<是否健康>,<序号>,<模式>`。第二个字段是每张卡的 vGPU 切分数量（HAMi 默认 10），序号是倒数第二个字段，模式 `hami-core` 表示软件层切分。这里的 UUID 和显存值来自 fake-gpu-operator 的 dcgm-exporter 指标。
 
 ### 6.4 安装 HAMi WebUI
 

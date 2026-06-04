@@ -220,11 +220,19 @@ chown $(id -u):$(id -g) $HOME/.kube/config
 
 #### 3.7 安装网络插件（Calico）
 
-Pod 之间需要网络通信。Calico 是一个 CNI（Container Network Interface）插件，负责为 Pod 分配 IP 地址并处理网络路由。没有 CNI 插件，Pod 无法相互通信。
+Pod 之间需要网络通信。Calico 是一个 CNI（Container Network Interface）插件，负责为 Pod 分配 IP 地址并处理网络路由。没有 CNI 插件，Pod 无法相互通信，节点会一直处于 `NotReady` 状态。
 
 ```bash
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml
+```
+
+> 第一个 manifest 安装 tigera-operator，负责管理 Calico 的生命周期。第二个创建 `Installation` 资源，告诉 operator 部署 Calico 本身。各 Calico 组件的职责参见 [HAMi 集群架构](../concepts/hami-architecture.md)。
+
+等待 Calico Pod 就绪：
+
+```bash
+kubectl get pods -n calico-system
 ```
 
 #### 3.8 允许 Master 节点调度 Pod
@@ -376,7 +384,7 @@ kubectl -n gpu-operator exec -it $(kubectl get pods -n gpu-operator -l app=nvidi
 helm repo add hami-charts https://project-hami.github.io/HAMi/
 
 # 安装 HAMi
-helm install hami hami-charts/hami -n kube-system
+helm install hami hami-charts/hami -n kube-system --version 2.9.0
 ```
 
 > HAMi 开源版安装在 `kube-system` 命名空间中。安装完成后，HAMi 会自动检测带有 GPU 的节点并启动 device-plugin。
@@ -396,7 +404,7 @@ hami-scheduler-xxxxxxxxxx-xxxxx   1/1     Running   0          2m
 
 ### 开启 GPU 节点
 
-HAMi 不会自动接管所有 GPU 节点，，需要手动标记哪些节点由 HAMi 管理。这种设计是为了让 HAMi 和非 HAMi 节点可以在同一个集群中共存。
+HAMi 不会自动接管所有 GPU 节点，需要手动标记哪些节点由 HAMi 管理。这种设计是为了让 HAMi 和非 HAMi 节点可以在同一个集群中共存。
 
 ```bash
 # 获取节点名称
@@ -409,20 +417,22 @@ kubectl label nodes ${NODE_NAME} gpu=on
 验证 GPU 注册信息：
 
 ```bash
-kubectl get node ${NODE_NAME} -o jsonpath='{.metadata.annotations.ham\.io/node-nvidia-register}'
+kubectl get node ${NODE_NAME} -o jsonpath='{.metadata.annotations.hami\.io/node-nvidia-register}'
 ```
 
 预期输出类似：
 
 ```plaintext
-GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,10,15360,100,NVIDIA-Tesla T4,0,true,0:
+GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,10,15360,100,NVIDIA-Tesla T4,0,true,0,hami-core:
 ```
 
 这个 annotation 的格式是：
 
 ```text
-{设备 UUID},{切分数量},{显存上限 MB},{算力上限%},{GPU 型号},{NUMA},{健康状态},{序号}
+{设备 UUID},{切分数量},{显存上限 MB},{算力上限%},{GPU 型号},{NUMA},{健康状态},{序号},{模式}
 ```
+
+`模式` 为 `hami-core` 表示软件层切分；在配置了 MIG 的卡上显示为 `mig`。
 
 其中 **切分数量=10** 表示这张 GPU 被虚拟化为 10 个 vGPU，可以被最多 10 个 Pod 共享。
 

@@ -597,11 +597,11 @@ In a real environment, the HAMi device-plugin automatically writes the `hami.io/
 
 ```bash
 kubectl annotate node ${NODE_NAME} \
-  hami.io/node-nvidia-register='GPU-3cef3724-8228-5a66-b391-b0901788f5d0,0,11441,100,NVIDIA-Tesla-K80,0,true:GPU-5127182e-f297-5a25-bb44-0444c3be540c,1,11441,100,NVIDIA-Tesla-K80,0,true:' \
+  hami.io/node-nvidia-register='GPU-3cef3724-8228-5a66-b391-b0901788f5d0,10,11441,100,NVIDIA-Tesla-K80,0,true,0,hami-core:GPU-5127182e-f297-5a25-bb44-0444c3be540c,10,11441,100,NVIDIA-Tesla-K80,0,true,1,hami-core:' \
   hami.io/node-handshake="Requesting_$(date '+%Y.%m.%d %H:%M:%S')"
 ```
 
-> Annotation format explanation: each GPU is separated by a colon, with fields meaning `GPU-<UUID>,<index>,<memory MiB>,<compute>,<model>,<NUMA node>,<healthy>`. The UUID and memory values here come from the fake-gpu-operator's dcgm-exporter metrics.
+> Annotation format explanation: each GPU is separated by a colon, with fields meaning `GPU-<UUID>,<partition count>,<memory MiB>,<compute %>,<model>,<NUMA node>,<healthy>,<index>,<mode>`. The second field is the number of vGPU partitions per card (HAMi defaults to 10), the index is the second-to-last field, and the mode is `hami-core` for software-level partitioning. The UUID and memory values here come from the fake-gpu-operator's dcgm-exporter metrics.
 
 ### 6.4 Install HAMi WebUI
 

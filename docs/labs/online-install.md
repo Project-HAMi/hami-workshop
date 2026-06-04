@@ -220,11 +220,19 @@ chown $(id -u):$(id -g) $HOME/.kube/config
 
 #### 3.7 Install Network Plugin (Calico)
 
-Pods need network connectivity to communicate with each other. Calico is a CNI (Container Network Interface) plugin responsible for assigning IP addresses to Pods and handling network routing. Without a CNI plugin, Pods cannot communicate with each other.
+Pods need network connectivity to communicate with each other. Calico is a CNI (Container Network Interface) plugin responsible for assigning IP addresses to Pods and handling network routing. Without a CNI plugin, Pods cannot communicate with each other and the node stays `NotReady`.
 
 ```bash
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml
+```
+
+> The first manifest installs the tigera-operator, which manages Calico's lifecycle. The second creates the `Installation` resource that tells the operator to deploy Calico itself. The role of each Calico component is described in [HAMi Cluster Architecture](../concepts/hami-architecture.md).
+
+Wait for the Calico Pods to be ready:
+
+```bash
+kubectl get pods -n calico-system
 ```
 
 #### 3.8 Allow Master Node to Schedule Pods
@@ -376,7 +384,7 @@ Install HAMi open-source edition via the Helm repository:
 helm repo add hami-charts https://project-hami.github.io/HAMi/
 
 # Install HAMi
-helm install hami hami-charts/hami -n kube-system
+helm install hami hami-charts/hami -n kube-system --version 2.9.0
 ```
 
 > The HAMi open-source edition is installed in the `kube-system` namespace. After installation, HAMi automatically detects nodes with GPUs and starts the device-plugin.
@@ -409,20 +417,22 @@ kubectl label nodes ${NODE_NAME} gpu=on
 Verify GPU registration information:
 
 ```bash
-kubectl get node ${NODE_NAME} -o jsonpath='{.metadata.annotations.ham\.io/node-nvidia-register}'
+kubectl get node ${NODE_NAME} -o jsonpath='{.metadata.annotations.hami\.io/node-nvidia-register}'
 ```
 
 Expected output is similar to:
 
 ```plaintext
-GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,10,15360,100,NVIDIA-Tesla T4,0,true,0:
+GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,10,15360,100,NVIDIA-Tesla T4,0,true,0,hami-core:
 ```
 
 The format of this annotation is:
 
 ```text
-{Device UUID},{Number of partitions},{VRAM limit in MB},{Compute limit %},{GPU model},{NUMA},{Health status},{Index}
+{Device UUID},{Number of partitions},{VRAM limit in MB},{Compute limit %},{GPU model},{NUMA},{Health status},{Index},{Mode}
 ```
+
+`Mode` is `hami-core` for software-level partitioning; on MIG-capable cards configured for MIG it shows `mig` instead.
 
 Here, **Number of partitions = 10** means this GPU is virtualized into 10 vGPUs, which can be shared by up to 10 Pods.
 

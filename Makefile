@@ -1,11 +1,12 @@
 .PHONY: serve build clean install
 
+PYTHON ?= python3
 VENV := .venv
 PIP := $(VENV)/bin/pip
 MKDOCS := $(VENV)/bin/mkdocs
 
 install:
-	python3 -m venv $(VENV)
+	$(PYTHON) -m venv $(VENV)
 	$(PIP) install -r requirements.txt
 
 serve: install
