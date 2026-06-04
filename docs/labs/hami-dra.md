@@ -15,7 +15,7 @@ In [Lab 3](gpu-partitioning.md) you sliced a GPU using HAMi's extended resources
 | Device selection | Annotations such as `nvidia.com/use-gputype` | CEL expressions over device attributes |
 | Validation | None (any number accepted at admission) | `requestPolicy` with min/max/step enforced by the API server |
 
-The HAMi DRA driver might be the first open-source NVIDIA GPU DRA driver with the [DRA Consumable Capacity](https://github.com/kubernetes/enhancements/tree/master/keps/sig-scheduling/5075-dra-consumable-capacity) feature enabled: multiple Pods draw capacity from one device, with the scheduler doing the accounting.
+The HAMi DRA driver implements the [DRA Consumable Capacity](https://github.com/kubernetes/enhancements/tree/master/keps/sig-scheduling/5075-dra-consumable-capacity) feature: multiple Pods draw capacity from one device, with the scheduler doing the accounting.
 
 ## Prerequisites
 
