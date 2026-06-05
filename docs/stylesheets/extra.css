@@ -30,6 +30,12 @@
   height: auto;
 }
 
+/* Footer: center copyright text */
+.md-copyright {
+  text-align: center;
+  width: 100%;
+}
+
 .mermaid-caption {
   text-align: center;
   font-size: 0.85em;
