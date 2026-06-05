@@ -1,6 +1,8 @@
 # HAMi Workshop
 
-Hands-on workshop for learning [HAMi](https://github.com/Project-HAMi/HAMi), the GPU virtualization middleware for Kubernetes. Available in [English](https://workshop.project-hami.io/) and [中文](https://workshop.project-hami.io/zh/).
+HAMi Workshop is a community learning resource for HAMi. The workshop was initiated by [Dynamia](https://dynamia.ai/) and is maintained as part of the HAMi community.
+
+Available in [English](https://workshop.project-hami.io/) and [中文](https://workshop.project-hami.io/zh/).
 
 ## What You'll Learn
 
@@ -36,6 +38,12 @@ docs/
 examples/           Lab code, manifests, and configs (numbered by lab)
 mkdocs.yml          Site configuration, i18n, navigation
 ```
+
+## Support
+
+For community support, please use the HAMi community channels.
+
+For enterprise adoption, PoC support, or commercial engagement, please contact [Dynamia](https://dynamia.ai/).
 
 ## Contributing
 

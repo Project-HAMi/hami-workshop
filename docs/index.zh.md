@@ -1,5 +1,7 @@
 # HAMi Workshop
 
+HAMi Workshop 是面向 HAMi 的社区学习资源。该 Workshop 由[密瓜智能](https://dynamia.ai/)（Dynamia）发起，并作为 HAMi 社区的一部分进行维护。
+
 欢迎来到 HAMi Workshop！本工作坊将带你从零开始学习 HAMi 在 Kubernetes 上的安装、配置和运维。
 
 ## 学习内容
