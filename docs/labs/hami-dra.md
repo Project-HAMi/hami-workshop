@@ -1,7 +1,7 @@
 # Lab 4: GPU Slicing with Dynamic Resource Allocation
 
 !!! warning "Experimental"
-    The HAMi DRA driver is young: at the time of writing it ships as raw DaemonSet manifests (`projecthami/k8s-dra-driver:v0.1.0`, Helm chart in development), and the consumable capacity feature it relies on is gated behind a Kubernetes feature flag. Everything in this lab was verified live on a Tesla T4 cluster, but expect the upstream pieces to keep moving.
+    The HAMi DRA driver is young and moving fast. This lab installs the exact DaemonSet manifests that were verified live on a Tesla T4 cluster (driver `projecthami/k8s-dra-driver:v0.1.0`). The driver repository has since added a Helm chart for the same v0.1.0 driver (in-repo at `chart/hami-dra-driver`, with a `nvidiaDriverRoot` value covering GPU Operator clusters); this lab will switch to the chart once that path has been verified. The consumable capacity feature also remains behind a Kubernetes feature gate.
 
 In [Lab 3](gpu-partitioning.md) you sliced a GPU using HAMi's extended resources (`nvidia.com/gpumem`, `nvidia.com/gpucores`). This lab achieves the same outcome through **Dynamic Resource Allocation (DRA)**, the Kubernetes-native device API that went GA in v1.34. Instead of opaque resource names, Pods request devices through `ResourceClaims` with structured, schema-validated capacity requests.
 
@@ -264,4 +264,4 @@ kubectl delete deviceclass hami-core-gpu.project-hami.io
 
 ## Next Steps
 
-Compare this hands-on with [Lab 3](gpu-partitioning.md) and form your own view of the trade-off: extended resources work everywhere today, DRA is where the ecosystem is heading. Watch the [HAMi DRA driver repository](https://github.com/Project-HAMi/k8s-dra-driver) for the Helm chart and new releases.
+Compare this hands-on with [Lab 3](gpu-partitioning.md) and form your own view of the trade-off: extended resources work everywhere today, DRA is where the ecosystem is heading. Watch the [HAMi DRA driver repository](https://github.com/Project-HAMi/k8s-dra-driver) for new releases.
