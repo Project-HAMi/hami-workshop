@@ -4,7 +4,7 @@ HAMi Workshop 是面向 HAMi 的社区学习资源。
 
 本项目聚焦于开放教程、动手实验和参考架构，帮助用户在 Kubernetes 上使用 HAMi 运行 AI 工作负载。
 
-该 Workshop 由[密瓜智能](https://dynamia.ai/)（Dynamia）发起，并作为 HAMi 社区的一部分进行维护。
+该 Workshop 由 HAMi 社区共同维护。
 
 欢迎社区贡献。
 

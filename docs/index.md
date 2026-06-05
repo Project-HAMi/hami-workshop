@@ -1,6 +1,6 @@
 # HAMi Workshop
 
-HAMi Workshop is a community learning resource for HAMi. The workshop was initiated by [Dynamia](https://dynamia.ai/) and is maintained as part of the HAMi community.
+HAMi Workshop is a community learning resource for HAMi.
 
 Welcome to the HAMi Workshop! This hands-on workshop teaches you how to install, configure, and operate HAMi on Kubernetes.
 

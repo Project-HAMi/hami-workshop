@@ -4,7 +4,7 @@ HAMi Workshop is a community-driven learning resource for HAMi.
 
 The project focuses on open tutorials, hands-on labs, and reference architectures for running AI workloads on Kubernetes with HAMi.
 
-The workshop was initiated by [Dynamia](https://dynamia.ai/) and is maintained as part of the HAMi community.
+The workshop is maintained by the HAMi community.
 
 Community contributions are welcome.
 

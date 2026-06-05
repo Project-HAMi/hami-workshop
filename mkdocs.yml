@@ -1,5 +1,5 @@
 site_name: HAMi Workshop
-site_description: Community workshops and reference architectures for running AI workloads on Kubernetes with HAMi, initiated by Dynamia and maintained as part of the HAMi community.
+site_description: Community workshops and reference architectures for running AI workloads on Kubernetes with HAMi.
 site_url: https://workshop.project-hami.io
 
 repo_name: Project-HAMi/hami-workshop
