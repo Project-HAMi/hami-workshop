@@ -1,0 +1,42 @@
+# Recording rules that translate the lab's metric vocabulary into the one the
+# HAMi WebUI queries. The WebUI expects vGPUmonitor series names (hami_memory_size,
+# hami_core_util, hami_container_vgpu_allocated, ...); the lab exposes the newer
+# byte/ratio names from the HAMi scheduler (:9395) and hami-mock-monitor (:9394).
+# Rules are evaluated by Prometheus via the release label kube-prometheus-stack selects on.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: hami-webui-bridge
+  namespace: kube-system
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: hami-webui-bridge
+      rules:
+        # Card capacity in MiB (WebUI divides by 1024 for GiB).
+        - record: hami_memory_size
+          expr: hami_gpu_memory_limit_bytes{job="hami-scheduler"} / 1048576
+        # Card core count. The scheduler reports a 0-100 ratio per card and the
+        # lab's cards have 100 cores, so the numbers coincide.
+        - record: hami_core_size
+          expr: hami_gpu_core_limit_ratio{job="hami-scheduler"}
+        # Per-card used memory in MiB and utilization in percent.
+        - record: hami_memory_used
+          expr: hami_host_gpu_memory_used_bytes{job="hami-mock-monitor"} / 1048576
+        - record: hami_core_util
+          expr: hami_host_gpu_utilization_ratio{job="hami-mock-monitor"}
+        - record: hami_core_util_avg
+          expr: avg by (instance) (hami_host_gpu_utilization_ratio{job="hami-mock-monitor"})
+        # Per-container reservations. The scheduler exports one series per pod and
+        # device; ^0 turns it into a count of virtual GPUs (one per series).
+        # exported_pod is renamed to the label the WebUI counts workloads by.
+        - record: hami_container_vmemory_allocated
+          expr: label_replace(hami_vgpu_memory_allocated_bytes{job="hami-scheduler"} / 1048576, "container_pod_uuid", "$1", "exported_pod", "(.*)")
+        - record: hami_container_vcore_allocated
+          expr: label_replace(hami_vgpu_core_allocated_ratio{job="hami-scheduler"}, "container_pod_uuid", "$1", "exported_pod", "(.*)")
+        - record: hami_container_vgpu_allocated
+          expr: label_replace(hami_vgpu_memory_allocated_bytes{job="hami-scheduler"} ^ 0, "container_pod_uuid", "$1", "exported_pod", "(.*)")
+        # vGPUs in use, counted per monitor instance.
+        - record: hami_vgpu_count
+          expr: sum by (instance) (count by (instance, exported_pod) (hami_vgpu_memory_used_bytes{job="hami-mock-monitor"}))

@@ -9,6 +9,20 @@ Everything runs on a laptop. The real HAMi scheduler makes the decisions. The GP
 
 What you do **not** get without a GPU: memory and compute isolation inside the container. That part is HAMi-core, and the presenter shows it live on a real card.
 
+```mermaid
+%% title: ContribFest Lab Architecture
+flowchart LR
+    subgraph cluster["kind cluster hami-lab"]
+        mdp["mock-device-plugin<br/>reads node annotation"] -->|"registers capacity<br/>gpumem / gpucores"| node["node hami-lab-control-plane<br/>2 × A100-40GB (fake)"]
+        node -->|"capacity"| sch["HAMi scheduler<br/>(real, :9395)"]
+        sch -->|"Fit + Bind<br/>GPU-mock-X, mem, cores"| pods["Pods<br/>share-1..3 / pack-1..2 / sim"]
+        pods -->|"usage"| mon["hami-mock-monitor<br/>completeBinds + :9394"]
+    end
+    you["You"] -->|"kubectl apply"| sch
+    you <-.->|"metrics: allocated"| sch
+    you <-.->|"metrics: used"| mon
+```
+
 Tested on 2026-10-20 with kind 0.33, kubectl 1.37, helm 4.3, HAMi chart 2.10.0 and hami-mock-monitor `86adb51`.
 
 ## Before the session
@@ -101,6 +115,20 @@ With `hami.io/gpu-scheduler-policy: binpack` both Pods land on the same card. Ch
 
 HAMi exposes two metric sets. Keep them apart: one is a reservation, the other is usage.
 
+```mermaid
+%% title: Reservation vs Usage
+flowchart LR
+    subgraph sched["Scheduler :9395 — what was allocated (reservation)"]
+        s1["hami_gpu_memory_allocated_bytes<br/>hami_gpu_core_allocated_ratio"]
+        s2["hami_gpu_shared_count<br/>hami_vgpu_memory_allocated_bytes"]
+    end
+    subgraph mon["vGPUmonitor :9394 — what is used"]
+        m1["hami_vgpu_memory_used_bytes<br/>hami_vgpu_memory_limit_bytes"]
+        m2["hami_container_device_utilization_ratio<br/>hami_host_gpu_memory_used_bytes"]
+    end
+    sched -. "allocated ≥ used on a healthy card" .-> mon
+```
+
 **Scheduler, port 9395: what was allocated**
 
 - `hami_gpu_memory_limit_bytes`, `hami_gpu_core_limit_ratio`: card capacity
@@ -116,7 +144,7 @@ HAMi exposes two metric sets. Keep them apart: one is a reservation, the other i
 - `hami_container_device_utilization_ratio`: SM utilization, percent of the whole device
 - `hami_host_gpu_utilization_ratio`, `hami_host_gpu_memory_used_bytes`: per card, summed over its containers
 
-On a real node vGPUmonitor also reports temperature, power, ECC errors and `hami_container_last_kernel_elapsed_seconds` (idle detection). The mock does not fake those.
+On a real node vGPUmonitor also reports ECC errors and `hami_container_last_kernel_elapsed_seconds` (idle detection). The mock fakes temperature and power (you will see `hami_host_gpu_temperature_celsius` and `hami_host_gpu_power_usage_watts`), but not those.
 
 ```bash
 ./metrics.sh scheduler
@@ -133,6 +161,47 @@ watch -n 5 "./metrics.sh monitor | grep 'pod=\"sim\"'"
 `hami_container_device_utilization_ratio` moves between 0 and 33 because utilization = load x allocated cores (33). Memory stays at 0.9 x the limit because vLLM preallocates its KV cache.
 
 **Questions.** Card `GPU-mock-1` shows 73% memory allocated but 20% used. Which number goes on a capacity dashboard, and which on a cost report? What happens to the usage series when the sim stops answering?
+
+## Optional: see it in the HAMi WebUI
+
+`metrics.sh` is fine for a terminal, but the [HAMi WebUI](https://github.com/Project-HAMi/HAMi-WebUI) turns the same numbers into dashboards. It needs a Prometheus in the cluster:
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add hami-webui https://project-hami.github.io/HAMi-WebUI
+helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+  --version 75.15.1 -n monitoring --create-namespace --set grafana.enabled=false --wait
+kubectl apply -f monitoring.yaml   # scrape :9395 and :9394
+kubectl apply -f webui-rules.yaml  # translate metric names for the WebUI
+helm upgrade --install my-hami-webui hami-webui/hami-webui \
+  --set externalPrometheus.enabled=true \
+  --set externalPrometheus.address="http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090" \
+  --set dcgm-exporter.enabled=false \
+  --set image.frontend.digest="" --set image.backend.digest="" \
+  -n kube-system --wait
+kubectl -n kube-system port-forward svc/my-hami-webui 3000:3000
+```
+
+Open <http://localhost:3000> . The overview page shows the two fake A100 cards, the reserved memory per card and the usage trend, all fed by the two metric sets from Lab 3:
+
+> **Why `webui-rules.yaml`?** The WebUI queries vGPUmonitor's metric names (`hami_memory_size`, `hami_core_util`, `hami_container_vgpu_allocated`, ...). This lab's scheduler and mock monitor expose the newer byte/ratio names (`hami_gpu_memory_limit_bytes`, `hami_host_gpu_utilization_ratio`, ...). The PrometheusRule records one set as the other, so without it every allocation and usage panel stays empty and only the node and card lists (which come from the scheduler API, not Prometheus) render.
+
+![HAMi WebUI cluster overview](../images/contribfest-webui-overview.png)
+
+The Nodes page breaks it down per card: allocation meters come from the scheduler metrics, usage meters from the mock monitor. Here card 0 is nearly full (two Pods binpacked on it) while card 1 only runs `sim`:
+
+![HAMi WebUI node view](../images/contribfest-webui-nodes.png)
+
+`--set image.*.digest=""` makes the chart use the `v1.3.0` tags, which matters when you pre-pull images for an offline room: digest references cannot be re-tagged after `kind load`. Add these to the pull list from "Before the session":
+
+```bash
+docker pull quay.io/prometheus/prometheus:v3.5.0 quay.io/prometheus/alertmanager:v0.28.1 \
+  quay.io/prometheus/node-exporter:v1.9.1 quay.io/prometheus-operator/prometheus-operator:v0.83.0 \
+  quay.io/prometheus-operator/prometheus-config-reloader:v0.83.0 \
+  registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0 \
+  projecthami/hami-webui-be-oss:v1.3.0 projecthami/hami-webui-fe-oss:v1.3.0
+for i in $(docker images --format '{{.Repository}}:{{.Tag}}' | grep -E 'prometheus|webui|kube-state'); do kind load docker-image $i --name hami-lab; done
+```
 
 ## Lab 4: Contribute (breakpoint 4)
 
