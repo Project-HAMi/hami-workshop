@@ -36,7 +36,9 @@ Tested on 2026-10-20 with kind 0.33, kubectl 1.37, helm 4.3, HAMi chart 2.10.0 a
 git clone https://github.com/Project-HAMi/hami-workshop
 cd hami-workshop/examples/containerdays-singapore
 git clone https://github.com/fishman/hami-mock-monitor
-docker pull kindest/node:v1.37.0 busybox:1.36 ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
+docker pull kindest/node:v1.37.0
+docker pull busybox:1.36
+docker pull ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
 ```
 
 Conference Wi-Fi is slow. Pull images at home.
@@ -213,11 +215,14 @@ The Nodes page breaks it down per card: allocation meters come from the schedule
 `--set image.*.digest=""` makes the chart use the `v1.3.0` tags, which matters when you pre-pull images for an offline room: digest references cannot be re-tagged after `kind load`. Add these to the pull list from "Before the session":
 
 ```bash
-docker pull quay.io/prometheus/prometheus:v3.5.0 quay.io/prometheus/alertmanager:v0.28.1 \
-  quay.io/prometheus/node-exporter:v1.9.1 quay.io/prometheus-operator/prometheus-operator:v0.83.0 \
-  quay.io/prometheus-operator/prometheus-config-reloader:v0.83.0 \
-  registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0 \
-  projecthami/hami-webui-be-oss:v1.3.0 projecthami/hami-webui-fe-oss:v1.3.0
+docker pull quay.io/prometheus/prometheus:v3.5.0
+docker pull quay.io/prometheus/alertmanager:v0.28.1
+docker pull quay.io/prometheus/node-exporter:v1.9.1
+docker pull quay.io/prometheus-operator/prometheus-operator:v0.83.0
+docker pull quay.io/prometheus-operator/prometheus-config-reloader:v0.83.0
+docker pull registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0
+docker pull projecthami/hami-webui-be-oss:v1.3.0
+docker pull projecthami/hami-webui-fe-oss:v1.3.0
 for i in $(docker images --format '{{.Repository}}:{{.Tag}}' | grep -E 'prometheus|webui|kube-state'); do kind load docker-image $i --name hami-lab; done
 ```
 

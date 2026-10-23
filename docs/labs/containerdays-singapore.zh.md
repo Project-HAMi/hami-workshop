@@ -36,7 +36,9 @@ HAMi 是 CNCF Incubating 项目，做 Kubernetes 上的异构 GPU 虚拟化，�
 git clone https://github.com/Project-HAMi/hami-workshop
 cd hami-workshop/examples/containerdays-singapore
 git clone https://github.com/fishman/hami-mock-monitor
-docker pull kindest/node:v1.37.0 busybox:1.36 ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
+docker pull kindest/node:v1.37.0
+docker pull busybox:1.36
+docker pull ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
 ```
 
 会场 Wi-Fi 慢，镜像请在家里拉好。
@@ -213,11 +215,14 @@ kubectl -n kube-system port-forward svc/my-hami-webui 3000:3000
 `--set image.*.digest=""` 让 chart 改用 `v1.3.0` 标签。给离线会场预拉镜像时这一点很关键：digest 引用在 `kind load` 之后无法保留原名。把下面这些加进"准备"一节的拉取清单：
 
 ```bash
-docker pull quay.io/prometheus/prometheus:v3.5.0 quay.io/prometheus/alertmanager:v0.28.1 \
-  quay.io/prometheus/node-exporter:v1.9.1 quay.io/prometheus-operator/prometheus-operator:v0.83.0 \
-  quay.io/prometheus-operator/prometheus-config-reloader:v0.83.0 \
-  registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0 \
-  projecthami/hami-webui-be-oss:v1.3.0 projecthami/hami-webui-fe-oss:v1.3.0
+docker pull quay.io/prometheus/prometheus:v3.5.0
+docker pull quay.io/prometheus/alertmanager:v0.28.1
+docker pull quay.io/prometheus/node-exporter:v1.9.1
+docker pull quay.io/prometheus-operator/prometheus-operator:v0.83.0
+docker pull quay.io/prometheus-operator/prometheus-config-reloader:v0.83.0
+docker pull registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0
+docker pull projecthami/hami-webui-be-oss:v1.3.0
+docker pull projecthami/hami-webui-fe-oss:v1.3.0
 for i in $(docker images --format '{{.Repository}}:{{.Tag}}' | grep -E 'prometheus|webui|kube-state'); do kind load docker-image $i --name hami-lab; done
 ```
 
