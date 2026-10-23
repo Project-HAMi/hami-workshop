@@ -1,0 +1,25 @@
+# Lab 3: a vLLM-compatible inference simulator on a third of a card.
+# hami-mock-monitor scrapes its /metrics and turns running requests into GPU utilization.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sim
+  annotations:
+    hami-mock-monitor.io/load-source: vllm
+spec:
+  containers:
+  - name: sim
+    image: ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
+    args:
+    - --model=fake-model
+    - --port=8000
+    - --max-num-seqs=5
+    - '--fake-metrics={"running-requests":"oscillate:0:5:2m"}'
+    ports:
+    - name: http
+      containerPort: 8000
+    resources:
+      limits:
+        nvidia.com/gpu: 1
+        nvidia.com/gpumem: 13653
+        nvidia.com/gpucores: 33
