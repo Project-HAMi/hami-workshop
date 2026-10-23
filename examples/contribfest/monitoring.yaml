@@ -1,0 +1,38 @@
+# ServiceMonitors that make Prometheus scrape the two HAMi metric sets:
+# the scheduler (:9395, reservations) and hami-mock-monitor (:9394, usage).
+# Requires kube-prometheus-stack, which selects monitors by the release label.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hami-scheduler
+  namespace: kube-system
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: hami
+  namespaceSelector:
+    matchNames: [kube-system]
+  endpoints:
+    - port: monitor
+      path: /metrics
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hami-mock-monitor
+  namespace: kube-system
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: hami-mock-monitor
+  namespaceSelector:
+    matchNames: [kube-system]
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s
