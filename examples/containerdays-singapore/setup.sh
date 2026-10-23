@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ContribFest lab environment: kind + HAMi 2.10 + mock device plugin + two fake A100-40GB
+# ContainerDays 2026 Singapore lab environment: kind + HAMi 2.10 + mock device plugin + two fake A100-40GB
 # + hami-mock-monitor. No GPU needed. Tested with kind 0.33, kubectl 1.37, helm 4.3.
 set -euo pipefail
 

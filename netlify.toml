@@ -16,3 +16,13 @@
   from = "/zh"
   to = "/zh/"
   status = 301
+
+[[redirects]]
+  from = "/labs/contribfest/*"
+  to = "/labs/containerdays-singapore/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/zh/labs/contribfest/*"
+  to = "/zh/labs/containerdays-singapore/:splat"
+  status = 301
