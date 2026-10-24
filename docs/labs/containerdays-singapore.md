@@ -37,6 +37,10 @@ git clone https://github.com/Project-HAMi/hami-workshop
 cd hami-workshop/examples/containerdays-singapore
 git clone https://github.com/fishman/hami-mock-monitor
 docker pull kindest/node:v1.37.0
+docker pull docker.io/projecthami/hami:v2.10.0
+docker pull docker.io/projecthami/mock-device-plugin:latest
+docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.37.0
+docker pull docker.io/liangjw/kube-webhook-certgen:v1.1.1
 docker pull busybox:1.36
 docker pull ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
 ```
@@ -52,11 +56,12 @@ Conference Wi-Fi is slow. Pull images at home.
 The script:
 
 1. Creates a kind cluster `hami-lab` and labels the node `gpu=on`.
-2. Installs HAMi 2.10.0 with the real device plugin off and the mock plugin on.
-3. Fakes two A100-40GB cards. Two pieces are needed:
+2. Loads the images pulled in "Before the session" into the cluster.
+3. Installs HAMi 2.10.0 with the real device plugin off and the mock plugin on.
+4. Fakes two A100-40GB cards. Two pieces are needed:
     - the count resource `nvidia.com/gpu=20` (the mock plugin's health gate, 2 cards x 10 splits)
     - the node annotation `hami.io/node-nvidia-register` from `fake-gpus.json`, which is what the real device plugin writes after it reads NVML
-4. Builds and installs hami-mock-monitor with `completeBinds=true`.
+5. Builds and installs hami-mock-monitor with `completeBinds=true`.
 
 Expected at the end:
 
