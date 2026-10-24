@@ -18,7 +18,6 @@ step "Pre-pulled lab images into ${CLUSTER}"
 IMAGES=(
   docker.io/projecthami/hami:v2.10.0
   docker.io/projecthami/mock-device-plugin:latest
-  registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.37.0
   docker.io/liangjw/kube-webhook-certgen:v1.1.1
   busybox:1.36
   ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
@@ -38,6 +37,8 @@ helm upgrade --install hami hami-charts/hami -n kube-system --version "${HAMI_VE
   --set devicePlugin.enabled=false \
   --set mockDevicePlugin.enabled=true \
   --set mockDevicePlugin.image.tag=latest \
+  --set scheduler.kubeScheduler.image.registry=registry.k8s.io \
+  --set scheduler.kubeScheduler.image.repository=kube-scheduler \
   --wait --timeout 8m
 
 step "Two fake NVIDIA A100-40GB cards on ${NODE}"

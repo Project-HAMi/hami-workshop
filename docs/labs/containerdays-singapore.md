@@ -39,7 +39,6 @@ git clone https://github.com/fishman/hami-mock-monitor
 docker pull kindest/node:v1.37.0
 docker pull docker.io/projecthami/hami:v2.10.0
 docker pull docker.io/projecthami/mock-device-plugin:latest
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/kube-scheduler:v1.37.0
 docker pull docker.io/liangjw/kube-webhook-certgen:v1.1.1
 docker pull busybox:1.36
 docker pull ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
