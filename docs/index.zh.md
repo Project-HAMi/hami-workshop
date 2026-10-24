@@ -34,6 +34,7 @@ HAMi 背景知识。
 
 - [实验 1: 在线安装 HAMi](labs/online-install.md)，在线环境安装 HAMi
 - [实验 2: 本地 Fake GPU 安装](labs/local-fake-gpu.md)，macOS 本地 Fake GPU 环境
+- [ContainerDays 2026 新加坡](labs/containerdays-singapore.md)，无 GPU 共享虚拟 GPU、调度策略、认识 KAI Scheduler、Volcano 与 DRA
 
 ## 关于 HAMi
 

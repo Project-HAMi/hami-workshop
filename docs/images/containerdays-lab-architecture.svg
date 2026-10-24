@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lab-arch-title lab-arch-desc" id="containerdays-lab-architecture-root">
+        <title id="lab-arch-title">Workshop lab architecture</title>
+        <desc id="lab-arch-desc">A laptop operator drives the real HAMi scheduler inside a kind cluster whose fake A100 cards are registered by a mock device plugin and whose usage metrics come from a mock monitor.</desc>
+        <defs>
+      <style>#containerdays-lab-architecture-root { font-family: 'Geist', 'Helvetica Neue', sans-serif; }
+      #containerdays-lab-architecture-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#containerdays-lab-architecture-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="containerdays-lab-architecture-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+          <marker id="containerdays-lab-architecture-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8a3c"/></marker>
+          <marker id="containerdays-lab-architecture-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+        <!-- Zone: kind cluster (drawn before arrows and nodes) -->
+        <rect x="232" y="120" width="688" height="320" rx="8"
+              fill="#2d3142" stroke="#2d3142" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.10"/>
+        <rect x="514" y="124" width="124" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="576" y="133" fill="#2d3142" font-size="7" font-family="'Geist Mono', monospace"
+              text-anchor="middle" letter-spacing="0.14em" fill-opacity="0.40">KIND CLUSTER HAMI-LAB</text>
+
+        <!-- Arrows first (behind boxes) -->
+        <line x1="408" y1="208" x2="480" y2="208" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-lab-architecture-arrow)"/>
+        <line x1="632" y1="208" x2="704" y2="208" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-lab-architecture-arrow)"/>
+        <line x1="840" y1="240" x2="840" y2="352" stroke="#0a8a3c" stroke-width="1.4" marker-end="url(#containerdays-lab-architecture-arrow-accent)"/>
+        <line x1="704" y1="384" x2="632" y2="384" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-lab-architecture-arrow)"/>
+
+        <path d="M 160,264 H 764 Q 772,264 772,256 V 240" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-lab-architecture-arrow)"/>
+        <path d="M 160,296 H 796 Q 804,296 804,288 V 240" fill="none" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3" marker-start="url(#containerdays-lab-architecture-arrow)" marker-end="url(#containerdays-lab-architecture-arrow)"/>
+        <path d="M 100,312 V 500 H 548 Q 556,500 556,492 V 416" fill="none" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3" marker-start="url(#containerdays-lab-architecture-arrow)" marker-end="url(#containerdays-lab-architecture-arrow)"/>
+
+        <!-- Arrow labels (opaque mask, 6px gap above the stroke) -->
+        <rect x="642" y="190" width="52" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="668" y="199" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">CAPACITY</text>
+
+        <rect x="848" y="288" width="60" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="878" y="297" fill="#0a8a3c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">FIT + BIND</text>
+
+        <rect x="648" y="366" width="40" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="668" y="375" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">USAGE</text>
+
+        <rect x="420" y="246" width="88" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="464" y="255" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">KUBECTL APPLY</text>
+
+        <rect x="396" y="302" width="88" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="440" y="311" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">METRICS ALLOC</text>
+
+        <rect x="300" y="482" width="84" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="342" y="491" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">METRICS USED</text>
+
+        <!-- Node: You (external input) -->
+        <rect x="40" y="248" width="120" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="40" y="248" width="120" height="64" rx="6" fill="#4f5d75" stroke="#5a6580" stroke-width="1" fill-opacity="0.10"/>
+        <rect x="48" y="254" width="28" height="12" rx="2" fill="none" stroke="#5a6580" stroke-width="0.8" stroke-opacity="0.40"/>
+        <text x="62" y="263" fill="#5a6580" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">USR</text>
+        <text x="100" y="284" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif" text-anchor="middle">You</text>
+        <text x="100" y="300" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">laptop · kubectl</text>
+
+        <!-- Node: mock-device-plugin -->
+        <rect x="256" y="176" width="152" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="256" y="176" width="152" height="64" rx="6" fill="#2d3142" stroke="#2d3142" stroke-width="1" fill-opacity="0.03" stroke-opacity="0.30"/>
+        <rect x="264" y="182" width="32" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.22"/>
+        <text x="280" y="191" fill="#5a6580" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PLUG</text>
+        <text x="332" y="212" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif" text-anchor="middle">mock-device-plugin</text>
+        <text x="332" y="228" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">gpumem · gpucores</text>
+
+        <!-- Node: hami-lab node -->
+        <rect x="480" y="176" width="152" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="480" y="176" width="152" height="64" rx="6" fill="#2d3142" stroke="#4f5d75" stroke-width="1" fill-opacity="0.05"/>
+        <rect x="488" y="182" width="32" height="12" rx="2" fill="none" stroke="#4f5d75" stroke-width="0.8" stroke-opacity="0.50"/>
+        <text x="504" y="191" fill="#4f5d75" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NODE</text>
+        <text x="556" y="212" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif" text-anchor="middle">hami-lab node</text>
+        <text x="556" y="228" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">2 × A100-40GB fake</text>
+
+        <!-- Node: HAMi scheduler (focal) -->
+        <rect x="704" y="176" width="156" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="704" y="176" width="156" height="64" rx="6" fill="#10d05d" stroke="#0a8a3c" stroke-width="1" fill-opacity="0.10"/>
+        <rect x="712" y="182" width="36" height="12" rx="2" fill="none" stroke="#0a8a3c" stroke-width="0.8" stroke-opacity="0.50"/>
+        <text x="730" y="191" fill="#0a8a3c" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCHED</text>
+        <text x="782" y="212" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif" text-anchor="middle">HAMi scheduler</text>
+        <text x="782" y="228" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">:9395 · real</text>
+
+        <!-- Node: Pods (workload) -->
+        <rect x="704" y="352" width="156" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="704" y="352" width="156" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <rect x="712" y="358" width="28" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+        <text x="726" y="367" fill="#2d3142" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POD</text>
+        <text x="782" y="388" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif" text-anchor="middle">Pods</text>
+        <text x="782" y="404" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">share · pack · sim</text>
+
+        <!-- Node: hami-mock-monitor -->
+        <rect x="480" y="352" width="152" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="480" y="352" width="152" height="64" rx="6" fill="#2d3142" stroke="#2d3142" stroke-width="1" fill-opacity="0.03" stroke-opacity="0.30"/>
+        <rect x="488" y="358" width="32" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.22"/>
+        <text x="504" y="367" fill="#5a6580" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MON</text>
+        <text x="556" y="388" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif" text-anchor="middle">hami-mock-monitor</text>
+        <text x="556" y="404" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">:9394 · usage</text>
+
+        <!-- Legend strip -->
+        <line x1="40" y1="476" x2="920" y2="476" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.10"/>
+        <text x="40" y="492" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+
+        <rect x="40" y="504" width="14" height="10" rx="2" fill="#10d05d" stroke="#0a8a3c" stroke-width="1" fill-opacity="0.10"/>
+        <text x="60" y="512" fill="#4f5d75" font-size="8.5" font-family="'Geist', 'Helvetica Neue', sans-serif">Focal: HAMi scheduler</text>
+
+        <rect x="210" y="504" width="14" height="10" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <text x="230" y="512" fill="#4f5d75" font-size="8.5" font-family="'Geist', 'Helvetica Neue', sans-serif">Workload</text>
+
+        <rect x="330" y="504" width="14" height="10" rx="2" fill="#2d3142" stroke="#2d3142" stroke-width="1" fill-opacity="0.03" stroke-opacity="0.30"/>
+        <text x="350" y="512" fill="#4f5d75" font-size="8.5" font-family="'Geist', 'Helvetica Neue', sans-serif">Cluster component</text>
+
+        <line x1="530" y1="509" x2="558" y2="509" stroke="#0a8a3c" stroke-width="1.4" marker-end="url(#containerdays-lab-architecture-arrow-accent)"/>
+        <text x="566" y="512" fill="#4f5d75" font-size="8.5" font-family="'Geist', 'Helvetica Neue', sans-serif">Primary flow</text>
+
+        <line x1="680" y1="509" x2="708" y2="509" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#containerdays-lab-architecture-arrow)"/>
+        <text x="716" y="512" fill="#4f5d75" font-size="8.5" font-family="'Geist', 'Helvetica Neue', sans-serif">Metrics query</text>
+      </svg>

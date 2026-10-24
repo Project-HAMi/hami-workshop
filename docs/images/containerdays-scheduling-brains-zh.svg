@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="brains-zh-title brains-zh-desc" id="containerdays-scheduling-brains-zh-root">
+        <title id="brains-zh-title">一个隔离层，多个调度大脑</title>
+        <desc id="brains-zh-desc">碎片化 GPU 请求经准入分别走向 HAMi 调度扩展、Volcano、KAI Scheduler 或 DRA 路线，所有路线汇合到同一个 HAMi-core 隔离库。</desc>
+        <defs>
+      <style>#containerdays-scheduling-brains-zh-root { font-family: 'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif; }
+      #containerdays-scheduling-brains-zh-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#containerdays-scheduling-brains-zh-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="containerdays-scheduling-brains-zh-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+          <marker id="containerdays-scheduling-brains-zh-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8a3c"/></marker>
+          <marker id="containerdays-scheduling-brains-zh-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+        <!-- Arrows first (behind boxes) -->
+        <line x1="336" y1="96" x2="408" y2="96" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-scheduling-brains-zh-arrow)"/>
+        <line x1="552" y1="96" x2="752" y2="96" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-scheduling-brains-zh-arrow)"/>
+        <line x1="824" y1="128" x2="824" y2="224" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-scheduling-brains-zh-arrow)"/>
+
+        <path d="M 436,128 V 176 H 156 Q 148,176 148,184 V 224" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-scheduling-brains-zh-arrow)"/>
+        <line x1="480" y1="128" x2="480" y2="224" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-scheduling-brains-zh-arrow)"/>
+        <path d="M 524,128 V 176 H 640 Q 648,176 648,184 V 224" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#containerdays-scheduling-brains-zh-arrow)"/>
+
+        <path d="M 148,288 V 344 H 438 Q 446,344 446,352 V 400" fill="none" stroke="#0a8a3c" stroke-width="1.4" marker-end="url(#containerdays-scheduling-brains-zh-arrow-accent)"/>
+        <path d="M 480,288 V 392 H 508 Q 516,392 516,400" fill="none" stroke="#0a8a3c" stroke-width="1.4" marker-end="url(#containerdays-scheduling-brains-zh-arrow-accent)"/>
+        <path d="M 648,288 V 344 H 594 Q 586,344 586,352 V 400" fill="none" stroke="#0a8a3c" stroke-width="1.4" marker-end="url(#containerdays-scheduling-brains-zh-arrow-accent)"/>
+
+        <!-- Arrow labels -->
+        <rect x="636" y="78" width="32" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="652" y="87" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">DRA</text>
+
+        <rect x="272" y="158" width="56" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="300" y="167" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">DEFAULT</text>
+
+        <rect x="488" y="164" width="56" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="516" y="173" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">VOLCANO</text>
+
+        <rect x="576" y="158" width="32" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="592" y="167" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">KAI</text>
+
+        <rect x="656" y="308" width="76" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="694" y="317" fill="#0a8a3c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">VIA ISOLATOR</text>
+
+        <!-- Node: GPU Pod (input) -->
+        <rect x="192" y="64" width="144" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="192" y="64" width="144" height="64" rx="6" fill="#4f5d75" stroke="#5a6580" stroke-width="1" fill-opacity="0.10"/>
+        <rect x="200" y="70" width="28" height="12" rx="2" fill="none" stroke="#5a6580" stroke-width="0.8" stroke-opacity="0.40"/>
+        <text x="214" y="79" fill="#5a6580" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POD</text>
+        <text x="264" y="100" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">GPU Pod</text>
+        <text x="264" y="118" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">碎片化请求</text>
+
+        <!-- Node: 准入 -->
+        <rect x="408" y="64" width="144" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="408" y="64" width="144" height="64" rx="6" fill="#2d3142" stroke="#2d3142" stroke-width="1" fill-opacity="0.03" stroke-opacity="0.30"/>
+        <rect x="416" y="70" width="32" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.22"/>
+        <text x="432" y="79" fill="#5a6580" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ADM</text>
+        <text x="480" y="100" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">准入</text>
+        <text x="480" y="118" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">mutating webhook</text>
+
+        <!-- Node: HAMi-DRA -->
+        <rect x="752" y="64" width="144" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="752" y="64" width="144" height="64" rx="6" fill="#2d3142" stroke="#2d3142" stroke-width="1" fill-opacity="0.03" stroke-opacity="0.30"/>
+        <rect x="760" y="70" width="32" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.22"/>
+        <text x="776" y="79" fill="#5a6580" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DRA</text>
+        <text x="824" y="100" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">HAMi-DRA</text>
+        <text x="824" y="118" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">gpu → claim</text>
+
+        <!-- Node: kube-scheduler -->
+        <rect x="752" y="224" width="144" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="752" y="224" width="144" height="64" rx="6" fill="#2d3142" stroke="#2d3142" stroke-width="1" fill-opacity="0.03" stroke-opacity="0.30"/>
+        <rect x="760" y="230" width="28" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.22"/>
+        <text x="774" y="239" fill="#5a6580" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">K8S</text>
+        <text x="824" y="260" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">kube-scheduler</text>
+        <text x="824" y="278" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">DRA 驱动 · 1.34+</text>
+
+        <!-- Node: HAMi 调度扩展 -->
+        <rect x="64" y="224" width="168" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="64" y="224" width="168" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <rect x="72" y="230" width="36" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+        <text x="90" y="239" fill="#2d3142" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+        <text x="148" y="260" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">HAMi 调度扩展</text>
+        <text x="148" y="276" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">gpumem · gpucores</text>
+
+        <!-- Node: Volcano -->
+        <rect x="400" y="224" width="160" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="400" y="224" width="160" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <rect x="408" y="230" width="36" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+        <text x="426" y="239" fill="#2d3142" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VLCN</text>
+        <text x="480" y="260" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">Volcano</text>
+        <text x="480" y="278" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">vgpu-* · gang · 队列</text>
+
+        <!-- Node: KAI Scheduler -->
+        <rect x="576" y="224" width="144" height="64" rx="6" fill="#f5f5f5"/>
+        <rect x="576" y="224" width="144" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <rect x="584" y="230" width="28" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+        <text x="598" y="239" fill="#2d3142" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KAI</text>
+        <text x="648" y="260" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">KAI Scheduler</text>
+        <text x="648" y="278" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">gpu-fraction · 拓扑</text>
+
+        <!-- Node: HAMi-core (focal) -->
+        <rect x="400" y="400" width="232" height="72" rx="6" fill="#f5f5f5"/>
+        <rect x="400" y="400" width="232" height="72" rx="6" fill="#10d05d" stroke="#0a8a3c" stroke-width="1" fill-opacity="0.10"/>
+        <rect x="408" y="406" width="32" height="12" rx="2" fill="none" stroke="#0a8a3c" stroke-width="0.8" stroke-opacity="0.50"/>
+        <text x="424" y="415" fill="#0a8a3c" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ISO</text>
+        <text x="516" y="436" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">HAMi-core</text>
+        <text x="516" y="454" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', 'Helvetica Neue', sans-serif" text-anchor="middle">libvgpu.so · 硬隔离</text>
+
+        <!-- Legend strip -->
+        <line x1="40" y1="500" x2="920" y2="500" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.10"/>
+        <text x="40" y="518" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', sans-serif">图例</text>
+
+        <rect x="88" y="532" width="14" height="10" rx="2" fill="#10d05d" stroke="#0a8a3c" stroke-width="1" fill-opacity="0.10"/>
+        <text x="108" y="542" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', sans-serif">共享隔离层</text>
+
+        <rect x="220" y="532" width="14" height="10" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <text x="240" y="542" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', sans-serif">调度大脑</text>
+
+        <rect x="352" y="532" width="14" height="10" rx="2" fill="#2d3142" stroke="#2d3142" stroke-width="1" fill-opacity="0.03" stroke-opacity="0.30"/>
+        <text x="372" y="542" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', sans-serif">Kubernetes 组件</text>
+
+        <rect x="520" y="532" width="14" height="10" rx="2" fill="#4f5d75" stroke="#5a6580" stroke-width="1" fill-opacity="0.10"/>
+        <text x="540" y="542" fill="#4f5d75" font-size="12" font-family="'Geist', 'PingFang SC', sans-serif">输入</text>
+      </svg>
