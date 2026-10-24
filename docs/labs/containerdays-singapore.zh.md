@@ -79,6 +79,7 @@ kubectl get node hami-lab-control-plane -o jsonpath='{.metadata.annotations.hami
 
 ```bash
 kubectl apply -f share.yaml -f too-big.yaml
+kubectl wait --for=condition=Ready pod/share-1 pod/share-2 pod/share-3 --timeout=120s
 kubectl get pods -o wide
 ```
 
@@ -127,6 +128,7 @@ done
 ```bash
 kubectl delete -f share.yaml -f too-big.yaml
 kubectl apply -f binpack.yaml
+kubectl wait --for=condition=Ready pod/pack-1 pod/pack-2 --timeout=120s
 for p in pack-1 pack-2; do
   echo -n "$p "; kubectl get pod $p -o jsonpath='{.metadata.annotations.hami\.io/vgpu-devices-allocated}{"\n"}'
 done
@@ -137,6 +139,7 @@ done
 ```bash
 kubectl delete -f binpack.yaml
 kubectl apply -f spread.yaml
+kubectl wait --for=condition=Ready pod/spread-1 pod/spread-2 --timeout=120s
 for p in spread-1 spread-2; do
   echo -n "$p "; kubectl get pod $p -o jsonpath='{.metadata.annotations.hami\.io/vgpu-devices-allocated}{"\n"}'
 done
