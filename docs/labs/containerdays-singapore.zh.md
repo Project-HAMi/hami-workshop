@@ -77,6 +77,16 @@ kubectl -n kube-system get cm hami-scheduler-device -o yaml | less
 kubectl get node hami-lab-control-plane -o jsonpath='{.metadata.annotations.hami\.io/node-nvidia-register}' | jq
 ```
 
+刚才那几条命令看到的东西，拼成一张全景图：两个 Helm release、一个节点。
+
+![setup.sh 装了什么](../images/containerdays-deployment-architecture-zh.svg)
+
+注意 `hami-scheduler` 的形态：一个原版 kube-scheduler 容器（以 `hami-scheduler` 之名注册），旁边是同时承担准入 webhook（:443）的 HAMi 扩展器。`hami-webhook` 这份 MutatingWebhookConfiguration 和它背后的 TLS Secret 在 `setup.sh` 运行前并不存在，它们是安装期间两个一次性的 Helm hook Job 接好的线：
+
+![hami-webhook 如何被注入、如何运转](../images/containerdays-webhook-lifecycle-zh.svg)
+
+create Job 把证书签进 `hami-scheduler-tls`，patch Job 把 CA 塞进 webhook 配置的 `caBundle`，两个 Job 跑完即自删。这就是为什么事后 `kubectl get jobs` 什么都看不到。
+
 **思考题。** 调度器从哪里拿到卡列表？如果把 `health` 改成 `false` 会发生什么？
 
 ## 实验 2：共享 GPU
@@ -118,6 +128,16 @@ done
 
 在真实节点上，第 4 步还会通过 `ld.so.preload` 注入 `libvgpu.so`，从那一刻起 HAMi-core 开始强制执行显存与算力上限。
 
+把整条链路压成一条时间线，从 `kubectl` 到运行中的 Pod：
+
+![一个 GPU Pod 从 kubectl 到节点的旅程](../images/containerdays-admission-journey-zh.svg)
+
+实线是同步调用，虚线是返回，绿色那一跳是改变一切的补丁。这些步骤间流转的数据全住在注解里，因为设备插件 API 只能携带整数设备数。Node 和 Pod 对象就是 HAMi 的数据库：
+
+![HAMi 的注解数据总线](../images/containerdays-annotation-bus-zh.svg)
+
+实线写、虚线读。插件一次性发布卡清单；扩展器读它、连同你的策略注解，写出分配结果，并持有节点锁直到插件的 `Allocate` 标记成功。下一个实验驱动的正是其中的策略行。
+
 ## 实验 3：调度策略
 
 放置发生在两个维度上，HAMi 各提供一个 Pod 注解：
@@ -150,6 +170,12 @@ done
 ```
 
 一卡一 Pod。同样的集群、同样的请求、不同的策略、不同的放置。
+
+spread 跑完后的两张卡并排看：
+
+![每张卡的 GPU 分配](../images/containerdays-gpu-allocation-zh.svg)
+
+数字来自节点注解 `hami.io/node-nvidia-register` 与各 Pod 的 `hami.io/vgpu-devices-allocated` 的 join，也就是上面那段分配循环逐个 Pod 打印的内容。完全空闲的整卡是 0 张，但 `GPU-mock-1` 还塞得下一个 10000 MB 的请求。真实集群上这个视图就是 HAMi WebUI 的节点页。
 
 **拓扑感知。** 分配注解里写的是精确的卡 UUID，选卡本身就是拓扑决策：在多卡节点上它决定 NVLink 与 PCIe 亲和。`fake-gpus.json` 里每张卡带 `numa` 字段，真实设备插件从驱动读取的也是同类信息。卡维度 spread 让 Pod 各占一卡，binpack 压到一卡上。跨卡、跨节点的显式拓扑感知放置，正是下一个实验里调度器补上的能力。
 

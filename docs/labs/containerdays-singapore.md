@@ -77,6 +77,16 @@ kubectl -n kube-system get cm hami-scheduler-device -o yaml | less
 kubectl get node hami-lab-control-plane -o jsonpath='{.metadata.annotations.hami\.io/node-nvidia-register}' | jq
 ```
 
+The tour in one picture: two Helm releases, one node, and the objects the commands above just touched.
+
+![What setup.sh installs](../images/containerdays-deployment-architecture.svg)
+
+Note the shape of `hami-scheduler`: a stock kube-scheduler container registered under the name `hami-scheduler`, plus the HAMi extender that also serves the admission webhook on :443. The `hami-webhook` MutatingWebhookConfiguration and the TLS secret behind it did not exist before `setup.sh` ran. Two one-shot Helm hook jobs wire them during install:
+
+![How hami-webhook is injected and runs](../images/containerdays-webhook-lifecycle.svg)
+
+The create job signs the certificate into `hami-scheduler-tls`, the patch job pushes the CA into the webhook configuration's `caBundle`, and both jobs delete themselves. That is why `kubectl get jobs` shows nothing afterwards.
+
 **Questions.** Where does the scheduler get the card list from? What would change if `health` was `false`?
 
 ## Lab 2: Share a GPU
@@ -118,6 +128,16 @@ You just watched the whole chain from request to card. Four steps, one node:
 
 On a real node, step 4 also injects `libvgpu.so` via `ld.so.preload`, and HAMi-core enforces the memory and core limits from that moment on.
 
+The whole chain as one timeline, from `kubectl` to a running Pod:
+
+![One GPU Pod's journey from kubectl to the node](../images/containerdays-admission-journey.svg)
+
+Solid arrows are sync calls, dashed are returns, and the green arrow is the one patch that changes everything. The data flowing through those steps lives in annotations, because the device-plugin API can only carry integer device counts. The Node and Pod objects are HAMi's database:
+
+![HAMi's annotation data bus](../images/containerdays-annotation-bus.svg)
+
+Solid arrows write, dashed arrows read. The plugin publishes the card inventory once; the extender reads it together with your policy annotations, writes the allocation, and holds the node mutex until the plugin's `Allocate` marks success. The next lab drives exactly those policy rows.
+
 ## Lab 3: Scheduler policies
 
 Placement happens on two axes, and HAMi exposes each as a Pod annotation:
@@ -150,6 +170,12 @@ done
 ```
 
 One Pod per card. Same cluster, same requests, different policy, different placement.
+
+Both cards side by side after the spread run:
+
+![GPU allocation per card](../images/containerdays-gpu-allocation.svg)
+
+The numbers come from joining the node's `hami.io/node-nvidia-register` with every pod's `hami.io/vgpu-devices-allocated`, which is what the allocation loop above printed one pod at a time. Zero cards are fully free, yet `GPU-mock-1` still fits one more 10000 MB request. On a real cluster this view is the HAMi WebUI's node page.
 
 **Topology awareness.** The allocation annotation names an exact card UUID, and card choice is a topology decision: on a multi-GPU node it decides NVLink and PCIe locality. `fake-gpus.json` carries a `numa` field per card, the same hint the real device plugin records from the driver. Card-level spread keeps Pods on separate cards, binpack packs them onto one. Explicit topology-aware placement across cards and nodes is what the schedulers in the next lab add.
 

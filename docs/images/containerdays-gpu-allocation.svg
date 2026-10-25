@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="gpu-title gpu-desc" id="containerdays-gpu-allocation-root">
+        <title id="gpu-title">GPU allocation per card</title>
+        <desc id="gpu-desc">Per-card memory allocation on the lab node: each fake A100-40GB card shows reserved memory against capacity and which pods hold the reservations.</desc>
+        <defs>
+      <style>#containerdays-gpu-allocation-root { font-family: 'Geist', 'Helvetica Neue', sans-serif; }
+      #containerdays-gpu-allocation-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#containerdays-gpu-allocation-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="containerdays-gpu-allocation-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+          <marker id="containerdays-gpu-allocation-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8a3c"/></marker>
+          <marker id="containerdays-gpu-allocation-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+        <!-- Node header band -->
+        <text x="64" y="80" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif">hami-lab-control-plane</text>
+        <text x="896" y="80" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">slots 3/20 · cores 90/200 · gpumem 45000/81920 MB</text>
+        <line x1="64" y1="96" x2="896" y2="96" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.10"/>
+
+        <!-- Card 1: GPU-mock-0 -->
+        <rect x="64" y="136" width="184" height="88" rx="6" fill="#f5f5f5"/>
+        <rect x="64" y="136" width="184" height="88" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <rect x="72" y="142" width="32" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+        <text x="88" y="151" fill="#2d3142" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CARD</text>
+        <text x="156" y="176" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif" text-anchor="middle">GPU-mock-0</text>
+        <text x="156" y="194" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">A100-SXM4-40GB</text>
+        <text x="156" y="210" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">numa 0 · healthy</text>
+
+        <text x="280" y="156" fill="#0a8a3c" font-size="9" font-family="'Geist Mono', monospace">USED 15000 MB</text>
+        <text x="800" y="156" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">FREE 25960 MB</text>
+        <rect x="280" y="164" width="520" height="28" rx="4" fill="#2d3142" stroke="#2d3142" stroke-width="0.8" fill-opacity="0.06" stroke-opacity="0.16"/>
+        <rect x="280" y="164" width="192" height="28" rx="4" fill="#10d05d" stroke="#0a8a3c" stroke-width="1" fill-opacity="0.55"/>
+        <text x="480" y="212" fill="#2d3142" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" fill-opacity="0.40">CAPACITY 40960 MB</text>
+
+        <text x="824" y="176" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif">share-2</text>
+        <text x="824" y="192" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">15000 MB · 30%</text>
+
+        <!-- Card 2: GPU-mock-1 -->
+        <rect x="64" y="296" width="184" height="88" rx="6" fill="#f5f5f5"/>
+        <rect x="64" y="296" width="184" height="88" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <rect x="72" y="302" width="32" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+        <text x="88" y="311" fill="#2d3142" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CARD</text>
+        <text x="156" y="336" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif" text-anchor="middle">GPU-mock-1</text>
+        <text x="156" y="354" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">A100-SXM4-40GB</text>
+        <text x="156" y="370" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">numa 0 · healthy</text>
+
+        <text x="280" y="316" fill="#0a8a3c" font-size="9" font-family="'Geist Mono', monospace">USED 30000 MB</text>
+        <text x="800" y="316" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">FREE 10960 MB</text>
+        <rect x="280" y="324" width="520" height="28" rx="4" fill="#2d3142" stroke="#2d3142" stroke-width="0.8" fill-opacity="0.06" stroke-opacity="0.16"/>
+        <rect x="280" y="324" width="380" height="28" rx="4" fill="#10d05d" stroke="#0a8a3c" stroke-width="1" fill-opacity="0.55"/>
+        <text x="480" y="372" fill="#2d3142" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" fill-opacity="0.40">CAPACITY 40960 MB</text>
+
+        <text x="824" y="336" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif">share-1</text>
+        <text x="824" y="352" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">15000 MB · 30%</text>
+        <text x="824" y="372" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', 'Helvetica Neue', sans-serif">share-3</text>
+        <text x="824" y="388" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">15000 MB · 30%</text>
+
+        <!-- Bottom note -->
+        <line x1="64" y1="456" x2="896" y2="456" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.10"/>
+        <text x="64" y="478" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">HOW TO READ THIS</text>
+        <text x="64" y="498" fill="#4f5d75" font-size="8.5" font-family="'Geist', 'Helvetica Neue', sans-serif">Per-card view = node annotation hami.io/node-nvidia-register (capacity) joined with each pod's hami.io/vgpu-devices-allocated (reservation).</text>
+        <text x="64" y="514" fill="#4f5d75" font-size="8.5" font-family="'Geist', 'Helvetica Neue', sans-serif">A card is fully free when no pod names its UUID. Here both cards hold reservations, so 0 of 2 cards are free, yet GPU-mock-1 still fits a 10000 MB request.</text>
+        <text x="64" y="530" fill="#2d3142" font-size="8" font-family="'Geist Mono', monospace" fill-opacity="0.40">snapshot 2026-10-25 · share-1..3 from share.yaml</text>
+      </svg>
