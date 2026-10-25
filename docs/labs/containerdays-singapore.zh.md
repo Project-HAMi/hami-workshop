@@ -37,6 +37,9 @@ git clone https://github.com/Project-HAMi/hami-workshop
 cd hami-workshop/examples/containerdays-singapore
 git clone https://github.com/fishman/hami-mock-monitor
 docker pull kindest/node:v1.37.0
+docker pull docker.io/projecthami/hami:v2.10.0
+docker pull docker.io/projecthami/mock-device-plugin:latest
+docker pull docker.io/liangjw/kube-webhook-certgen:v1.1.1
 docker pull busybox:1.36
 docker pull ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
 ```
@@ -49,14 +52,15 @@ docker pull ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
 ./setup.sh
 ```
 
-脚本做四件事：
+脚本做五件事：
 
 1. 创建 kind 集群 `hami-lab`，给节点打标签 `gpu=on`。
-2. 安装 HAMi 2.10.0，关闭真实设备插件，开启 mock 插件。
-3. 模拟两张 A100-40GB，需要两个要素：
+2. 把"准备"一节拉好的镜像导入集群。
+3. 安装 HAMi 2.10.0，关闭真实设备插件，开启 mock 插件。
+4. 模拟两张 A100-40GB，需要两个要素：
     - 计数资源 `nvidia.com/gpu=20`（mock 插件的健康门槛，2 卡 x 10 份切分）
     - 节点注解 `hami.io/node-nvidia-register`，内容在 `fake-gpus.json`，真实设备插件读完 NVML 后写的就是它
-4. 从源码构建并安装 `completeBinds=true` 的 hami-mock-monitor。
+5. 从源码构建并安装 `completeBinds=true` 的 hami-mock-monitor。
 
 预期结果：
 

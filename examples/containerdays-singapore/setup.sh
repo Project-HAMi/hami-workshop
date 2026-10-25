@@ -14,6 +14,22 @@ step "kind cluster ${CLUSTER}"
 kind get clusters | grep -qx "${CLUSTER}" || kind create cluster --name "${CLUSTER}"
 kubectl label node "${NODE}" gpu=on --overwrite
 
+step "Pre-pulled lab images into ${CLUSTER}"
+IMAGES=(
+  docker.io/projecthami/hami:v2.10.0
+  docker.io/projecthami/mock-device-plugin:latest
+  docker.io/liangjw/kube-webhook-certgen:v1.1.1
+  busybox:1.36
+  ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
+)
+for img in "${IMAGES[@]}"; do
+  if docker image inspect "${img}" >/dev/null 2>&1; then
+    kind load docker-image "${img}" --name "${CLUSTER}"
+  else
+    echo "${img} not pulled yet, the cluster will pull it from the registry"
+  fi
+done
+
 step "HAMi ${HAMI_VERSION} with the mock device plugin"
 helm repo add hami-charts https://project-hami.github.io/HAMi/ >/dev/null 2>&1 || true
 helm repo update hami-charts >/dev/null
@@ -21,6 +37,8 @@ helm upgrade --install hami hami-charts/hami -n kube-system --version "${HAMI_VE
   --set devicePlugin.enabled=false \
   --set mockDevicePlugin.enabled=true \
   --set mockDevicePlugin.image.tag=latest \
+  --set scheduler.kubeScheduler.image.registry=registry.k8s.io \
+  --set scheduler.kubeScheduler.image.repository=kube-scheduler \
   --wait --timeout 8m
 
 step "Two fake NVIDIA A100-40GB cards on ${NODE}"
