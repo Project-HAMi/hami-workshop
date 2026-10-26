@@ -1,0 +1,69 @@
+# Optional: two vLLM replicas of Qwen3-0.6B sharing one AMD GPU through HAMi.
+# Each replica gets half the CUs and a 3072 MiB VRAM slice.
+# The vLLM ROCm image is 11.6 GB compressed (several times that unpacked), so this is
+# not the default path of the lab. Not verified on a Radeon 780M.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qwen3-vllm
+  labels:
+    app: qwen3-vllm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: qwen3-vllm
+  template:
+    metadata:
+      labels:
+        app: qwen3-vllm
+    spec:
+      hostIPC: true
+      volumes:
+      - name: shm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 2Gi
+      # Shared Hugging Face cache on the node, so the model downloads once.
+      - name: hf-cache
+        hostPath:
+          path: /var/cache/huggingface
+          type: DirectoryOrCreate
+      containers:
+      - name: vllm
+        # Upstream vLLM ROCm build. It ships gfx1100 kernels, not gfx1103.
+        image: vllm/vllm-openai-rocm:v0.32.0
+        securityContext:
+          seccompProfile:
+            type: Unconfined
+          runAsGroup: 44
+          capabilities:
+            add: ["SYS_PTRACE"]
+        command: ["vllm", "serve", "Qwen/Qwen3-0.6B"]
+        args:
+        - --port=8000
+        - --max-model-len=2048
+        - --gpu-memory-utilization=0.8
+        - --enforce-eager
+        env:
+        # gfx1103 (Radeon 780M) is not in the image; run it as gfx1100.
+        - name: HSA_OVERRIDE_GFX_VERSION
+          value: "11.0.0"
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          periodSeconds: 10
+          failureThreshold: 60
+        resources:
+          limits:
+            amd.com/gpu: 1
+            amd.com/gpucores: 50
+            amd.com/gpumem: 3072
+        volumeMounts:
+        - name: shm
+          mountPath: /dev/shm
+        - name: hf-cache
+          mountPath: /root/.cache/huggingface

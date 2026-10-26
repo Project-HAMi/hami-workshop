@@ -35,6 +35,7 @@ Hands-on exercises.
 - [Lab 1: Online Installation](labs/online-install.md): Install HAMi on a live cluster.
 - [Lab 2: Local Fake GPU Setup](labs/local-fake-gpu.md): Set up HAMi locally on macOS.
 - [ContainerDays 2026 Singapore](labs/containerdays-singapore.md): Share fake GPUs, tune scheduling policies, meet KAI Scheduler, Volcano and DRA. No GPU needed.
+- [Lab 3: Local AMD GPU (optional)](labs/local-amd-gpu.md): For people with an AMD GPU. Share a real GPU between two small LLMs with HAMi.
 
 ## About HAMi
 

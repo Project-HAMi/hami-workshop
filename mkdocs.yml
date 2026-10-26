@@ -77,6 +77,7 @@ nav:
   - labs/online-install.md
   - labs/local-fake-gpu.md
   - labs/containerdays-singapore.md
+  - labs/local-amd-gpu.md
 
 extra_css:
 - stylesheets/extra.css

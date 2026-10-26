@@ -1,0 +1,73 @@
+# One-time build of llama-server for ROCm, in the ROCm image the cluster already has.
+# Output goes to /var/lib/hami-lab/llama on the node:
+#   bin/llama-server, lib/ (hipBLAS, rocBLAS, gfx1100 kernels), models/Qwen3-0.6B-Q8_0.gguf
+# The build needs no GPU: it compiles for gfx1100, and the 780M (gfx1103) runs it
+# with HSA_OVERRIDE_GFX_VERSION=11.0.0.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: llama-build
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      volumes:
+      - name: out
+        hostPath:
+          path: /var/lib/hami-lab/llama
+          type: DirectoryOrCreate
+      containers:
+      - name: build
+        image: rocm/dev-ubuntu-24.04:7.2.4
+        env:
+        - name: LLAMA_TAG
+          value: v0.7.0
+        - name: GPU_TARGET
+          value: gfx1100
+        - name: MODEL_URL
+          value: https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q8_0.gguf
+        volumeMounts:
+        - name: out
+          mountPath: /out
+        command: ["bash", "-euxo", "pipefail", "-c"]
+        args:
+        - |
+          if [ -x /out/bin/llama-server ] && [ -s /out/models/Qwen3-0.6B-Q8_0.gguf ]; then
+            echo "already built"; exit 0
+          fi
+          mkdir -p /out/bin /out/lib /out/models
+          ls /opt/rocm/lib > /tmp/base-libs
+
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            cmake build-essential curl ca-certificates hipcc hipblas-dev rocblas-dev
+
+          curl -fsSL "https://github.com/ggml-org/llama.cpp/archive/refs/tags/${LLAMA_TAG}.tar.gz" | tar xz -C /tmp
+          cd /tmp/llama.cpp-*
+          HIPCXX="$(hipconfig -l)/clang" HIP_PATH="$(hipconfig -R)" cmake -S . -B build \
+            -DGGML_HIP=ON -DAMDGPU_TARGETS="${GPU_TARGET}" \
+            -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release \
+            -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF \
+            -DLLAMA_BUILD_UI=OFF -DLLAMA_USE_PREBUILT_UI=OFF
+          cmake --build build --target llama-server -j"$(nproc)"
+          cp build/bin/llama-server /out/bin/
+          cp -P build/bin/*.so* /out/lib/
+
+          # ROCm libraries llama-server needs that the base image does not ship.
+          LD_LIBRARY_PATH=/out/lib ldd /out/bin/llama-server | awk '$3 ~ /^\/opt\/rocm/ {print $3}' | while read -r lib; do
+            grep -qx "$(basename "$lib")" /tmp/base-libs || cp -L "$lib" /out/lib/
+          done
+          # BLAS kernel databases: keep only the target arch and arch-independent files.
+          for d in rocblas hipblaslt; do
+            src=/opt/rocm/lib/$d/library
+            [ -d "$src" ] || continue
+            mkdir -p /out/lib/$d/library
+            find "$src" -mindepth 1 -maxdepth 1 \( -name "*${GPU_TARGET}*" -o ! -name '*gfx*' \) \
+              -exec cp -r {} /out/lib/$d/library/ \;
+          done
+
+          curl -fL -o /out/models/Qwen3-0.6B-Q8_0.gguf.part "$MODEL_URL"
+          mv /out/models/Qwen3-0.6B-Q8_0.gguf.part /out/models/Qwen3-0.6B-Q8_0.gguf
+          du -sh /out/*
