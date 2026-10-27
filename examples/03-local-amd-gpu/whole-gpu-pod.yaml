@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rocminfo
+spec:
+  restartPolicy: Never
+  containers:
+  - name: rocminfo
+    image: rocm/dev-ubuntu-24.04:7.2.4
+    command: ["sh", "-c", "env | grep -E 'ROCR|HIP_|HSA_' ; rocminfo | grep -E 'Marketing Name|gfx|Compute Unit'"]
+    resources:
+      limits:
+        amd.com/gpu: 1

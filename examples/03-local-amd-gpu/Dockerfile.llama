@@ -1,0 +1,14 @@
+# Payload image for the AMD lab: llama-server built for ROCm 7.2.4 / gfx1100,
+# the extra ROCm libraries it needs, and Qwen3-0.6B Q8_0.
+# Pods mount it read-only as an image volume and run it inside rocm/dev-ubuntu-24.04:7.2.4.
+#
+# Build context: the output directory of llama-build-job.yaml
+#   docker cp hami-amd-control-plane:/var/lib/hami-lab/llama ./llama
+#   docker build -f Dockerfile.llama -t ghcr.io/fishing-agents/hami-workshop:qwen3-0.6b-llamacpp-v0.7.0-rocm7.2.4 ./llama
+FROM scratch
+LABEL org.opencontainers.image.source=https://github.com/fishing-agents/hami-workshop \
+      org.opencontainers.image.description="llama-server v0.7.0 for ROCm 7.2.4 (gfx1100) with Qwen3-0.6B Q8_0, for the HAMi AMD lab" \
+      org.opencontainers.image.licenses="MIT AND Apache-2.0"
+COPY bin/ /bin/
+COPY lib/ /lib/
+COPY models/ /models/

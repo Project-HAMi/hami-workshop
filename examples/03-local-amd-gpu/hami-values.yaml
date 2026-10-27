@@ -1,0 +1,15 @@
+global:
+  # Master build after v2.10.0. Matches the chart checked out at the same commit.
+  imageTag: "33b7220"
+
+scheduler:
+  kubeScheduler:
+    image:
+      # Empty tag follows the cluster's Kubernetes version.
+      # The default registry is an Alibaba Cloud mirror; outside China use upstream.
+      registry: registry.k8s.io
+      repository: kube-scheduler
+
+devicePlugin:
+  # HAMi's bundled plugin is for NVIDIA. The amd-gpu chart registers amd.com/gpu.
+  enabled: false
