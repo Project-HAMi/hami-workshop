@@ -29,6 +29,7 @@ theme:
 
 markdown_extensions:
 - admonition
+- footnotes
 - attr_list
 - md_in_html
 - pymdownx.details
@@ -74,8 +75,10 @@ nav:
   - concepts/gpu-driver.md
   - concepts/hami-architecture.md
 - Labs:
+  - labs/install-tools.md
   - labs/online-install.md
   - labs/local-fake-gpu.md
+  - labs/hami-lab.md
   - labs/containerdays-singapore.md
   - labs/local-amd-gpu.md
 

@@ -1,4 +1,4 @@
-.PHONY: serve build clean install
+.PHONY: serve build clean install diagrams
 
 VENV := .venv
 PIP := $(VENV)/bin/pip
@@ -16,3 +16,7 @@ build: install
 
 clean:
 	rm -rf site
+
+PDG ?= pdg
+diagrams:
+	for f in examples/hami-lab/diagrams/*.pdg; do $(PDG) --target web -o docs/images/hami-lab-$$(basename $${f%.pdg}).svg $$f; done

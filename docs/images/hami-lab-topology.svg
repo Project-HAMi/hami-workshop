@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="352" viewBox="0 0 1000.25 351.75" class="predictygraph">
+<rect x="0" y="0" width="1000.25" height="351.75" fill="#ffffff"/>
+<g class="pdg-groups">
+<g id="src" class="pdg-group">
+<rect x="16" y="16" width="243.53" height="319.75" rx="10" fill="#f1f5f9" stroke="#bfdbfe" stroke-width="1"/>
+<path d="M 16 55.25 L 16 26 A 10 10 0 0 1 26 16 L 249.53 16 A 10 10 0 0 1 259.53 26 L 259.53 55.25 Z" fill="#dbeafe" class="pdg-title-band"/>
+<text x="30" y="42.35" text-anchor="start" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="13" font-weight="bold" font-style="normal">On the node</text>
+</g>
+</g>
+<g class="pdg-edges">
+<g id="e0" class="pdg-edge">
+<path d="M 229.63 85.94 C 268.4 85.94 268.4 154.19 307.16 154.19" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="315.53,154.19 306.23,158.09 306.23,150.28" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e1" class="pdg-edge">
+<path d="M 230.7 155.31 C 268.93 155.31 268.93 168.65 307.16 168.65" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="315.53,168.65 306.23,172.55 306.23,164.74" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e2" class="pdg-edge">
+<path d="M 239.27 224.69 C 273.22 224.69 273.22 183.1 307.16 183.1" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="315.53,183.1 306.23,187.01 306.23,179.2" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e3" class="pdg-edge">
+<path d="M 245.53 294.06 C 276.35 294.06 276.35 197.56 307.16 197.56" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="315.53,197.56 306.23,201.47 306.23,193.66" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e4" class="pdg-edge pdg-flow pdg-flow-forward">
+<path d="M 491.28 175.88 C 525.87 175.88 525.87 175.88 560.46 175.88" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="0.75" stroke-opacity="0.3" class="pdg-line"/>
+<path d="M 491.28 175.88 C 525.87 175.88 525.87 175.88 560.46 175.88" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="2.7" stroke-dasharray="0.1 6" stroke-linecap="round" stroke-dashoffset="6.1" class="pdg-line pdg-flow-forward"><animate attributeName="stroke-dashoffset" values="6.1;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="568.83,175.88 559.53,179.78 559.53,171.97" fill="#64748b" class="pdg-head"/>
+<rect x="501.1" y="168" width="49.55" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="525.87" y="179.45" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">patches</text>
+</g>
+<g id="e5" class="pdg-edge pdg-flow pdg-flow-forward">
+<path d="M 737.12 175.88 C 765.19 175.88 765.19 175.88 793.25 175.88" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="0.75" stroke-opacity="0.3" class="pdg-line"/>
+<path d="M 737.12 175.88 C 765.19 175.88 765.19 175.88 793.25 175.88" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="2.7" stroke-dasharray="0.1 6" stroke-linecap="round" stroke-dashoffset="6.1" class="pdg-line pdg-flow-forward"><animate attributeName="stroke-dashoffset" values="6.1;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="801.62,175.88 792.33,179.78 792.33,171.97" fill="#64748b" class="pdg-head"/>
+<rect x="746.94" y="168" width="36.5" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="765.19" y="179.45" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">reads</text>
+</g>
+</g>
+<g class="pdg-nodes">
+<g id="nv" class="pdg-node">
+<rect x="45.9" y="58.25" width="183.73" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="137.77" y="81.55" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">NVIDIA · NVML</text>
+<text x="137.77" y="100.06" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">NVLink and PCIe P2P links</text>
+</g>
+<g id="amd" class="pdg-node">
+<rect x="44.83" y="127.62" width="185.88" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="137.77" y="150.93" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">AMD · KFD topology</text>
+<text x="137.77" y="169.43" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">XGMI peers, NUMA node</text>
+</g>
+<g id="mx" class="pdg-node">
+<rect x="36.26" y="197" width="203.02" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="137.77" y="220.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">MetaX · vendor plugin</text>
+<text x="137.77" y="238.81" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">MetaXLink and PCIe switch</text>
+</g>
+<g id="kl" class="pdg-node">
+<rect x="30" y="266.38" width="215.53" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="137.77" y="289.68" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Kunlunxin, AWS Neuron</text>
+<text x="137.77" y="308.18" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">fixed board layout by index</text>
+</g>
+<g id="dp" class="pdg-node green">
+<rect x="315.53" y="148.19" width="175.75" height="55.38" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+<path d="M 315.53 158.19 A 10 10 0 0 1 319.53 150.19 L 319.53 201.56 A 10 10 0 0 1 315.53 193.56 Z" fill="#16a34a" class="pdg-accent"/>
+<text x="403.41" y="171.49" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Device plugin</text>
+<text x="403.41" y="189.99" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">per vendor, DaemonSet</text>
+</g>
+<g id="anno" class="pdg-node">
+<rect x="568.83" y="140.75" width="168.3" height="70.25" rx="10" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-opacity="0.7" class="pdg-border-glow"><animate attributeName="stroke-width" values="1.5;11.5;11.5" dur="1.6s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values="0.7;0;0" dur="1.6s" repeatCount="indefinite"/></rect>
+<rect x="568.83" y="140.75" width="168.3" height="70.25" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="652.98" y="164.05" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Node annotations</text>
+<text x="652.98" y="182.56" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">register: numa, links</text>
+<text x="652.98" y="197.43" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">scores: pair scores</text>
+</g>
+<g id="hs" class="pdg-node blue">
+<rect x="801.62" y="148.19" width="182.62" height="55.38" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+<path d="M 801.62 158.19 A 10 10 0 0 1 805.62 150.19 L 805.62 201.56 A 10 10 0 0 1 801.62 193.56 Z" fill="#2563eb" class="pdg-accent"/>
+<text x="892.94" y="171.49" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">hami-scheduler</text>
+<text x="892.94" y="189.99" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">Filter + Score per vendor</text>
+</g>
+</g>
+</svg>
