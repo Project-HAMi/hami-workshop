@@ -9,7 +9,7 @@
 
 ![实验架构](../images/hami-lab-architecture.svg)
 
-2026-11-09 测试通过：kind 0.33、kubectl 1.37、helm 4.3、HAMi chart 2.10.0、hami-mock-monitor 0.2.0。
+2026-11-09 测试通过：kind 0.33、kubectl 1.37、helm 4.3、HAMi chart 2.11.0、hami-mock-monitor 0.2.0。
 
 ## 准备
 
@@ -23,7 +23,7 @@
 git clone https://github.com/Project-HAMi/hami-workshop
 cd hami-workshop/examples/hami-lab
 docker pull kindest/node:v1.37.0
-docker pull docker.io/projecthami/hami:v2.10.0
+docker pull docker.io/projecthami/hami:v2.11.0
 docker pull docker.io/projecthami/mock-device-plugin:latest
 docker pull docker.io/liangjw/kube-webhook-certgen:v1.1.1
 docker pull busybox:1.36
@@ -51,7 +51,7 @@ Pod 请求一张卡的一部分。webhook 把它路由给 HAMi 调度器，调�
 
 1. 创建 kind 集群 `hami-lab`，给节点打标签 `gpu=on`。
 2. 把预先拉好的镜像导入集群。
-3. 安装 HAMi 2.10.0，关闭真实设备插件，开启 mock 插件。
+3. 安装 HAMi 2.11.0，关闭真实设备插件，开启 mock 插件。
 4. 模拟两张 A100-40GB：计数资源 `nvidia.com/gpu=20`（2 张卡 x 10 份切分），以及来自 `fake-gpus.json` 的节点注解 `hami.io/node-nvidia-register`，这正是真实设备插件读取 NVML 后写入的内容。
 5. 安装 hami-mock-monitor，设置 `completeBinds=true`。
 

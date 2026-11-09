@@ -9,7 +9,7 @@ What you do **not** get without a GPU: memory and compute isolation inside the c
 
 ![Lab architecture](../images/hami-lab-architecture.svg)
 
-Tested on 2026-11-09 with kind 0.33, kubectl 1.37, helm 4.3, HAMi chart 2.10.0 and hami-mock-monitor 0.2.0.
+Tested on 2026-11-09 with kind 0.33, kubectl 1.37, helm 4.3, HAMi chart 2.11.0 and hami-mock-monitor 0.2.0.
 
 ## Before you start
 
@@ -23,7 +23,7 @@ Pull the images **once, before the session**, not at the venue:
 git clone https://github.com/Project-HAMi/hami-workshop
 cd hami-workshop/examples/hami-lab
 docker pull kindest/node:v1.37.0
-docker pull docker.io/projecthami/hami:v2.10.0
+docker pull docker.io/projecthami/hami:v2.11.0
 docker pull docker.io/projecthami/mock-device-plugin:latest
 docker pull docker.io/liangjw/kube-webhook-certgen:v1.1.1
 docker pull busybox:1.36
@@ -51,7 +51,7 @@ The script:
 
 1. Creates a kind cluster `hami-lab` and labels the node `gpu=on`.
 2. Loads the pre-pulled images into the cluster.
-3. Installs HAMi 2.10.0 with the real device plugin off and the mock plugin on.
+3. Installs HAMi 2.11.0 with the real device plugin off and the mock plugin on.
 4. Fakes two A100-40GB cards: the count resource `nvidia.com/gpu=20` (2 cards x 10 splits) and the node annotation `hami.io/node-nvidia-register` from `fake-gpus.json`, which is what the real device plugin writes after it reads NVML.
 5. Installs hami-mock-monitor with `completeBinds=true`.
 

@@ -2,7 +2,7 @@
 
 Lab guide: [docs/labs/hami-lab.md](../../docs/labs/hami-lab.md). Runs on a laptop, no GPU needed.
 
-- `setup.sh`: kind + HAMi 2.10 + mock device plugin + two fake A100-40GB + hami-mock-monitor
+- `setup.sh`: kind + HAMi 2.11 + mock device plugin + two fake A100-40GB + hami-mock-monitor
 - `fake-gpus.json`: the `hami.io/node-nvidia-register` annotation
 - `share.yaml`, `too-big.yaml`: Lab 2
 - `binpack.yaml`, `spread.yaml`: Lab 3

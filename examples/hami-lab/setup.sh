@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# HAMi lab environment: kind + HAMi 2.10 + mock device plugin + two fake A100-40GB
+# HAMi lab environment: kind + HAMi 2.11 + mock device plugin + two fake A100-40GB
 # + hami-mock-monitor. No GPU needed. Tested with kind 0.33, kubectl 1.37, helm 4.3.
 set -euo pipefail
 
 CLUSTER=${CLUSTER:-hami-lab}
 NODE="${CLUSTER}-control-plane"
-HAMI_VERSION=${HAMI_VERSION:-2.10.0}
+HAMI_VERSION=${HAMI_VERSION:-2.11.0}
 MONITOR_VERSION=${MONITOR_VERSION:-0.2.0}
 
 step() { printf '\n==> %s\n' "$*"; }
@@ -16,16 +16,17 @@ kubectl label node "${NODE}" gpu=on --overwrite
 
 step "Pre-pulled lab images into ${CLUSTER}"
 IMAGES=(
-  docker.io/projecthami/hami:v2.10.0
+  docker.io/projecthami/hami:v2.11.0
   docker.io/projecthami/mock-device-plugin:latest
   docker.io/liangjw/kube-webhook-certgen:v1.1.1
   busybox:1.36
   ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
   ghcr.io/fishman/hami-mock-monitor:${MONITOR_VERSION}
 )
+PLATFORM=$(docker version -f '{{.Server.Os}}/{{.Server.Arch}}')
 for img in "${IMAGES[@]}"; do
   if docker image inspect "${img}" >/dev/null 2>&1; then
-    kind load docker-image "${img}" --name "${CLUSTER}"
+    docker save --platform "${PLATFORM}" "${img}" | kind load image-archive /dev/stdin --name "${CLUSTER}"
   else
     echo "${img} not pulled yet, the cluster will pull it from the registry"
   fi
