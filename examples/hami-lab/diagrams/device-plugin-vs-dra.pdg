@@ -1,0 +1,15 @@
+graph layout=row theme=hami gap=60
+group dp "Device plugin" sub="classic HAMi" layout=column gap=24 {
+  dpp "HAMi device plugin" sub="reports each card 10 times" .blue
+  ann "Node annotation" sub="hami.io/node-nvidia-register"
+  ext "HAMi scheduler extender" sub="reads the annotation, picks a card" .blue
+}
+group dra "DRA" sub="HAMi-DRA, Kubernetes 1.34+" layout=column gap=24 .green {
+  drv "DRA driver" sub="kubelet plugin" .green
+  rs "ResourceSlice" sub="typed attributes and capacity"
+  ks "kube-scheduler" sub="DRA plugin, no extender" .green
+}
+dpp -> ann "writes"
+ann -> ext "reads"
+drv -> rs "publishes"
+rs -> ks "reads"

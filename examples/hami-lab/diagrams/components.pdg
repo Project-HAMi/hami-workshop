@@ -1,0 +1,21 @@
+graph layout=row theme=hami gap=56
+group cp "Control plane" layout=column gap=22 {
+  api "Kubernetes API" sub="Pods · node annotations"
+  hs "hami-scheduler Pod" sub="webhook + extender · :9395" .blue
+}
+group node "Each GPU node" layout=column gap=22 .green {
+  dp "hami-device-plugin" sub="DaemonSet · registers cards" .green
+  core "HAMi-core" sub="libvgpu.so in the container" .green
+  mon "vGPUmonitor" sub="usage · :9394" .green
+}
+group obs "Observability" layout=column gap=22 {
+  prom "Prometheus" sub="scrapes :9395 and :9394"
+  ui "HAMi-WebUI" sub="read-only dashboards" .blue
+}
+dp -> api "node-nvidia-register"
+api <-> hs "annotations"
+dp -> core "mounts"
+core -> mon "shared region"
+hs -> prom "allocated"
+mon -> prom "used"
+prom -> ui

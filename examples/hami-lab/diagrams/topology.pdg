@@ -1,0 +1,16 @@
+graph layout=row theme=hami gap=56
+group src "On the node" layout=column gap=14 {
+  nv "NVIDIA · NVML" sub="NVLink and PCIe P2P links"
+  amd "AMD · KFD topology" sub="XGMI peers, NUMA node"
+  mx "MetaX · vendor plugin" sub="MetaXLink and PCIe switch"
+  kl "Kunlunxin, AWS Neuron" sub="fixed board layout by index"
+}
+dp "Device plugin" sub="per vendor, DaemonSet" .green
+anno "Node annotations" sub="register: numa, links\nscores: pair scores" border=glow
+hs "hami-scheduler" sub="Filter + Score per vendor" .blue
+nv -> dp
+amd -> dp
+mx -> dp
+kl -> dp
+dp -> anno "patches" flow=forward
+anno -> hs "reads" flow=forward

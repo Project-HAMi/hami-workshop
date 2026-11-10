@@ -1,0 +1,21 @@
+graph layout=row theme=hami gap=40 steps=auto
+group panels layout=row align=stretch gap=40 .bare {
+group cp "Control plane" sub="decides where the Pod runs" layout=column gap=30 {
+  pod "Pod" sub="nvidia.com/gpumem: 3000"
+  webhook "MutatingWebhook" sub="sets schedulerName" .blue
+  sched "HAMi scheduler" sub="picks a node and a card" .blue
+}
+group node "GPU node" sub="sets up the container, enforces limits" layout=column gap=30 .green {
+  kubelet "kubelet" sub="starts the Pod"
+  plugin "HAMi device plugin" sub="mounts libvgpu.so" .green
+  core "HAMi-Core" sub="checks memory and kernel calls" .green
+}
+}
+gpu "GPU" border=glow
+pod -> webhook flow=forward
+webhook -> sched flow=forward
+sched -> kubelet "bind" flow=forward
+kubelet -> plugin "Allocate()" flow=forward
+plugin -> core flow=forward
+core -> gpu flow=forward
+css { group.bare { fill: none; stroke: none; padding: 0; } }

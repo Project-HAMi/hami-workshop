@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="898" height="235" viewBox="0 0 898.23 235" class="predictygraph">
+<rect x="0" y="0" width="898.23" height="235" fill="#ffffff"/>
+<g class="pdg-groups">
+<g id="kind" class="pdg-group">
+<rect x="245.2" y="16" width="637.03" height="203" rx="10" fill="#f1f5f9" stroke="#bfdbfe" stroke-width="1"/>
+<path d="M 245.2 55.25 L 245.2 26 A 10 10 0 0 1 255.2 16 L 872.23 16 A 10 10 0 0 1 882.23 26 L 882.23 55.25 Z" fill="#dbeafe" class="pdg-title-band"/>
+<text x="259.2" y="42.35" text-anchor="start" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="13" font-weight="bold" font-style="normal">kind cluster hami-lab</text>
+<g id="top" class="pdg-group bare">
+<rect x="259.2" y="58.25" width="609.03" height="55.38" rx="10" fill="none" stroke="none" stroke-width="1"/>
+</g>
+<g id="bottom" class="pdg-group bare">
+<rect x="369.91" y="149.62" width="387.61" height="55.38" rx="10" fill="none" stroke="none" stroke-width="1"/>
+</g>
+</g>
+</g>
+<g class="pdg-edges">
+<g id="e0" class="pdg-edge">
+<path d="M 685.98 85.94 C 670.17 85.94 670.17 85.94 654.35 85.94" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="645.98,85.94 655.28,82.03 655.28,89.84" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e1" class="pdg-edge">
+<path d="M 495.08 85.94 C 459.04 85.94 459.04 85.94 423.01 85.94" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="414.64,85.94 423.94,82.03 423.94,89.84" fill="#64748b" class="pdg-head"/>
+<rect x="432.83" y="78.06" width="52.44" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="459.04" y="89.51" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">capacity</text>
+</g>
+<g id="e2" class="pdg-edge">
+<path d="M 137.25 108.5 C 194.04 108.5 194.04 85.94 250.83 85.94" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="259.2,85.94 249.9,89.84 249.9,82.03" fill="#64748b" class="pdg-head"/>
+<rect x="154.06" y="89.34" width="79.95" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="194.04" y="100.79" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">kubectl apply</text>
+</g>
+<g id="e3" class="pdg-edge pdg-flow pdg-flow-forward">
+<path d="M 387.91 113.62 C 387.91 127.44 387.91 127.44 387.91 141.25" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="0.75" stroke-opacity="0.3" class="pdg-line"/>
+<path d="M 387.91 113.62 C 387.91 127.44 387.91 127.44 387.91 141.25" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="2.7" stroke-dasharray="0.1 6" stroke-linecap="round" stroke-dashoffset="6.1" class="pdg-line pdg-flow-forward"><animate attributeName="stroke-dashoffset" values="6.1;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="387.91,149.62 384,140.32 391.81,140.32" fill="#64748b" class="pdg-head"/>
+<rect x="359.18" y="119.56" width="57.45" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="387.91" y="131.01" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">fit + bind</text>
+</g>
+<g id="e4" class="pdg-edge">
+<path d="M 507.87 177.31 C 537.28 177.31 537.28 186.31 566.68 186.31" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="575.05,186.31 565.75,190.22 565.75,182.41" fill="#64748b" class="pdg-head"/>
+<rect x="517.68" y="173.94" width="39.19" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="537.28" y="185.39" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">usage</text>
+</g>
+<g id="e5" class="pdg-edge">
+<path d="M 575.05 168.31 C 360.34 168.31 360.34 126.5 145.62 126.5" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="137.25,126.5 146.55,122.59 146.55,130.41" fill="#64748b" class="pdg-head"/>
+<rect x="336.76" y="139.53" width="47.16" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="360.34" y="150.98" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">metrics</text>
+</g>
+</g>
+<g class="pdg-nodes">
+<g id="you" class="pdg-node">
+<rect x="16" y="89.81" width="121.25" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="76.62" y="113.11" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">You</text>
+<text x="76.62" y="131.62" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">laptop · kubectl</text>
+</g>
+<g id="sched" class="pdg-node green">
+<rect x="259.2" y="58.25" width="155.44" height="55.38" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+<path d="M 259.2 68.25 A 10 10 0 0 1 263.2 60.25 L 263.2 111.62 A 10 10 0 0 1 259.2 103.62 Z" fill="#16a34a" class="pdg-accent"/>
+<text x="336.92" y="81.55" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">HAMi scheduler</text>
+<text x="336.92" y="100.06" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">:9395 · real</text>
+</g>
+<g id="node" class="pdg-node">
+<rect x="495.08" y="58.25" width="150.91" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="570.53" y="81.55" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">hami-lab node</text>
+<text x="570.53" y="100.06" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">2 × A100-40GB fake</text>
+</g>
+<g id="plugin" class="pdg-node">
+<rect x="685.98" y="58.25" width="182.25" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="777.11" y="81.55" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">mock-device-plugin</text>
+<text x="777.11" y="100.06" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">gpumem · gpucores</text>
+</g>
+<g id="pods" class="pdg-node blue">
+<rect x="369.91" y="149.62" width="137.95" height="55.38" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+<path d="M 369.91 159.62 A 10 10 0 0 1 373.91 151.62 L 373.91 203 A 10 10 0 0 1 369.91 195 Z" fill="#2563eb" class="pdg-accent"/>
+<text x="438.89" y="172.93" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Pods</text>
+<text x="438.89" y="191.43" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">share · pack · sim</text>
+</g>
+<g id="monitor" class="pdg-node">
+<rect x="575.05" y="149.62" width="182.47" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="666.29" y="172.93" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">hami-mock-monitor</text>
+<text x="666.29" y="191.43" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">:9394 · usage</text>
+</g>
+</g>
+</svg>

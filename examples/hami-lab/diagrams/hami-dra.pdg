@@ -1,0 +1,10 @@
+graph layout=row theme=hami gap=36 steps=auto
+pod "Pod" sub="nvidia.com/gpu, gpumem, gpucores"
+wh "HAMi-DRA webhook" sub="rewrites the request" .blue
+rc "ResourceClaim" sub="or ResourceClaimTemplate"
+ks "kube-scheduler" sub="DRA allocation" .blue
+core "HAMi-Core" sub="same in-container limits" .green
+pod -> wh flow=forward
+wh -> rc flow=forward
+rc -> ks flow=forward
+ks -> core flow=forward

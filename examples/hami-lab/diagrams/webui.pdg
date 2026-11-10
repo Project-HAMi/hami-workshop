@@ -1,0 +1,15 @@
+graph layout=row theme=hami gap=48
+user "Browser" sub="port-forward :3000"
+group pod "HAMi-WebUI Pod" sub="one container, read-only" layout=column gap=18 .blue {
+  vue "Vue app" sub="static assets · :3000"
+  apih "Go API" sub="/api/vgpu/v1 · in-process" .blue
+  diag "Diagnostics" sub="ready · metrics · :8000"
+}
+group src "Data sources" layout=column gap=18 {
+  k8s "Kubernetes API" sub="nodes · Pods · device ConfigMap"
+  prom "Prometheus" sub="HAMi :9395 · :9394 · DCGM"
+}
+user -> vue
+vue -> apih
+apih -> k8s "list"
+apih -> prom "PromQL"
