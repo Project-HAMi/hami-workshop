@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# HAMi lab environment: kind + HAMi 2.11 + mock device plugin + two fake A100-40GB
+# + hami-mock-monitor. No GPU needed. Tested with kind 0.33, kubectl 1.37, helm 4.3.
+set -euo pipefail
+
+CLUSTER=${CLUSTER:-hami-lab}
+NODE="${CLUSTER}-control-plane"
+HAMI_VERSION=${HAMI_VERSION:-2.11.0}
+MONITOR_VERSION=${MONITOR_VERSION:-0.2.0}
+
+step() { printf '\n==> %s\n' "$*"; }
+
+step "kind cluster ${CLUSTER}"
+kind get clusters | grep -qx "${CLUSTER}" || kind create cluster --name "${CLUSTER}"
+kubectl label node "${NODE}" gpu=on --overwrite
+
+step "Pre-pulled lab images into ${CLUSTER}"
+IMAGES=(
+  docker.io/projecthami/hami:v2.11.0
+  docker.io/projecthami/mock-device-plugin:latest
+  docker.io/liangjw/kube-webhook-certgen:v1.1.1
+  busybox:1.36
+  ghcr.io/llm-d/llm-d-inference-sim:v0.12.0
+  ghcr.io/fishman/hami-mock-monitor:${MONITOR_VERSION}
+)
+PLATFORM=$(docker version -f '{{.Server.Os}}/{{.Server.Arch}}')
+for img in "${IMAGES[@]}"; do
+  if docker image inspect "${img}" >/dev/null 2>&1; then
+    docker save --platform "${PLATFORM}" "${img}" | kind load image-archive /dev/stdin --name "${CLUSTER}"
+  else
+    echo "${img} not pulled yet, the cluster will pull it from the registry"
+  fi
+done
+
+step "HAMi ${HAMI_VERSION} with the mock device plugin"
+helm repo add hami-charts https://project-hami.github.io/HAMi/ >/dev/null 2>&1 || true
+helm repo update hami-charts >/dev/null
+helm upgrade --install hami hami-charts/hami -n kube-system --version "${HAMI_VERSION}" \
+  --set devicePlugin.enabled=false \
+  --set mockDevicePlugin.enabled=true \
+  --set mockDevicePlugin.image.tag=latest \
+  --set scheduler.kubeScheduler.image.registry=registry.k8s.io \
+  --set scheduler.kubeScheduler.image.repository=kube-scheduler \
+  --wait --timeout 8m
+
+step "Two fake NVIDIA A100-40GB cards on ${NODE}"
+kubectl patch node "${NODE}" --subresource=status --type=json \
+  -p '[{"op":"add","path":"/status/capacity/nvidia.com~1gpu","value":"20"}]' >/dev/null
+kubectl annotate node "${NODE}" --overwrite "hami.io/node-nvidia-register=$(cat "$(dirname "$0")/fake-gpus.json")"
+
+step "hami-mock-monitor ${MONITOR_VERSION}"
+helm upgrade --install hami-mock-monitor oci://ghcr.io/fishman/charts/hami-mock-monitor \
+  --version "${MONITOR_VERSION}" -n kube-system \
+  --set image.pullPolicy=IfNotPresent --set completeBinds=true --wait
+
+step "Waiting for the mock plugin to register memory and cores"
+for _ in $(seq 1 30); do
+  mem=$(kubectl get node "${NODE}" -o jsonpath='{.status.allocatable.nvidia\.com/gpumem}')
+  [ -n "${mem}" ] && break
+  sleep 5
+done
+kubectl get node "${NODE}" -o json | jq '.status.allocatable|with_entries(select(.key|test("nvidia.com")))'
+echo "Expect gpu=20, gpumem=81920, gpucores=200. Ready for Lab 2."

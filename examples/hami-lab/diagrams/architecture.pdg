@@ -1,0 +1,20 @@
+graph layout=row theme=hami gap=48
+you "You" sub="laptop · kubectl"
+group kind "kind cluster hami-lab" layout=column gap=36 {
+  group top layout=row gap=40 .bare {
+    sched "HAMi scheduler" sub=":9395 · real" .green
+    node "hami-lab node" sub="2 × A100-40GB fake"
+    plugin "mock-device-plugin" sub="gpumem · gpucores"
+  }
+  group bottom layout=row gap=40 .bare {
+    pods "Pods" sub="share · pack · sim" .blue
+    monitor "hami-mock-monitor" sub=":9394 · usage"
+  }
+}
+plugin -> node
+node -> sched "capacity"
+you -> sched "kubectl apply"
+sched -> pods "fit + bind" flow=forward
+pods -> monitor "usage"
+monitor -> you "metrics"
+css { group.bare { fill: none; stroke: none; padding: 0; } }

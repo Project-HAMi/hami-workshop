@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="849" height="298" viewBox="0 0 848.81 298.38" class="predictygraph">
+<rect x="0" y="0" width="848.81" height="298.38" fill="#ffffff"/>
+<g class="pdg-groups">
+<g id="inputs" class="pdg-group bare">
+<rect x="142.87" y="16" width="563.08" height="55.38" rx="10" fill="none" stroke="none" stroke-width="1"/>
+</g>
+<g id="brains" class="pdg-group">
+<rect x="16" y="93.38" width="816.81" height="111.62" rx="10" fill="#f1f5f9" stroke="#bfdbfe" stroke-width="1"/>
+<path d="M 16 132.62 L 16 103.38 A 10 10 0 0 1 26 93.38 L 822.81 93.38 A 10 10 0 0 1 832.81 103.38 L 832.81 132.62 Z" fill="#dbeafe" class="pdg-title-band"/>
+<text x="542.67" y="119.72" text-anchor="start" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="13" font-weight="bold" font-style="normal">Scheduling brains</text>
+</g>
+</g>
+<g class="pdg-edges">
+<g id="e0" class="pdg-edge">
+<path d="M 277.1 43.69 C 317.92 43.69 317.92 43.69 358.73 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="367.1,43.69 357.8,47.59 357.8,39.78" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e1" class="pdg-edge">
+<path d="M 419.36 71.38 C 419.36 99.31 106.09 99.31 106.09 127.25" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="106.09,135.62 102.18,126.33 109.99,126.33" fill="#64748b" class="pdg-head"/>
+<rect x="240.37" y="91.44" width="44.7" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="262.72" y="102.89" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">default</text>
+</g>
+<g id="e2" class="pdg-edge">
+<path d="M 437.36 71.38 C 437.36 99.31 323.68 99.31 323.68 127.25" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="323.68,135.62 319.77,126.33 327.59,126.33" fill="#64748b" class="pdg-head"/>
+<rect x="356.12" y="91.44" width="48.8" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="380.52" y="102.89" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">volcano</text>
+</g>
+<g id="e3" class="pdg-edge">
+<path d="M 455.36 71.38 C 455.36 99.31 537.05 99.31 537.05 127.25" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="537.05,135.62 533.15,126.33 540.96,126.33" fill="#64748b" class="pdg-head"/>
+<rect x="484.3" y="91.44" width="23.81" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="496.21" y="102.89" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">KAI</text>
+</g>
+<g id="e4" class="pdg-edge">
+<path d="M 507.62 43.69 C 548.43 43.69 548.43 43.69 589.25 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="597.62,43.69 588.32,47.59 588.32,39.78" fill="#64748b" class="pdg-head"/>
+<rect x="533.82" y="35.81" width="29.22" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="548.43" y="47.26" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">DRA</text>
+</g>
+<g id="e5" class="pdg-edge">
+<path d="M 697.82 71.38 C 697.82 99.31 697.82 99.31 697.82 127.25" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="697.82,135.62 693.92,126.33 701.73,126.33" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e6" class="pdg-edge">
+<path d="M 106.09 191 C 106.09 204.81 397.41 204.81 397.41 218.63" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="397.41,227 393.5,217.7 401.31,217.7" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e7" class="pdg-edge">
+<path d="M 323.68 191 C 323.68 204.81 415.41 204.81 415.41 218.63" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="415.41,227 411.5,217.7 419.31,217.7" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e8" class="pdg-edge">
+<path d="M 537.05 191 C 537.05 204.81 433.41 204.81 433.41 218.63" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="433.41,227 429.5,217.7 437.31,217.7" fill="#64748b" class="pdg-head"/>
+</g>
+<g id="e9" class="pdg-edge">
+<path d="M 743.87 191 C 743.87 204.81 451.41 204.81 451.41 218.63" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="451.41,227 447.5,217.7 455.31,217.7" fill="#64748b" class="pdg-head"/>
+<rect x="564.29" y="196.94" width="66.7" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="597.64" y="208.39" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">via isolator</text>
+</g>
+</g>
+<g class="pdg-nodes">
+<g id="pod" class="pdg-node">
+<rect x="142.87" y="16" width="134.23" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="209.98" y="39.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">GPU Pod</text>
+<text x="209.98" y="57.8" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">fractional request</text>
+</g>
+<g id="adm" class="pdg-node">
+<rect x="367.1" y="16" width="140.52" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="437.36" y="39.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Admission</text>
+<text x="437.36" y="57.8" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">mutating webhook</text>
+</g>
+<g id="dra" class="pdg-node">
+<rect x="597.62" y="16" width="108.33" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="651.78" y="39.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">HAMi-DRA</text>
+<text x="651.78" y="57.8" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">gpu → claim</text>
+</g>
+<g id="ext" class="pdg-node blue">
+<rect x="30" y="135.62" width="152.17" height="55.38" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+<path d="M 30 145.62 A 10 10 0 0 1 34 137.62 L 34 189 A 10 10 0 0 1 30 181 Z" fill="#2563eb" class="pdg-accent"/>
+<text x="106.09" y="158.93" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">HAMi extender</text>
+<text x="106.09" y="177.43" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">gpumem · gpucores</text>
+</g>
+<g id="vol" class="pdg-node blue">
+<rect x="242.17" y="135.62" width="163.02" height="55.38" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+<path d="M 242.17 145.62 A 10 10 0 0 1 246.17 137.62 L 246.17 189 A 10 10 0 0 1 242.17 181 Z" fill="#2563eb" class="pdg-accent"/>
+<text x="323.68" y="158.93" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Volcano</text>
+<text x="323.68" y="177.43" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">vgpu-* · gang · queue</text>
+</g>
+<g id="kai" class="pdg-node blue">
+<rect x="465.19" y="135.62" width="143.73" height="55.38" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+<path d="M 465.19 145.62 A 10 10 0 0 1 469.19 137.62 L 469.19 189 A 10 10 0 0 1 465.19 181 Z" fill="#2563eb" class="pdg-accent"/>
+<text x="537.05" y="158.93" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">KAI Scheduler</text>
+<text x="537.05" y="177.43" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">gpu-fraction · topo</text>
+</g>
+<g id="ks" class="pdg-node">
+<rect x="668.92" y="135.62" width="149.89" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="743.87" y="158.93" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">kube-scheduler</text>
+<text x="743.87" y="177.43" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">DRA driver · 1.34+</text>
+</g>
+<g id="core" class="pdg-node green">
+<rect x="330.99" y="227" width="186.83" height="55.38" rx="10" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-opacity="0.7" class="pdg-border-glow"><animate attributeName="stroke-width" values="1.5;11.5;11.5" dur="1.6s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values="0.7;0;0" dur="1.6s" repeatCount="indefinite"/></rect>
+<rect x="330.99" y="227" width="186.83" height="55.38" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+<path d="M 330.99 237 A 10 10 0 0 1 334.99 229 L 334.99 280.38 A 10 10 0 0 1 330.99 272.38 Z" fill="#16a34a" class="pdg-accent"/>
+<text x="424.41" y="250.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">HAMi-core</text>
+<text x="424.41" y="268.81" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">libvgpu.so · hard isolation</text>
+</g>
+</g>
+</svg>

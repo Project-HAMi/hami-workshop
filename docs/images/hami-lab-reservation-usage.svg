@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="705" height="264" viewBox="0 0 705.44 263.56" class="predictygraph">
+<rect x="0" y="0" width="705.44" height="263.56" fill="#ffffff"/>
+<g class="pdg-groups">
+<g id="alloc" class="pdg-group blue">
+<rect x="16" y="16" width="278.22" height="231.56" rx="10" fill="#cfddfb" stroke="#2563eb" stroke-width="1"/>
+<path d="M 16 72.06 L 16 26 A 10 10 0 0 1 26 16 L 284.22 16 A 10 10 0 0 1 294.22 26 L 294.22 72.06 Z" fill="#dbeafe" class="pdg-title-band"/>
+<text x="30" y="42.35" text-anchor="start" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="13" font-weight="bold" font-style="normal">Allocation · scheduler :9395</text>
+<text x="30" y="59.75" text-anchor="start" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.05" font-weight="normal" font-style="normal">what was reserved</text>
+</g>
+<g id="usage" class="pdg-group green">
+<rect x="396.53" y="16" width="292.91" height="231.56" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+<path d="M 396.53 72.06 L 396.53 26 A 10 10 0 0 1 406.53 16 L 679.44 16 A 10 10 0 0 1 689.44 26 L 689.44 72.06 Z" fill="#dcfce7" class="pdg-title-band"/>
+<text x="410.53" y="42.35" text-anchor="start" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="13" font-weight="bold" font-style="normal">Usage · monitor :9394</text>
+<text x="410.53" y="59.75" text-anchor="start" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.05" font-weight="normal" font-style="normal">what is consumed</text>
+</g>
+</g>
+<g class="pdg-edges">
+<g id="e0" class="pdg-edge">
+<path d="M 294.22 131.78 C 341.19 131.78 341.19 131.78 388.16 131.78" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="1.5" stroke-linecap="butt" class="pdg-line"/>
+<polygon points="396.53,131.78 387.23,135.69 387.23,127.88" fill="#64748b" class="pdg-head"/>
+<rect x="304.03" y="123.91" width="74.31" height="15.75" rx="3" fill="#ffffff" fill-opacity="0.9" class="pdg-label-bg"/>
+<text x="341.19" y="135.36" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="normal" font-style="normal">alloc ≥ used</text>
+</g>
+</g>
+<g class="pdg-nodes">
+<g id="acard" class="pdg-node">
+<rect x="33.55" y="75.06" width="243.11" height="70.25" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="155.11" y="98.36" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Per card</text>
+<text x="155.11" y="116.87" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">hami_gpu_memory_allocated_bytes</text>
+<text x="155.11" y="131.74" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">hami_gpu_core_allocated_ratio</text>
+</g>
+<g id="apod" class="pdg-node">
+<rect x="30" y="163.31" width="250.22" height="70.25" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="155.11" y="186.61" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Per pod</text>
+<text x="155.11" y="205.12" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">hami_vgpu_memory_allocated_bytes</text>
+<text x="155.11" y="219.99" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">hami_gpu_shared_count</text>
+</g>
+<g id="ucnt" class="pdg-node">
+<rect x="410.53" y="75.06" width="264.91" height="70.25" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="542.98" y="98.36" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Per container</text>
+<text x="542.98" y="116.87" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">hami_vgpu_memory_used_bytes</text>
+<text x="542.98" y="131.74" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">hami_container_device_utilization_ratio</text>
+</g>
+<g id="ucard" class="pdg-node">
+<rect x="418.55" y="163.31" width="248.86" height="70.25" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="542.98" y="186.61" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Per card</text>
+<text x="542.98" y="205.12" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">hami_host_gpu_memory_used_bytes</text>
+<text x="542.98" y="219.99" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">hami_host_gpu_utilization_ratio</text>
+</g>
+</g>
+</svg>

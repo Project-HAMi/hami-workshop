@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1128" height="87" viewBox="0 0 1127.86 87.38" class="predictygraph">
+<rect x="0" y="0" width="1127.86" height="87.38" fill="#ffffff"/>
+<g class="pdg-groups">
+
+</g>
+<g class="pdg-edges">
+<g id="e0" class="pdg-edge pdg-flow pdg-flow-forward">
+<path d="M 260.69 43.69 C 274.5 43.69 274.5 43.69 288.32 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="0.75" stroke-opacity="0.3" class="pdg-line"/>
+<path d="M 260.69 43.69 C 274.5 43.69 274.5 43.69 288.32 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="2.7" stroke-dasharray="0.1 6" stroke-linecap="round" stroke-dashoffset="6.1" class="pdg-line pdg-flow-forward"><animate attributeName="stroke-dashoffset" values="6.1;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="296.69,43.69 287.39,47.59 287.39,39.78" fill="#64748b" class="pdg-head"/>
+<circle cx="274.5" cy="29.81" r="9.88" fill="#16a34a" stroke="#ffffff" stroke-width="1.5" class="pdg-step"/>
+<text x="274.5" y="33.39" text-anchor="middle" fill="#ffffff" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="bold" font-style="normal">1</text>
+</g>
+<g id="e1" class="pdg-edge pdg-flow pdg-flow-forward">
+<path d="M 484.88 43.69 C 498.69 43.69 498.69 43.69 512.5 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="0.75" stroke-opacity="0.3" class="pdg-line"/>
+<path d="M 484.88 43.69 C 498.69 43.69 498.69 43.69 512.5 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="2.7" stroke-dasharray="0.1 6" stroke-linecap="round" stroke-dashoffset="6.1" class="pdg-line pdg-flow-forward"><animate attributeName="stroke-dashoffset" values="6.1;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="520.88,43.69 511.57,47.59 511.57,39.78" fill="#64748b" class="pdg-head"/>
+<circle cx="498.69" cy="29.81" r="9.88" fill="#16a34a" stroke="#ffffff" stroke-width="1.5" class="pdg-step"/>
+<text x="498.69" y="33.39" text-anchor="middle" fill="#ffffff" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="bold" font-style="normal">2</text>
+</g>
+<g id="e2" class="pdg-edge pdg-flow pdg-flow-forward">
+<path d="M 708.89 43.69 C 722.71 43.69 722.71 43.69 736.52 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="0.75" stroke-opacity="0.3" class="pdg-line"/>
+<path d="M 708.89 43.69 C 722.71 43.69 722.71 43.69 736.52 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="2.7" stroke-dasharray="0.1 6" stroke-linecap="round" stroke-dashoffset="6.1" class="pdg-line pdg-flow-forward"><animate attributeName="stroke-dashoffset" values="6.1;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="744.89,43.69 735.59,47.59 735.59,39.78" fill="#64748b" class="pdg-head"/>
+<circle cx="722.71" cy="29.81" r="9.88" fill="#16a34a" stroke="#ffffff" stroke-width="1.5" class="pdg-step"/>
+<text x="722.71" y="33.39" text-anchor="middle" fill="#ffffff" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="bold" font-style="normal">3</text>
+</g>
+<g id="e3" class="pdg-edge pdg-flow pdg-flow-forward">
+<path d="M 898.78 43.69 C 912.6 43.69 912.6 43.69 926.41 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="0.75" stroke-opacity="0.3" class="pdg-line"/>
+<path d="M 898.78 43.69 C 912.6 43.69 912.6 43.69 926.41 43.69" fill="none" stroke="#64748b" stroke-linejoin="round" stroke-width="2.7" stroke-dasharray="0.1 6" stroke-linecap="round" stroke-dashoffset="6.1" class="pdg-line pdg-flow-forward"><animate attributeName="stroke-dashoffset" values="6.1;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="934.78,43.69 925.48,47.59 925.48,39.78" fill="#64748b" class="pdg-head"/>
+<circle cx="912.6" cy="29.81" r="9.88" fill="#16a34a" stroke="#ffffff" stroke-width="1.5" class="pdg-step"/>
+<text x="912.6" y="33.39" text-anchor="middle" fill="#ffffff" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11" font-weight="bold" font-style="normal">4</text>
+</g>
+</g>
+<g class="pdg-nodes">
+<g id="pod" class="pdg-node">
+<rect x="16" y="16" width="244.69" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="138.34" y="39.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">Pod</text>
+<text x="138.34" y="57.8" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">nvidia.com/gpu, gpumem, gpucores</text>
+</g>
+<g id="wh" class="pdg-node blue">
+<rect x="296.69" y="16" width="188.19" height="55.38" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+<path d="M 296.69 26 A 10 10 0 0 1 300.69 18 L 300.69 69.38 A 10 10 0 0 1 296.69 61.38 Z" fill="#2563eb" class="pdg-accent"/>
+<text x="390.78" y="39.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">HAMi-DRA webhook</text>
+<text x="390.78" y="57.8" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">rewrites the request</text>
+</g>
+<g id="rc" class="pdg-node">
+<rect x="520.88" y="16" width="188.02" height="55.38" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="614.88" y="39.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">ResourceClaim</text>
+<text x="614.88" y="57.8" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">or ResourceClaimTemplate</text>
+</g>
+<g id="ks" class="pdg-node blue">
+<rect x="744.89" y="16" width="153.89" height="55.38" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+<path d="M 744.89 26 A 10 10 0 0 1 748.89 18 L 748.89 69.38 A 10 10 0 0 1 744.89 61.38 Z" fill="#2563eb" class="pdg-accent"/>
+<text x="821.84" y="39.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">kube-scheduler</text>
+<text x="821.84" y="57.8" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">DRA allocation</text>
+</g>
+<g id="core" class="pdg-node green">
+<rect x="934.78" y="16" width="177.08" height="55.38" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+<path d="M 934.78 26 A 10 10 0 0 1 938.78 18 L 938.78 69.38 A 10 10 0 0 1 934.78 61.38 Z" fill="#16a34a" class="pdg-accent"/>
+<text x="1023.32" y="39.3" text-anchor="middle" fill="#1e293b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="14" font-weight="600" font-style="normal">HAMi-Core</text>
+<text x="1023.32" y="57.8" text-anchor="middle" fill="#64748b" font-family='"Source Sans 3", "Source Sans Pro", Arial, Helvetica, "Liberation Sans", sans-serif' font-size="11.9" font-weight="normal" font-style="normal">same in-container limits</text>
+</g>
+</g>
+</svg>
