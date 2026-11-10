@@ -10,15 +10,7 @@ After completing this lab, you will have a fully functional GPU-virtualized Kube
 
 The entire installation process is divided into 6 steps, each solving a specific problem:
 
-```mermaid
-%% title: HAMi Installation Overview
-flowchart LR
-    Step1["Step 1<br/>Create GCP VM"] --> Step2["Step 2<br/>Install Helm"]
-    Step2 --> Step3["Step 3<br/>Install Kubernetes"]
-    Step3 --> Step4["Step 4<br/>Install Prometheus"]
-    Step4 --> Step5["Step 5<br/>Install GPU Operator"]
-    Step5 --> Step6["Step 6<br/>Install HAMi"]
-```
+![HAMi Installation Overview](../images/online-install-steps.svg)
 
 | Step | Purpose | What Problem It Solves |
 | ------ | ------ | ------------- |
@@ -176,13 +168,7 @@ systemctl enable containerd
 
 The relationship between these three tools:
 
-```mermaid
-%% title: kubeadm, kubelet, kubectl Relationship
-flowchart LR
-    kubeadm["kubeadm<br/>Cluster initialization tool"] --> cluster["Kubernetes Cluster"]
-    kubelet["kubelet<br/>Node agent<br/>Runs on each node"] --> pods["Manages Pod lifecycle"]
-    kubectl["kubectl<br/>Command-line client"] --> api["Interacts with API Server"]
-```
+![kubeadm, kubelet, kubectl Relationship](../images/kubeadm-trio.svg)
 
 - **kubeadm**: A one-time tool used to initialize the cluster
 - **kubelet**: A daemon process responsible for creating and destroying Pods on the local node

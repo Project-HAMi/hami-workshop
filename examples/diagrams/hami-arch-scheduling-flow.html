@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HAMi GPU Scheduling Flow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif; background: #f5f8fb;
+           min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 672" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="hasf-title hasf-desc" id="hasf-root">
+        <title id="hasf-title">HAMi GPU scheduling flow</title>
+        <desc id="hasf-desc">A Pod requesting 2GB of VRAM goes through kube-scheduler, which calls the HAMi extender, binds to a node, and the HAMi device plugin slices VRAM and mounts the device for the container.</desc>
+        <defs>
+          <marker id="hasf-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="hasf-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="hasf-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Zones -->
+        <rect x="100" y="40" width="760" height="110" rx="8"
+              fill="rgba(21,50,77,0.02)" stroke="rgba(21,50,77,0.10)" stroke-width="0.8"/>
+        <rect x="424" y="34" width="112" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="480" y="43" fill="rgba(21,50,77,0.40)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.14em">USER WORKLOAD</text>
+
+        <rect x="100" y="186" width="760" height="130" rx="8"
+              fill="rgba(21,50,77,0.02)" stroke="rgba(21,50,77,0.10)" stroke-width="0.8"/>
+        <rect x="396" y="180" width="168" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="480" y="189" fill="rgba(21,50,77,0.40)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.14em">KUBERNETES SCHEDULING</text>
+
+        <rect x="100" y="352" width="760" height="280" rx="8"
+              fill="rgba(21,50,77,0.02)" stroke="rgba(21,50,77,0.10)" stroke-width="0.8"/>
+        <rect x="428" y="346" width="104" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="480" y="355" fill="rgba(21,50,77,0.40)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.14em">ON THE NODE</text>
+
+        <!-- Arrows first -->
+        <path d="M 480,122 V 164 Q 480,172 472,172 H 358 Q 350,172 350,180 V 214"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hasf-arrow)"/>
+        <line x1="450" y1="240" x2="530" y2="240" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hasf-arrow)"/>
+        <line x1="530" y1="258" x2="450" y2="258" stroke="#5a748f" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#hasf-arrow)"/>
+        <line x1="350" y1="278" x2="350" y2="380" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hasf-arrow)"/>
+        <line x1="350" y1="436" x2="350" y2="460" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hasf-arrow)"/>
+        <line x1="350" y1="524" x2="350" y2="548" stroke="#0a8f3d" stroke-width="1.4" marker-end="url(#hasf-arrow-accent)"/>
+
+        <!-- Arrow labels -->
+        <rect x="452" y="222" width="76" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="490" y="231" fill="rgba(21,50,77,0.55)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.06em">EXTENDER</text>
+        <rect x="452" y="264" width="76" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="490" y="273" fill="rgba(21,50,77,0.55)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.06em">DECISION</text>
+        <rect x="358" y="318" width="44" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="380" y="327" fill="rgba(21,50,77,0.55)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.06em">BIND</text>
+        <rect x="358" y="440" width="56" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="386" y="449" fill="rgba(21,50,77,0.55)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.06em">CREATE</text>
+        <rect x="358" y="528" width="96" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="406" y="537" fill="rgba(21,50,77,0.55)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.06em">SLICE + MOUNT</text>
+
+        <!-- Pod -->
+        <g>
+          <rect x="380" y="66" width="200" height="56" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="388" y="72" width="36" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="406" y="81" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">WORKLOAD</text>
+          <text x="480" y="102" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Pod</text>
+          <text x="480" y="112" fill="#5a748f" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">request: 2GB VRAM</text>
+        </g>
+
+        <!-- kube-scheduler + hami-scheduler -->
+        <g>
+          <rect x="250" y="214" width="200" height="64" rx="6" fill="#ffffff" stroke="#7c8cff" stroke-width="1.2"/>
+          <text x="350" y="238" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">kube-scheduler</text>
+          <text x="350" y="254" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">filter + score</text>
+        </g>
+        <g>
+          <rect x="530" y="214" width="200" height="64" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="538" y="220" width="36" height="12" rx="2" fill="rgba(16,208,93,0.12)" stroke="rgba(16,208,93,0.60)" stroke-width="0.8"/>
+          <text x="556" y="229" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="630" y="250" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">hami-scheduler</text>
+          <text x="630" y="266" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">GPU scheduling</text>
+        </g>
+
+        <!-- Node column -->
+        <g>
+          <rect x="250" y="380" width="200" height="56" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="350" y="404" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">kubelet</text>
+          <text x="350" y="420" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">node agent</text>
+        </g>
+        <g>
+          <rect x="250" y="460" width="200" height="64" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="258" y="466" width="36" height="12" rx="2" fill="rgba(16,208,93,0.12)" stroke="rgba(16,208,93,0.60)" stroke-width="0.8"/>
+          <text x="276" y="475" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="350" y="496" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">hami-device-plugin</text>
+          <text x="350" y="512" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">VRAM partitioning</text>
+        </g>
+        <g>
+          <rect x="250" y="548" width="200" height="56" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="350" y="572" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">GPU Hardware</text>
+          <text x="350" y="588" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">physical device</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

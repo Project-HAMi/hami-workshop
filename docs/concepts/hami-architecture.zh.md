@@ -6,34 +6,7 @@
 
 安装完成后的集群由 5 层组成，每一层为上层提供服务：
 
-```mermaid
-%% title: HAMi 集群 5 层架构
-flowchart TB
-    subgraph Infra["Kubernetes 基础设施层"]
-        K8s["Kubernetes Control Plane"]
-        Cilium["Cilium 网络"]
-    end
-    subgraph GPUStack["NVIDIA GPU Runtime Stack"]
-        Driver["NVIDIA Driver"]
-        Toolkit["Container Toolkit"]
-        DCGM["DCGM Exporter"]
-        GFD["GPU Feature Discovery"]
-    end
-    subgraph Scheduler["GPU 调度层"]
-        DevicePlugin["HAMi Device Plugin"]
-        SchedulerExt["HAMi Scheduler"]
-    end
-    subgraph Observe["监控层"]
-        Prometheus["Prometheus"]
-    end
-    subgraph UI["可视化层"]
-        WebUI["HAMi WebUI"]
-    end
-    GPUStack --> Scheduler
-    Scheduler --> K8s
-    GPUStack --> Observe
-    Observe --> UI
-```
+![HAMi 集群 5 层架构](../images/hami-arch-cluster-layers-zh.svg)
 
 从下往上看：
 
@@ -76,15 +49,7 @@ kube-system    cilium                      cilium-x.x.x                       de
 
 它们之间的安装顺序是有依赖关系的：
 
-```mermaid
-%% title: Helm Release 安装依赖
-flowchart LR
-    Cilium["cilium<br/>CNI 网络"] --> GPUOp["gpu-operator<br/>GPU Runtime"]
-    GPUOp --> HAMi["hami<br/>GPU 调度"]
-    HAMi --> WebUI["my-hami-webui<br/>可视化"]
-    Prometheus["prometheus<br/>监控"] --> GPUOp
-    Prometheus --> WebUI
-```
+![Helm Release 安装依赖](../images/hami-arch-helm-deps-zh.svg)
 
 Prometheus 必须先于 GPU Operator 和 HAMi WebUI 安装，因为它们都依赖 Prometheus 来采集和提供指标数据。
 
@@ -156,31 +121,7 @@ Prometheus 必须先于 GPU Operator 和 HAMi WebUI 安装，因为它们都依�
 | **hami-scheduler** | Deployment，HAMi 调度器。它注册为 Kubernetes Scheduler Extender，参与 Pod 的 GPU 调度决策。支持 binpack/spread 策略、优先级调度、GPU 资源配额等高级功能 |
 | **hami-device-plugin** | DaemonSet（每个 GPU 节点一个），替代 NVIDIA 原生 device-plugin。它向 kubelet 注册自定义 GPU 资源（显存、算力），并在 Pod 创建时执行显存切分和设备挂载 |
 
-```mermaid
-%% title: HAMi GPU 调度流程
-flowchart TB
-    subgraph User["用户提交工作负载"]
-        Pod["Pod<br/>request: 2GB 显存"]
-    end
-
-    subgraph K8sScheduler["Kubernetes 调度流程"]
-        KS["kube-scheduler<br/>过滤 + 打分"]
-        HS["hami-scheduler<br/>GPU 调度增强"]
-    end
-
-    subgraph Node["节点上"]
-        Kubelet["kubelet"]
-        HDP["hami-device-plugin"]
-        GPU["GPU 硬件"]
-    end
-
-    Pod --> KS
-    KS -->|"调用 Extender"| HS
-    HS -->|"返回调度决策"| KS
-    KS -->|"绑定到节点"| Kubelet
-    Kubelet -->|"创建容器"| HDP
-    HDP -->|"切分显存<br/>挂载设备"| GPU
-```
+![HAMi GPU 调度流程](../images/hami-arch-scheduling-flow-zh.svg)
 
 **如果没有它们**：
 
@@ -217,94 +158,7 @@ flowchart TB
 
 以下是安装完成后所有组件之间的完整连接关系：
 
-```mermaid
-%% title: 完整系统架构
-flowchart TB
-    subgraph Hardware["硬件层"]
-        GPU["Tesla T4 GPU"]
-        CPU["CPU / 内存 / 磁盘"]
-        NIC["网卡"]
-    end
-
-    subgraph K8sCore["Kubernetes 控制平面"]
-        API["kube-apiserver"]
-        KS["kube-scheduler"]
-        CM["kube-controller-manager"]
-        ETCD["etcd"]
-        DNS["CoreDNS"]
-        Proxy["kube-proxy"]
-    end
-
-    subgraph Network["网络层"]
-        Cilium["cilium DaemonSet"]
-        CiliumOp["cilium-operator"]
-    end
-
-    subgraph GPURuntime["NVIDIA GPU Runtime Stack"]
-        Driver["nvidia-driver-daemonset"]
-        Toolkit["nvidia-container-toolkit"]
-        DCGM["dcgm-exporter"]
-        GFD["gpu-feature-discovery"]
-        Validator["validator"]
-    end
-
-    subgraph HAMiLayer["HAMi GPU 调度层"]
-        HAMiDP["hami-device-plugin"]
-        HAMiSched["hami-scheduler"]
-    end
-
-    subgraph Monitor["监控层"]
-        Prom["Prometheus Server"]
-        PromOp["Prometheus Operator"]
-        KSM["kube-state-metrics"]
-        NodeExp["node-exporter"]
-        Alert["Alertmanager"]
-    end
-
-    subgraph Visualization["可视化层"]
-        WebUI["HAMi WebUI"]
-    end
-
-    subgraph Workloads["AI 工作负载"]
-        Train["训练任务"]
-        Infer["推理服务"]
-    end
-
-    %% 硬件到 Runtime
-    GPU -->|"内核驱动"| Driver
-    CPU --> NodeExp
-    NIC --> Cilium
-
-    %% Runtime 内部
-    Driver --> Toolkit
-    Driver --> DCGM
-    Driver --> GFD
-    Driver --> Validator
-
-    %% Runtime 到 K8s
-    Toolkit -->|"注册 nvidia runtime"| API
-    GFD -->|"打 GPU Label"| API
-
-    %% HAMi 到 K8s
-    HAMiSched -->|"Scheduler Extender"| KS
-    HAMiDP -->|"注册 GPU 资源"| API
-    KS --> API
-    CM --> API
-
-    %% 监控采集
-    DCGM -->|"GPU 指标"| Prom
-    NodeExp -->|"节点指标"| Prom
-    KSM -->|"集群状态指标"| Prom
-    Prom --> Alert
-    PromOp --> Prom
-
-    %% 可视化
-    Prom -->|"查询指标"| WebUI
-
-    %% 工作负载
-    Workloads -->|"请求 GPU 资源"| API
-    Workloads -->|"通过 Toolkit 使用"| GPU
-```
+![完整系统架构](../images/hami-arch-system-zh.svg)
 
 ---
 
@@ -312,33 +166,7 @@ flowchart TB
 
 以一个典型场景，，**提交一个需要 2GB 显存的推理 Pod**，，为例，看看各层如何协作：
 
-```mermaid
-%% title: 推理 Pod 跨层协作
-sequenceDiagram
-    participant User as 用户
-    participant API as kube-apiserver
-    participant KS as kube-scheduler
-    participant HS as hami-scheduler
-    participant Kubelet as kubelet
-    participant HDP as hami-device-plugin
-    participant Driver as NVIDIA Driver
-    participant Prom as Prometheus
-
-    User->>API: 提交 Pod（request: 2GB 显存）
-    API->>KS: 触发调度
-    KS->>HS: 调用 Extender，查询 GPU 调度建议
-    HS->>HS: 查询节点 GPU 资源 annotation，计算最优节点
-    HS-->>KS: 返回推荐节点
-    KS->>API: 绑定 Pod 到目标节点
-    API->>Kubelet: 通知创建 Pod
-    Kubelet->>HDP: 请求分配 GPU 资源
-    HDP->>HDP: 执行显存切分（从物理 GPU 划出 2GB）
-    HDP->>Driver: 通过 NVIDIA 库完成设备挂载
-    HDP-->>Kubelet: 返回分配结果
-    Kubelet->>Kubelet: 启动容器
-    Note over Prom: DCGM Exporter 持续采集 GPU 指标
-    Prom->>Prom: 抓取 GPU 利用率、显存使用等指标
-```
+![推理 Pod 跨层协作](../images/hami-arch-inference-seq-zh.svg)
 
 整个流程中，每一层各司其职：Kubernetes 提供调度框架和 Pod 生命周期管理，GPU Runtime Stack 提供硬件访问能力，HAMi 在中间做出 GPU 级别的调度决策和资源切分，Prometheus 在后台持续采集指标。
 

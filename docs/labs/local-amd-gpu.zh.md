@@ -16,16 +16,7 @@
 
 ## 安装全景图
 
-```mermaid
-%% title: 本地 AMD GPU 实验全景图
-flowchart LR
-    Step1["步骤1<br/>检查主机"] --> Step2["步骤2<br/>创建 kind 集群"]
-    Step2 --> Step3["步骤3<br/>安装 HAMi"]
-    Step3 --> Step4["步骤4<br/>安装 AMD device plugin"]
-    Step4 --> Step5["步骤5<br/>运行整卡 Pod"]
-    Step5 --> Step6["步骤6<br/>两个 LLM 共享 GPU"]
-    Step6 --> Step7["步骤7<br/>检查切分效果"]
-```
+![本地 AMD GPU 实验全景图](../images/amd-lab-steps-zh.svg)
 
 | 步骤 | 目的 | 解决什么问题 |
 | ------ | ------ | ------------- |
@@ -37,16 +28,7 @@ flowchart LR
 | 两个 LLM 共享 GPU | 真实负载 | 两个 Pod 同时在一块 GPU 上运行模型 |
 | 检查切分效果 | 验证隔离 | 计算单元不重叠，显存有上限 |
 
-```mermaid
-%% title: AMD 节点上的职责分工
-flowchart TB
-    Pod["Pod 申请<br/>amd.com/gpu、gpucores、gpumem"] --> Sched["HAMi scheduler<br/>选择节点和 GPU 份额"]
-    Sched --> Kubelet["kubelet"]
-    Kubelet --> Plugin["AMD device plugin<br/>设置 HSA_CU_MASK 和显存上限"]
-    Plugin --> Ctr["容器"]
-    Ctr --> Hook["libamvgpu.so（LD_AUDIT）<br/>强制显存上限"]
-    Ctr --> ROCm["ROCm 运行时<br/>应用 CU 掩码"]
-```
+![AMD 节点上的职责分工](../images/amd-lab-roles-zh.svg)
 
 ## 前提条件
 

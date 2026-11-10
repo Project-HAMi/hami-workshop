@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>推理 Pod 跨层协作</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif; background: #f5f8fb;
+           min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .frame { max-width: 1200px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 840px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 1080 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="seq-title seq-desc" id="seq-root">
+        <title id="seq-title">推理 Pod，跨层流程</title>
+        <desc id="seq-desc">用户提交申请 2GB 显存的 Pod，kube-scheduler 调用 hami-scheduler 扩展器完成调度，kubelet 让 hami-device-plugin 切分显存并挂载设备，容器随后启动。</desc>
+        <defs>
+          <marker id="seq-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="seq-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="seq-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+          <marker id="seq-arrow-open" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polyline points="0 0, 8 3, 0 6" fill="none" stroke="#5a748f" stroke-width="1.2"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Annotation callout: the submitter -->
+        <text x="64" y="104" fill="rgba(21,50,77,0.75)" font-size="13" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" font-style="italic">用户提交 Pod，申请 2GB 显存</text>
+
+        <!-- Lifelines -->
+        <line x1="180" y1="88" x2="180" y2="592" stroke="rgba(21,50,77,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="360" y1="88" x2="360" y2="592" stroke="rgba(21,50,77,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="540" y1="88" x2="540" y2="592" stroke="rgba(21,50,77,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="720" y1="88" x2="720" y2="592" stroke="rgba(21,50,77,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="900" y1="88" x2="900" y2="592" stroke="rgba(21,50,77,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+
+        <!-- Activation bars -->
+        <rect x="176" y="120" width="8" height="192" fill="rgba(21,50,77,0.06)" stroke="#5a748f" stroke-width="0.8"/>
+        <rect x="356" y="164" width="8" height="144" fill="rgba(21,50,77,0.06)" stroke="#5a748f" stroke-width="0.8"/>
+        <rect x="536" y="164" width="8" height="96" fill="rgba(21,50,77,0.06)" stroke="#5a748f" stroke-width="0.8"/>
+        <rect x="716" y="340" width="8" height="212" fill="rgba(21,50,77,0.06)" stroke="#5a748f" stroke-width="0.8"/>
+        <rect x="896" y="384" width="8" height="96" fill="rgba(21,50,77,0.06)" stroke="#5a748f" stroke-width="0.8"/>
+
+        <!-- Messages -->
+        <line x1="184" y1="132" x2="352" y2="132" stroke="#5a748f" stroke-width="1.2" marker-end="url(#seq-arrow)"/>
+        <rect x="216" y="110" width="104" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="268" y="119" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">触发调度</text>
+
+        <line x1="368" y1="176" x2="532" y2="176" stroke="#7c8cff" stroke-width="1.2" marker-end="url(#seq-arrow-link)"/>
+        <rect x="404" y="154" width="92" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="450" y="163" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">调用扩展器</text>
+
+        <!-- HS self message -->
+        <path d="M 548,208 H 588 Q 596,208 596,216 V 232 Q 596,240 588,240 H 548"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#seq-arrow)"/>
+        <text x="604" y="228" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace">计算最优节点</text>
+
+        <!-- Return: recommended node (headline) -->
+        <line x1="532" y1="264" x2="368" y2="264" stroke="#0a8f3d" stroke-width="1.4" stroke-dasharray="5,4" marker-end="url(#seq-arrow-accent)"/>
+        <rect x="400" y="242" width="100" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="450" y="251" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">返回推荐节点</text>
+
+        <line x1="352" y1="308" x2="188" y2="308" stroke="#5a748f" stroke-width="1.2" marker-end="url(#seq-arrow)"/>
+        <rect x="220" y="286" width="100" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="270" y="295" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">绑定到节点</text>
+
+        <!-- Async notify -->
+        <line x1="188" y1="352" x2="712" y2="352" stroke="#5a748f" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#seq-arrow-open)"/>
+        <rect x="396" y="330" width="108" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="450" y="339" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">异步创建 Pod</text>
+
+        <line x1="728" y1="396" x2="892" y2="396" stroke="#5a748f" stroke-width="1.2" marker-end="url(#seq-arrow)"/>
+        <rect x="748" y="374" width="124" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="810" y="383" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">申请 GPU 切片</text>
+
+        <!-- HDP self message -->
+        <path d="M 908,428 H 948 Q 956,428 956,436 V 452 Q 956,460 948,460 H 908"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#seq-arrow)"/>
+        <text x="964" y="448" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace">切分 + 挂载</text>
+
+        <line x1="892" y1="480" x2="728" y2="480" stroke="#5a748f" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#seq-arrow)"/>
+        <rect x="762" y="458" width="96" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="810" y="467" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">分配完成</text>
+
+        <!-- Kubelet self message -->
+        <path d="M 728,512 H 768 Q 776,512 776,520 V 536 Q 776,544 768,544 H 728"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#seq-arrow)"/>
+        <text x="784" y="532" fill="rgba(21,50,77,0.55)" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace">启动容器</text>
+
+        <!-- Actors -->
+        <g>
+          <rect x="105" y="40" width="150" height="48" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="180" y="60" fill="#15324d" font-size="11.5" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">kube-apiserver</text>
+          <text x="180" y="76" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">集群状态</text>
+        </g>
+        <g>
+          <rect x="285" y="40" width="150" height="48" rx="6" fill="#ffffff" stroke="#7c8cff" stroke-width="1.2"/>
+          <text x="360" y="60" fill="#15324d" font-size="11.5" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">kube-scheduler</text>
+          <text x="360" y="76" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">过滤 + 打分</text>
+        </g>
+        <g>
+          <rect x="465" y="40" width="150" height="48" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="473" y="46" width="36" height="12" rx="2" fill="rgba(16,208,93,0.12)" stroke="rgba(16,208,93,0.60)" stroke-width="0.8"/>
+          <text x="491" y="55" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="540" y="74" fill="#15324d" font-size="11.5" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">hami-scheduler</text>
+        </g>
+        <g>
+          <rect x="645" y="40" width="150" height="48" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="720" y="60" fill="#15324d" font-size="11.5" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">kubelet</text>
+          <text x="720" y="76" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">节点代理</text>
+        </g>
+        <g>
+          <rect x="825" y="40" width="150" height="48" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="833" y="46" width="36" height="12" rx="2" fill="rgba(16,208,93,0.12)" stroke="rgba(16,208,93,0.60)" stroke-width="0.8"/>
+          <text x="851" y="55" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="900" y="74" fill="#15324d" font-size="11.5" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">hami-device-plugin</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

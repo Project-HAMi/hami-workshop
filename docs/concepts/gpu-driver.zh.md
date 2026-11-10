@@ -26,20 +26,7 @@ ecc                   45056  0
 
 NVIDIA 驱动由多个内核模块组成，它们之间存在依赖关系：
 
-```mermaid
-%% title: NVIDIA 内核模块层级
-flowchart TB
-    subgraph LinuxKernel["Linux Kernel"]
-        NVIDIA["nvidia - 核心 GPU 驱动"]
-        UVM["nvidia_uvm - 统一虚拟内存"]
-        MODESET["nvidia_modeset - 显示模式管理"]
-        ECC["ecc - ECC 错误处理"]
-        MODESET --> NVIDIA
-        UVM --> NVIDIA
-        ECC --> NVIDIA
-    end
-    NVIDIA --> GPU["NVIDIA GPU"]
-```
+![NVIDIA 内核模块层级](../images/gpu-driver-kernel-modules-zh.svg)
 
 ### 各模块的作用
 
@@ -54,23 +41,7 @@ flowchart TB
 
 GPU 驱动遵循标准的 Linux 分层架构：用户态（User Space）通过库调用内核态（Kernel Space）的模块，最终操作硬件。
 
-```mermaid
-%% title: Linux GPU 驱动架构
-flowchart TB
-    subgraph User["用户态"]
-        CLI["CLI 工具 (nvidia-smi)"]
-        Lib["用户态库 (libnvidia-ml.so)"]
-    end
-    subgraph Kernel["内核态"]
-        Module["Kernel Module (nvidia.ko)"]
-    end
-    subgraph Hardware["硬件"]
-        HW["GPU Device"]
-    end
-    CLI --> Lib
-    Lib --> Module
-    Module --> HW
-```
+![Linux GPU 驱动架构](../images/gpu-driver-architecture-zh.svg)
 
 调用链路：
 

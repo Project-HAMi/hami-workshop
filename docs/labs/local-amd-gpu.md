@@ -16,16 +16,7 @@ This lab was run end to end on an AMD Ryzen 7 7840U with Radeon 780M graphics (`
 
 ## Installation Overview
 
-```mermaid
-%% title: Local AMD GPU Lab Overview
-flowchart LR
-    Step1["Step 1<br/>Check the host"] --> Step2["Step 2<br/>Create kind cluster"]
-    Step2 --> Step3["Step 3<br/>Install HAMi"]
-    Step3 --> Step4["Step 4<br/>Install AMD device plugin"]
-    Step4 --> Step5["Step 5<br/>Run a whole-GPU Pod"]
-    Step5 --> Step6["Step 6<br/>Share the GPU with two LLMs"]
-    Step6 --> Step7["Step 7<br/>Check the slices"]
-```
+![Local AMD GPU Lab Overview](../images/amd-lab-steps.svg)
 
 | Step | Purpose | What It Solves |
 | ------ | ------ | ------------- |
@@ -37,16 +28,7 @@ flowchart LR
 | Share the GPU with two LLMs | Real workload | Two Pods run a model on one GPU at the same time |
 | Check the slices | Verify isolation | Compute units don't overlap and memory is capped |
 
-```mermaid
-%% title: Who Does What on an AMD Node
-flowchart TB
-    Pod["Pod requests<br/>amd.com/gpu, gpucores, gpumem"] --> Sched["HAMi scheduler<br/>picks node and GPU share"]
-    Sched --> Kubelet["kubelet"]
-    Kubelet --> Plugin["AMD device plugin<br/>sets HSA_CU_MASK and memory limit"]
-    Plugin --> Ctr["Container"]
-    Ctr --> Hook["libamvgpu.so (LD_AUDIT)<br/>enforces the VRAM limit"]
-    Ctr --> ROCm["ROCm runtime<br/>applies the CU mask"]
-```
+![Who Does What on an AMD Node](../images/amd-lab-roles.svg)
 
 ## Prerequisites
 

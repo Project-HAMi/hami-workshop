@@ -16,17 +16,10 @@
   background-color: rgba(14, 188, 83, 1) !important;
 }
 
-/* Mermaid diagrams: override material's figure width: fit-content */
-.md-typeset .mermaid-figure {
-  width: 100% !important;
-  margin: 1.5em 0 !important;
-  text-align: left;
-}
-
-.mermaid-figure svg {
+/* Diagram SVGs: full content width, scrollable on small screens */
+.md-typeset img[src$=".svg"] {
   display: block;
-  width: 100% !important;
-  max-width: none !important;
+  width: 100%;
   height: auto;
 }
 
@@ -34,12 +27,4 @@
 .md-copyright {
   text-align: center;
   width: 100%;
-}
-
-.mermaid-caption {
-  text-align: center;
-  font-size: 0.85em;
-  color: var(--md-default-fg-color--light);
-  margin-top: 0.5em;
-  font-style: italic;
 }

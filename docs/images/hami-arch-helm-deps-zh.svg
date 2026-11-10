@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="helmd-title helmd-desc" id="hami-arch-helm-deps-zh-root">
+        <title id="helmd-title">Helm Release 安装顺序</title>
+        <desc id="helmd-desc">先装 cilium，再装 gpu-operator，然后是 HAMi 和 WebUI；Prometheus 同时服务于 GPU 运行时和可视化。</desc>
+        <defs>
+      <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
+      #hami-arch-helm-deps-zh-root { font-family: 'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif; }
+      #hami-arch-helm-deps-zh-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#hami-arch-helm-deps-zh-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="hami-arch-helm-deps-zh-helmd-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="hami-arch-helm-deps-zh-helmd-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="hami-arch-helm-deps-zh-helmd-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Arrows first -->
+        <path d="M 552,148 V 184 Q 552,192 544,192 H 387 Q 379,192 379,200 V 240"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hami-arch-helm-deps-zh-helmd-arrow)"/>
+        <path d="M 610,148 V 184 Q 610,192 618,192 H 775 Q 783,192 783,200 V 240"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hami-arch-helm-deps-zh-helmd-arrow)"/>
+        <line x1="262" y1="272" x2="294" y2="272" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hami-arch-helm-deps-zh-helmd-arrow)"/>
+        <line x1="464" y1="272" x2="496" y2="272" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hami-arch-helm-deps-zh-helmd-arrow)"/>
+        <line x1="666" y1="272" x2="698" y2="272" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hami-arch-helm-deps-zh-helmd-arrow)"/>
+
+        <!-- Prometheus -->
+        <g>
+          <rect x="496" y="84" width="170" height="64" rx="6" fill="#ffffff" stroke="#39c6f4" stroke-width="1.2"/>
+          <rect x="504" y="90" width="68" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="538" y="99" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">监控</text>
+          <text x="581" y="124" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">prometheus</text>
+          <text x="581" y="140" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">Helm 发行版</text>
+        </g>
+
+        <!-- Install chain -->
+        <g>
+          <rect x="92" y="240" width="170" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="177" y="268" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">cilium</text>
+          <text x="177" y="284" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">CNI 网络</text>
+        </g>
+        <g>
+          <rect x="294" y="240" width="170" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="379" y="268" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">gpu-operator</text>
+          <text x="379" y="284" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">GPU 运行时</text>
+        </g>
+        <g>
+          <rect x="496" y="240" width="170" height="64" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="504" y="246" width="36" height="12" rx="2" fill="#10d05d" stroke="#10d05d" stroke-width="0.8" fill-opacity="0.12" stroke-opacity="0.60"/>
+          <text x="522" y="255" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="581" y="280" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">hami</text>
+          <text x="581" y="296" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">GPU 调度</text>
+        </g>
+        <g>
+          <rect x="698" y="240" width="170" height="64" rx="6" fill="#ffffff" stroke="#39c6f4" stroke-width="1.2"/>
+          <text x="783" y="268" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">my-hami-webui</text>
+          <text x="783" y="284" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">可视化</text>
+        </g>
+      </svg>

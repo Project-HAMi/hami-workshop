@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kubernetes GPU 调度链</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif; background: #f5f8fb;
+           min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="k8sched-title k8sched-desc" id="k8sched-root">
+        <title id="k8sched-title">Kubernetes GPU 调度链</title>
+        <desc id="k8sched-desc">没有 HAMi 时：GPU 由厂商 device plugin 暴露，kubelet 上报给 Kubernetes API，默认调度器按整卡把 GPU 分给 Pod。</desc>
+        <defs>
+          <marker id="k8sched-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="k8sched-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="k8sched-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Arrows first -->
+        <line x1="258" y1="116" x2="294" y2="116" stroke="#5a748f" stroke-width="1.2" marker-end="url(#k8sched-arrow)"/>
+        <line x1="462" y1="116" x2="498" y2="116" stroke="#5a748f" stroke-width="1.2" marker-end="url(#k8sched-arrow)"/>
+        <line x1="666" y1="116" x2="702" y2="116" stroke="#5a748f" stroke-width="1.2" marker-end="url(#k8sched-arrow)"/>
+        <path d="M 786,148 V 192 Q 786,200 778,200 H 692 Q 684,200 684,208 V 252"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#k8sched-arrow)"/>
+        <line x1="600" y1="284" x2="564" y2="284" stroke="#5a748f" stroke-width="1.2" marker-end="url(#k8sched-arrow)"/>
+        <line x1="396" y1="284" x2="360" y2="284" stroke="#5a748f" stroke-width="1.2" marker-end="url(#k8sched-arrow)"/>
+
+        <!-- Row 1: node plane bottom-up -->
+        <g>
+          <rect x="90" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="174" y="112" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">GPU</text>
+          <text x="174" y="128" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">硬件</text>
+        </g>
+        <g>
+          <rect x="294" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="378" y="112" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Driver</text>
+          <text x="378" y="128" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">内核模块</text>
+        </g>
+        <g>
+          <rect x="498" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="506" y="90" width="40" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="526" y="99" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">K8S</text>
+          <text x="582" y="120" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Device Plugin</text>
+          <text x="582" y="136" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">暴露 GPU</text>
+        </g>
+        <g>
+          <rect x="702" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="786" y="112" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">kubelet</text>
+          <text x="786" y="128" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">节点代理</text>
+        </g>
+
+        <!-- Row 2: control plane -->
+        <g>
+          <rect x="600" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="684" y="280" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Kubernetes API</text>
+          <text x="684" y="296" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">集群状态</text>
+        </g>
+        <g>
+          <rect x="396" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#7c8cff" stroke-width="1.2"/>
+          <text x="480" y="280" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">K8s Scheduler</text>
+          <text x="480" y="296" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">整卡装箱</text>
+        </g>
+        <g>
+          <rect x="192" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="200" y="258" width="36" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="218" y="267" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">WORKLOAD</text>
+          <text x="276" y="288" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Pod</text>
+          <text x="276" y="304" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">获得整卡</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

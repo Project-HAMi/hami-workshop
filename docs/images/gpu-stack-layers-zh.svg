@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 792" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="gsl-title gsl-desc" id="gpu-stack-layers-zh-root">
+        <title id="gsl-title">GPU 软件栈，五层</title>
+        <desc id="gsl-desc">自底向上：硬件、内核驱动模块、用户态库与工具、带 NVIDIA 工具包的容器运行时、以及 HAMi 所在的 Kubernetes 调度层。</desc>
+        <defs>
+      <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
+      #gpu-stack-layers-zh-root { font-family: 'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif; }
+      #gpu-stack-layers-zh-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#gpu-stack-layers-zh-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="gpu-stack-layers-zh-gsl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="gpu-stack-layers-zh-gsl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="gpu-stack-layers-zh-gsl-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- L5 band -->
+        <rect x="60" y="36" width="840" height="116" rx="8" fill="#15324d" stroke="#15324d" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.10"/>
+        <text x="76" y="58" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">第 5 层 · KUBERNETES 调度</text>
+        <text x="884" y="58" fill="#15324d" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="end" fill-opacity="0.40">放置决策</text>
+
+        <!-- L4 band -->
+        <rect x="60" y="172" width="840" height="116" rx="8" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.10"/>
+        <text x="76" y="194" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">第 4 层 · 容器运行时</text>
+        <text x="884" y="194" fill="#15324d" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="end" fill-opacity="0.40">沙箱 + GPU 注入</text>
+
+        <!-- L3 band -->
+        <rect x="60" y="316" width="840" height="144" rx="8" fill="#15324d" stroke="#15324d" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.10"/>
+        <text x="76" y="338" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">第 3 层 · 用户态库 / 工具</text>
+        <text x="884" y="338" fill="#15324d" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="end" fill-opacity="0.40">容器内</text>
+
+        <!-- L2 band -->
+        <rect x="60" y="488" width="840" height="116" rx="8" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.10"/>
+        <text x="76" y="510" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">第 2 层 · 内核驱动</text>
+        <text x="884" y="510" fill="#15324d" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="end" fill-opacity="0.40">内核态模块</text>
+
+        <!-- L1 band -->
+        <rect x="60" y="632" width="840" height="116" rx="8" fill="#15324d" stroke="#15324d" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.10"/>
+        <text x="76" y="654" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">第 1 层 · 硬件</text>
+        <text x="884" y="654" fill="#15324d" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="end" fill-opacity="0.40">物理层</text>
+
+        <!-- Arrows first (inter-layer, orthogonal) -->
+        <path d="M 720,128 V 156 Q 720,164 712,164 H 488 Q 480,164 480,172 V 212"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-layers-zh-gsl-arrow)"/>
+        <path d="M 446,264 V 292 Q 446,300 438,300 H 152 Q 144,300 144,308 V 356"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-layers-zh-gsl-arrow)"/>
+        <path d="M 513,264 V 304 Q 513,312 505,312 H 320 Q 312,312 312,320 V 356"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-layers-zh-gsl-arrow)"/>
+        <path d="M 144,408 V 460 Q 144,468 152,468 H 438 Q 446,468 446,476 V 528"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-layers-zh-gsl-arrow)"/>
+        <path d="M 312,408 V 472 Q 312,480 320,480 H 505 Q 513,480 513,488 V 528"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-layers-zh-gsl-arrow)"/>
+        <path d="M 480,580 V 604 Q 480,612 472,612 H 248 Q 240,612 240,620 V 672"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-layers-zh-gsl-arrow)"/>
+
+        <!-- L5 chips -->
+        <g>
+          <rect x="140" y="76" width="200" height="52" rx="6" fill="#ffffff" stroke="#7c8cff" stroke-width="1.2"/>
+          <text x="240" y="98" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">K8s Scheduler</text>
+          <text x="240" y="114" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">默认放置</text>
+        </g>
+        <g>
+          <rect x="380" y="76" width="200" height="52" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="388" y="82" width="36" height="12" rx="2" fill="#10d05d" stroke="#10d05d" stroke-width="0.8" fill-opacity="0.12" stroke-opacity="0.60"/>
+          <text x="406" y="91" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="480" y="110" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">HAMi Scheduler</text>
+          <text x="480" y="122" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">GPU 共享扩展器</text>
+        </g>
+        <g>
+          <rect x="620" y="76" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="720" y="98" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Pod</text>
+          <text x="720" y="114" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">负载</text>
+        </g>
+
+        <!-- L4 chips -->
+        <g>
+          <rect x="140" y="212" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="240" y="234" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">containerd</text>
+          <text x="240" y="250" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">CRI 运行时</text>
+        </g>
+        <g>
+          <rect x="380" y="212" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="234" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Container</text>
+          <text x="480" y="250" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">Pod 沙箱</text>
+        </g>
+        <g>
+          <rect x="620" y="212" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="720" y="234" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Container Toolkit</text>
+          <text x="720" y="250" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">nvidia-container-toolkit</text>
+        </g>
+
+        <!-- L3 chips -->
+        <g>
+          <rect x="68" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="144" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">CUDA Runtime</text>
+          <text x="144" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">运行时 / 工具包</text>
+        </g>
+        <g>
+          <rect x="236" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="312" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">NVML</text>
+          <text x="312" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">libnvidia-ml.so</text>
+        </g>
+        <g>
+          <rect x="404" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">nvidia-smi</text>
+          <text x="480" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">CLI</text>
+        </g>
+        <g>
+          <rect x="572" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#39c6f4" stroke-width="1.2"/>
+          <text x="648" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">DCGM</text>
+          <text x="648" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">诊断</text>
+        </g>
+        <g>
+          <rect x="740" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="816" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">MIG</text>
+          <text x="816" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">硬件分区</text>
+        </g>
+
+        <!-- L2 chips -->
+        <g>
+          <rect x="140" y="528" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="240" y="550" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">nvidia-uvm.ko</text>
+          <text x="240" y="566" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">统一内存</text>
+        </g>
+        <g>
+          <rect x="380" y="528" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="550" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">nvidia.ko</text>
+          <text x="480" y="566" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">核心模块</text>
+        </g>
+        <g>
+          <rect x="620" y="528" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="720" y="550" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">nvidia-modeset.ko</text>
+          <text x="720" y="566" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">显示</text>
+        </g>
+
+        <!-- L1 chips -->
+        <g>
+          <rect x="140" y="672" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="240" y="694" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">NVIDIA GPU</text>
+          <text x="240" y="710" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">计算设备</text>
+        </g>
+        <g>
+          <rect x="380" y="672" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="694" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">PCIe Bus</text>
+          <text x="480" y="710" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">主机互连</text>
+        </g>
+        <g>
+          <rect x="620" y="672" width="200" height="52" rx="6" fill="#ffffff" stroke="#b8c6d6" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="720" y="694" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">NVLink</text>
+          <text x="720" y="710" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">可选</text>
+        </g>
+      </svg>

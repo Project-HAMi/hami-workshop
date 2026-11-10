@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="nsmi-title nsmi-desc" id="gpu-stack-nvidia-smi-chain-root">
+        <title id="nsmi-title">nvidia-smi call chain</title>
+        <desc id="nsmi-desc">nvidia-smi queries through the NVML interface and libnvidia-ml.so into the nvidia.ko kernel module, which reads the GPU.</desc>
+        <defs>
+      <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
+      #gpu-stack-nvidia-smi-chain-root { font-family: 'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif; }
+      #gpu-stack-nvidia-smi-chain-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#gpu-stack-nvidia-smi-chain-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="gpu-stack-nvidia-smi-chain-nsmi-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="gpu-stack-nvidia-smi-chain-nsmi-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="gpu-stack-nvidia-smi-chain-nsmi-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Arrows first -->
+        <line x1="206" y1="125" x2="262" y2="125" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-nvidia-smi-chain-nsmi-arrow)"/>
+        <line x1="418" y1="125" x2="474" y2="125" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-nvidia-smi-chain-nsmi-arrow)"/>
+        <line x1="630" y1="125" x2="686" y2="125" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-nvidia-smi-chain-nsmi-arrow)"/>
+        <line x1="806" y1="125" x2="862" y2="125" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-nvidia-smi-chain-nsmi-arrow)"/>
+
+        <!-- Nodes -->
+        <g>
+          <rect x="56" y="89" width="150" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="64" y="95" width="36" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="82" y="104" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">CLI</text>
+          <text x="131" y="126" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">nvidia-smi</text>
+          <text x="131" y="144" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">management CLI</text>
+        </g>
+        <g>
+          <rect x="262" y="89" width="156" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="270" y="95" width="40" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="290" y="104" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">API</text>
+          <text x="340" y="126" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">NVML</text>
+          <text x="340" y="144" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">C interface</text>
+        </g>
+        <g>
+          <rect x="474" y="89" width="156" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="482" y="95" width="36" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="500" y="104" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">LIB</text>
+          <text x="552" y="126" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">libnvidia-ml.so</text>
+          <text x="552" y="144" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">user space</text>
+        </g>
+        <g>
+          <rect x="686" y="89" width="120" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="694" y="95" width="44" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="716" y="104" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">KMOD</text>
+          <text x="746" y="126" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">nvidia.ko</text>
+          <text x="746" y="144" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">kernel</text>
+        </g>
+        <g>
+          <rect x="862" y="89" width="64" height="72" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <text x="894" y="122" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">GPU</text>
+          <text x="894" y="140" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">hw</text>
+        </g>
+      </svg>

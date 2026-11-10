@@ -10,15 +10,7 @@
 
 整个安装过程分 6 步，每一步都在解决一个具体问题：
 
-```mermaid
-%% title: HAMi 安装全景图
-flowchart LR
-    Step1["步骤1<br/>创建 GCP VM"] --> Step2["步骤2<br/>安装 Helm"]
-    Step2 --> Step3["步骤3<br/>安装 Kubernetes"]
-    Step3 --> Step4["步骤4<br/>安装 Prometheus"]
-    Step4 --> Step5["步骤5<br/>安装 GPU Operator"]
-    Step5 --> Step6["步骤6<br/>安装 HAMi"]
-```
+![HAMi 安装全景图](../images/online-install-steps-zh.svg)
 
 | 步骤 | 目的 | 解决什么问题 |
 | ------ | ------ | ------------- |
@@ -176,13 +168,7 @@ systemctl enable containerd
 
 这三个工具的关系：
 
-```mermaid
-%% title: kubeadm, kubelet, kubectl 关系
-flowchart LR
-    kubeadm["kubeadm<br/>集群初始化工具"] --> cluster["Kubernetes 集群"]
-    kubelet["kubelet<br/>节点代理<br/>每个节点上运行"] --> pods["管理 Pod 生命周期"]
-    kubectl["kubectl<br/>命令行客户端"] --> api["与 API Server 交互"]
-```
+![kubeadm, kubelet, kubectl 关系](../images/kubeadm-trio-zh.svg)
 
 - **kubeadm**：一次性工具，用来初始化集群
 - **kubelet**：常驻进程，负责本节点上 Pod 的创建和销毁

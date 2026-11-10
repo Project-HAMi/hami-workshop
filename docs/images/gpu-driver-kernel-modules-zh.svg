@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="gdkm-title gdkm-desc" id="gpu-driver-kernel-modules-zh-root">
+        <title id="gdkm-title">NVIDIA 内核模块层级</title>
+        <desc id="gdkm-desc">Linux 内核中，nvidia_uvm、nvidia_modeset、ecc 三个辅助模块都挂载到核心 nvidia 驱动，只有核心驱动直接与 GPU 通信。</desc>
+        <defs>
+      <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
+      #gpu-driver-kernel-modules-zh-root { font-family: 'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif; }
+      #gpu-driver-kernel-modules-zh-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#gpu-driver-kernel-modules-zh-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="gpu-driver-kernel-modules-zh-gdkm-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="gpu-driver-kernel-modules-zh-gdkm-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="gpu-driver-kernel-modules-zh-gdkm-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Zone: Linux kernel (drawn first) -->
+        <rect x="64" y="32" width="832" height="252" rx="8"
+              fill="#15324d" stroke="#15324d" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.10"/>
+        <rect x="392" y="26" width="176" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="480" y="35" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.14em" fill-opacity="0.40">LINUX 内核</text>
+
+        <!-- Arrows first (behind boxes) -->
+        <line x1="480" y1="116" x2="480" y2="200" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-driver-kernel-modules-zh-gdkm-arrow)"/>
+        <path d="M 204,116 V 160 Q 204,168 212,168 H 406 Q 414,168 414,176 V 200"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-driver-kernel-modules-zh-gdkm-arrow)"/>
+        <path d="M 756,116 V 160 Q 756,168 748,168 H 554 Q 546,168 546,176 V 200"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-driver-kernel-modules-zh-gdkm-arrow)"/>
+        <line x1="480" y1="260" x2="480" y2="316" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-driver-kernel-modules-zh-gdkm-arrow)"/>
+
+        <!-- Helper modules -->
+        <g>
+          <rect x="96" y="60" width="216" height="56" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="204" y="84" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">nvidia_uvm</text>
+          <text x="204" y="100" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">统一虚拟内存</text>
+        </g>
+        <g>
+          <rect x="372" y="60" width="216" height="56" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="84" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">nvidia_modeset</text>
+          <text x="480" y="100" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">显示模式管理</text>
+        </g>
+        <g>
+          <rect x="648" y="60" width="216" height="56" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="756" y="84" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">ecc</text>
+          <text x="756" y="100" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">ECC 错误处理</text>
+        </g>
+
+        <!-- Core driver (focal) -->
+        <g>
+          <rect x="348" y="200" width="264" height="60" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="356" y="206" width="40" height="12" rx="2" fill="#10d05d" stroke="#10d05d" stroke-width="0.8" fill-opacity="0.12" stroke-opacity="0.60"/>
+          <text x="376" y="215" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">CORE</text>
+          <text x="480" y="236" fill="#15324d" font-size="13" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">nvidia</text>
+          <text x="480" y="252" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">核心 GPU 驱动</text>
+        </g>
+
+        <!-- GPU -->
+        <g>
+          <rect x="380" y="316" width="200" height="56" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="340" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">NVIDIA GPU</text>
+          <text x="480" y="356" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">硬件设备</text>
+        </g>
+      </svg>

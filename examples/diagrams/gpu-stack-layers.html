@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPU Software Stack 5-Layer Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif; background: #f5f8fb;
+           min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 792" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="gsl-title gsl-desc" id="gsl-root">
+        <title id="gsl-title">GPU software stack, five layers</title>
+        <desc id="gsl-desc">From the bottom up: hardware, kernel driver modules, user-space libraries and tools, container runtime with the NVIDIA toolkit, and Kubernetes scheduling where HAMi plugs in.</desc>
+        <defs>
+          <marker id="gsl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="gsl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="gsl-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- L5 band -->
+        <rect x="60" y="36" width="840" height="116" rx="8" fill="rgba(21,50,77,0.02)" stroke="rgba(21,50,77,0.10)" stroke-width="0.8"/>
+        <text x="76" y="58" fill="rgba(21,50,77,0.40)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em">L5 · KUBERNETES SCHEDULING</text>
+        <text x="884" y="58" fill="rgba(21,50,77,0.40)" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="end">placement</text>
+
+        <!-- L4 band -->
+        <rect x="60" y="172" width="840" height="116" rx="8" fill="transparent" stroke="rgba(21,50,77,0.10)" stroke-width="0.8"/>
+        <text x="76" y="194" fill="rgba(21,50,77,0.40)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em">L4 · CONTAINER RUNTIME</text>
+        <text x="884" y="194" fill="rgba(21,50,77,0.40)" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="end">sandbox + GPU injection</text>
+
+        <!-- L3 band -->
+        <rect x="60" y="316" width="840" height="144" rx="8" fill="rgba(21,50,77,0.02)" stroke="rgba(21,50,77,0.10)" stroke-width="0.8"/>
+        <text x="76" y="338" fill="rgba(21,50,77,0.40)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em">L3 · USER-SPACE LIBRARIES / TOOLS</text>
+        <text x="884" y="338" fill="rgba(21,50,77,0.40)" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="end">inside the container</text>
+
+        <!-- L2 band -->
+        <rect x="60" y="488" width="840" height="116" rx="8" fill="transparent" stroke="rgba(21,50,77,0.10)" stroke-width="0.8"/>
+        <text x="76" y="510" fill="rgba(21,50,77,0.40)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em">L2 · KERNEL DRIVER</text>
+        <text x="884" y="510" fill="rgba(21,50,77,0.40)" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="end">in-kernel modules</text>
+
+        <!-- L1 band -->
+        <rect x="60" y="632" width="840" height="116" rx="8" fill="rgba(21,50,77,0.02)" stroke="rgba(21,50,77,0.10)" stroke-width="0.8"/>
+        <text x="76" y="654" fill="rgba(21,50,77,0.40)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em">L1 · HARDWARE</text>
+        <text x="884" y="654" fill="rgba(21,50,77,0.40)" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="end">physical</text>
+
+        <!-- Arrows first (inter-layer, orthogonal) -->
+        <path d="M 720,128 V 156 Q 720,164 712,164 H 488 Q 480,164 480,172 V 212"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gsl-arrow)"/>
+        <path d="M 446,264 V 292 Q 446,300 438,300 H 152 Q 144,300 144,308 V 356"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gsl-arrow)"/>
+        <path d="M 513,264 V 304 Q 513,312 505,312 H 320 Q 312,312 312,320 V 356"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gsl-arrow)"/>
+        <path d="M 144,408 V 460 Q 144,468 152,468 H 438 Q 446,468 446,476 V 528"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gsl-arrow)"/>
+        <path d="M 312,408 V 472 Q 312,480 320,480 H 505 Q 513,480 513,488 V 528"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gsl-arrow)"/>
+        <path d="M 480,580 V 604 Q 480,612 472,612 H 248 Q 240,612 240,620 V 672"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gsl-arrow)"/>
+
+        <!-- L5 chips -->
+        <g>
+          <rect x="140" y="76" width="200" height="52" rx="6" fill="#ffffff" stroke="#7c8cff" stroke-width="1.2"/>
+          <text x="240" y="98" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">K8s Scheduler</text>
+          <text x="240" y="114" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">default placement</text>
+        </g>
+        <g>
+          <rect x="380" y="76" width="200" height="52" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="388" y="82" width="36" height="12" rx="2" fill="rgba(16,208,93,0.12)" stroke="rgba(16,208,93,0.60)" stroke-width="0.8"/>
+          <text x="406" y="91" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="480" y="110" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">HAMi Scheduler</text>
+          <text x="480" y="122" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">GPU sharing extender</text>
+        </g>
+        <g>
+          <rect x="620" y="76" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="720" y="98" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Pod</text>
+          <text x="720" y="114" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">workload</text>
+        </g>
+
+        <!-- L4 chips -->
+        <g>
+          <rect x="140" y="212" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="240" y="234" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">containerd</text>
+          <text x="240" y="250" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">CRI runtime</text>
+        </g>
+        <g>
+          <rect x="380" y="212" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="234" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Container</text>
+          <text x="480" y="250" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">Pod sandbox</text>
+        </g>
+        <g>
+          <rect x="620" y="212" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="720" y="234" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Container Toolkit</text>
+          <text x="720" y="250" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">nvidia-container-toolkit</text>
+        </g>
+
+        <!-- L3 chips -->
+        <g>
+          <rect x="68" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="144" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">CUDA Runtime</text>
+          <text x="144" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">runtime / toolkit</text>
+        </g>
+        <g>
+          <rect x="236" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="312" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">NVML</text>
+          <text x="312" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">libnvidia-ml.so</text>
+        </g>
+        <g>
+          <rect x="404" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">nvidia-smi</text>
+          <text x="480" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">CLI</text>
+        </g>
+        <g>
+          <rect x="572" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#39c6f4" stroke-width="1.2"/>
+          <text x="648" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">DCGM</text>
+          <text x="648" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">diagnostics</text>
+        </g>
+        <g>
+          <rect x="740" y="356" width="152" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="816" y="378" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">MIG</text>
+          <text x="816" y="394" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">partitioning</text>
+        </g>
+
+        <!-- L2 chips -->
+        <g>
+          <rect x="140" y="528" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="240" y="550" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">nvidia-uvm.ko</text>
+          <text x="240" y="566" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">unified memory</text>
+        </g>
+        <g>
+          <rect x="380" y="528" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="550" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">nvidia.ko</text>
+          <text x="480" y="566" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">core module</text>
+        </g>
+        <g>
+          <rect x="620" y="528" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="720" y="550" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">nvidia-modeset.ko</text>
+          <text x="720" y="566" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">display</text>
+        </g>
+
+        <!-- L1 chips -->
+        <g>
+          <rect x="140" y="672" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="240" y="694" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">NVIDIA GPU</text>
+          <text x="240" y="710" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">compute device</text>
+        </g>
+        <g>
+          <rect x="380" y="672" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="694" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">PCIe Bus</text>
+          <text x="480" y="710" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">host interconnect</text>
+        </g>
+        <g>
+          <rect x="620" y="672" width="200" height="52" rx="6" fill="#ffffff" stroke="#b8c6d6" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="720" y="694" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">NVLink</text>
+          <text x="720" y="710" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">optional fabric</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

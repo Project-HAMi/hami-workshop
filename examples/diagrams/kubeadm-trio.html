@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kubeadm, kubelet, kubectl Relationship</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif; background: #f5f8fb;
+           min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ktrio-title ktrio-desc" id="ktrio-root">
+        <title id="ktrio-title">kubeadm, kubelet and kubectl</title>
+        <desc id="ktrio-desc">Three separate tools: kubeadm initializes a cluster, kubelet on every node manages Pod lifecycle, kubectl talks to the API server.</desc>
+        <defs>
+          <marker id="ktrio-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="ktrio-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="ktrio-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Arrows first -->
+        <line x1="224" y1="160" x2="224" y2="224" stroke="#5a748f" stroke-width="1.2" marker-end="url(#ktrio-arrow)"/>
+        <line x1="480" y1="160" x2="480" y2="224" stroke="#5a748f" stroke-width="1.2" marker-end="url(#ktrio-arrow)"/>
+        <line x1="736" y1="160" x2="736" y2="224" stroke="#7c8cff" stroke-width="1.2" marker-end="url(#ktrio-arrow-link)"/>
+
+        <!-- Label for the API call -->
+        <rect x="752" y="180" width="76" height="12" rx="2" fill="#f5f8fb"/>
+        <text x="790" y="189" fill="rgba(21,50,77,0.55)" font-size="8" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace"
+              text-anchor="middle" letter-spacing="0.06em">HTTPS API</text>
+
+        <!-- Tools -->
+        <g>
+          <rect x="104" y="84" width="240" height="76" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="112" y="90" width="56" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="140" y="99" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">BOOTSTRAP</text>
+          <text x="224" y="124" fill="#15324d" font-size="13" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">kubeadm</text>
+          <text x="224" y="142" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">cluster init tool</text>
+        </g>
+        <g>
+          <rect x="360" y="84" width="240" height="76" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="368" y="90" width="56" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="396" y="99" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">NODE AGENT</text>
+          <text x="480" y="124" fill="#15324d" font-size="13" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">kubelet</text>
+          <text x="480" y="142" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">runs on every node</text>
+        </g>
+        <g>
+          <rect x="616" y="84" width="240" height="76" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="624" y="90" width="48" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="648" y="99" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">CLIENT</text>
+          <text x="736" y="124" fill="#15324d" font-size="13" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">kubectl</text>
+          <text x="736" y="142" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">command-line client</text>
+        </g>
+
+        <!-- Artifacts -->
+        <g>
+          <rect x="104" y="224" width="240" height="64" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <text x="224" y="252" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Kubernetes Cluster</text>
+          <text x="224" y="270" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">created by init</text>
+        </g>
+        <g>
+          <rect x="360" y="224" width="240" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="252" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Pod lifecycle</text>
+          <text x="480" y="270" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">managed per node</text>
+        </g>
+        <g>
+          <rect x="616" y="224" width="240" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="736" y="252" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">API Server</text>
+          <text x="736" y="270" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">cluster operations</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Fake GPU Installation Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif; background: #f5f8fb;
+           min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fgsteps-title fgsteps-desc" id="fgsteps-root">
+        <title id="fgsteps-title">Local fake GPU lab, seven steps</title>
+        <desc id="fgsteps-desc">Verify the local environment, install the fake-gpu-operator, HAMi and Prometheus, run simulated GPU workloads, install the HAMi WebUI, then observe HAMi and the fake GPUs.</desc>
+        <defs>
+          <marker id="fgsteps-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="fgsteps-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="fgsteps-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Arrows first -->
+        <line x1="258" y1="100" x2="294" y2="100" stroke="#5a748f" stroke-width="1.2" marker-end="url(#fgsteps-arrow)"/>
+        <line x1="462" y1="100" x2="498" y2="100" stroke="#5a748f" stroke-width="1.2" marker-end="url(#fgsteps-arrow)"/>
+        <line x1="666" y1="100" x2="702" y2="100" stroke="#5a748f" stroke-width="1.2" marker-end="url(#fgsteps-arrow)"/>
+        <path d="M 786,136 V 172 Q 786,180 778,180 H 168 Q 160,180 160,188 V 240 Q 160,248 168,248 H 192"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#fgsteps-arrow)"/>
+        <line x1="360" y1="252" x2="396" y2="252" stroke="#5a748f" stroke-width="1.2" marker-end="url(#fgsteps-arrow)"/>
+        <line x1="564" y1="252" x2="600" y2="252" stroke="#5a748f" stroke-width="1.2" marker-end="url(#fgsteps-arrow)"/>
+
+        <!-- Row 1 -->
+        <g>
+          <rect x="90" y="64" width="168" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="98" y="70" width="20" height="14" rx="2" fill="rgba(21,50,77,0.10)"/>
+          <text x="108" y="81" fill="#15324d" font-size="9" font-weight="600" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">1</text>
+          <text x="174" y="102" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Verify environment</text>
+          <text x="174" y="118" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">kind, docker, helm</text>
+        </g>
+        <g>
+          <rect x="294" y="64" width="168" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="302" y="70" width="20" height="14" rx="2" fill="rgba(21,50,77,0.10)"/>
+          <text x="312" y="81" fill="#15324d" font-size="9" font-weight="600" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">2</text>
+          <text x="378" y="102" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">fake-gpu-operator</text>
+          <text x="378" y="118" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">simulated GPUs</text>
+        </g>
+        <g>
+          <rect x="498" y="64" width="168" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="506" y="70" width="20" height="14" rx="2" fill="rgba(21,50,77,0.10)"/>
+          <text x="516" y="81" fill="#15324d" font-size="9" font-weight="600" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">3</text>
+          <text x="582" y="102" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Install HAMi</text>
+          <text x="582" y="118" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">helm chart</text>
+        </g>
+        <g>
+          <rect x="702" y="64" width="168" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="710" y="70" width="20" height="14" rx="2" fill="rgba(21,50,77,0.10)"/>
+          <text x="720" y="81" fill="#15324d" font-size="9" font-weight="600" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">4</text>
+          <text x="786" y="102" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Install Prometheus</text>
+          <text x="786" y="118" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">monitoring</text>
+        </g>
+
+        <!-- Row 2 -->
+        <g>
+          <rect x="192" y="216" width="168" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="200" y="222" width="20" height="14" rx="2" fill="rgba(21,50,77,0.10)"/>
+          <text x="210" y="233" fill="#15324d" font-size="9" font-weight="600" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">5</text>
+          <text x="276" y="254" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Run workloads</text>
+          <text x="276" y="270" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">simulated GPU Pods</text>
+        </g>
+        <g>
+          <rect x="396" y="216" width="168" height="72" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="404" y="222" width="20" height="14" rx="2" fill="rgba(21,50,77,0.10)"/>
+          <text x="414" y="233" fill="#15324d" font-size="9" font-weight="600" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">6</text>
+          <text x="480" y="254" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Install HAMi WebUI</text>
+          <text x="480" y="270" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">visualization</text>
+        </g>
+        <g>
+          <rect x="600" y="216" width="168" height="72" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="608" y="222" width="20" height="14" rx="2" fill="rgba(16,208,93,0.14)"/>
+          <text x="618" y="233" fill="#0a8f3d" font-size="9" font-weight="600" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">7</text>
+          <text x="684" y="254" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Observe</text>
+          <text x="684" y="270" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">HAMi + fake GPUs</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

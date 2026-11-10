@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete GPU Pod Dependency Chain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif; background: #f5f8fb;
+           min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="podchain-title podchain-desc" id="podchain-root">
+        <title id="podchain-title">Complete GPU Pod dependency chain</title>
+        <desc id="podchain-desc">A Pod is started by containerd with the NVIDIA Container Toolkit, runs CUDA on the user-space driver library, reaches nvidia.ko in the kernel, and lands on the GPU over PCIe.</desc>
+        <defs>
+          <marker id="podchain-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="podchain-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="podchain-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Arrows first -->
+        <line x1="258" y1="116" x2="294" y2="116" stroke="#5a748f" stroke-width="1.2" marker-end="url(#podchain-arrow)"/>
+        <line x1="462" y1="116" x2="498" y2="116" stroke="#5a748f" stroke-width="1.2" marker-end="url(#podchain-arrow)"/>
+        <line x1="666" y1="116" x2="702" y2="116" stroke="#5a748f" stroke-width="1.2" marker-end="url(#podchain-arrow)"/>
+        <line x1="786" y1="148" x2="786" y2="252" stroke="#5a748f" stroke-width="1.2" marker-end="url(#podchain-arrow)"/>
+        <line x1="702" y1="284" x2="666" y2="284" stroke="#5a748f" stroke-width="1.2" marker-end="url(#podchain-arrow)"/>
+        <line x1="498" y1="284" x2="462" y2="284" stroke="#5a748f" stroke-width="1.2" marker-end="url(#podchain-arrow)"/>
+        <line x1="294" y1="284" x2="258" y2="284" stroke="#5a748f" stroke-width="1.2" marker-end="url(#podchain-arrow)"/>
+
+        <!-- Row 1 -->
+        <g>
+          <rect x="90" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="98" y="90" width="36" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="116" y="99" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">WORKLOAD</text>
+          <text x="174" y="120" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Pod</text>
+          <text x="174" y="136" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">gpu workload</text>
+        </g>
+        <g>
+          <rect x="294" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="378" y="120" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">containerd</text>
+          <text x="378" y="136" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">container runtime</text>
+        </g>
+        <g>
+          <rect x="498" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="506" y="90" width="52" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="532" y="99" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">NVIDIA</text>
+          <text x="582" y="120" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Container Toolkit</text>
+          <text x="582" y="136" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">injects GPU into OCI</text>
+        </g>
+        <g>
+          <rect x="702" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="786" y="120" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">CUDA</text>
+          <text x="786" y="136" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">runtime / toolkit</text>
+        </g>
+
+        <!-- Row 2 (flow right to left) -->
+        <g>
+          <rect x="702" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="786" y="288" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Driver Library</text>
+          <text x="786" y="304" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">user-space</text>
+        </g>
+        <g>
+          <rect x="498" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="506" y="258" width="44" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="528" y="267" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">KMOD</text>
+          <text x="582" y="288" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">nvidia.ko</text>
+          <text x="582" y="304" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">kernel module</text>
+        </g>
+        <g>
+          <rect x="294" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="378" y="288" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">PCIe Bus</text>
+          <text x="378" y="304" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">interconnect</text>
+        </g>
+        <g>
+          <rect x="90" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <text x="174" y="288" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">NVIDIA GPU</text>
+          <text x="174" y="304" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">hardware</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

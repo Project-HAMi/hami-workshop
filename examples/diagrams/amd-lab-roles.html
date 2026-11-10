@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Who Does What on an AMD Node</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif; background: #f5f8fb;
+           min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 720px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="amdroles-title amdroles-desc" id="amdroles-root">
+        <title id="amdroles-title">Who does what on an AMD node</title>
+        <desc id="amdroles-desc">The Pod asks for AMD GPU resources, the HAMi scheduler picks the node and share, kubelet calls the AMD device plugin, and inside the container libamvgpu.so enforces the VRAM cap while ROCm applies the compute-unit mask.</desc>
+        <defs>
+          <marker id="amdroles-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="amdroles-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="amdroles-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Arrows first -->
+        <line x1="480" y1="104" x2="480" y2="144" stroke="#5a748f" stroke-width="1.2" marker-end="url(#amdroles-arrow)"/>
+        <line x1="480" y1="208" x2="480" y2="248" stroke="#5a748f" stroke-width="1.2" marker-end="url(#amdroles-arrow)"/>
+        <line x1="480" y1="312" x2="480" y2="352" stroke="#5a748f" stroke-width="1.2" marker-end="url(#amdroles-arrow)"/>
+        <line x1="480" y1="416" x2="480" y2="440" stroke="#5a748f" stroke-width="1.2" marker-end="url(#amdroles-arrow)"/>
+        <path d="M 360,504 V 520 Q 360,528 352,528 H 248 Q 240,528 240,536"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#amdroles-arrow)"/>
+        <path d="M 600,504 V 520 Q 600,528 608,528 H 712 Q 720,528 720,536"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#amdroles-arrow)"/>
+
+        <!-- Request -->
+        <g>
+          <rect x="300" y="40" width="360" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="308" y="46" width="36" height="12" rx="2" fill="transparent" stroke="rgba(21,50,77,0.40)" stroke-width="0.8"/>
+          <text x="326" y="55" fill="rgba(21,50,77,0.80)" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">WORKLOAD</text>
+          <text x="480" y="76" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Pod</text>
+          <text x="480" y="92" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">amd.com/gpu · gpucores · gpumem</text>
+        </g>
+
+        <!-- HAMi scheduler -->
+        <g>
+          <rect x="300" y="144" width="360" height="64" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="308" y="150" width="36" height="12" rx="2" fill="rgba(16,208,93,0.12)" stroke="rgba(16,208,93,0.60)" stroke-width="0.8"/>
+          <text x="326" y="159" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="480" y="180" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">HAMi scheduler</text>
+          <text x="480" y="196" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">picks node + GPU share</text>
+        </g>
+
+        <!-- kubelet -->
+        <g>
+          <rect x="300" y="248" width="360" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="272" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">kubelet</text>
+          <text x="480" y="288" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">node agent</text>
+        </g>
+
+        <!-- AMD device plugin -->
+        <g>
+          <rect x="300" y="352" width="360" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="376" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">AMD device plugin</text>
+          <text x="480" y="392" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">sets HSA_CU_MASK + memory limit</text>
+        </g>
+
+        <!-- Container -->
+        <g>
+          <rect x="300" y="440" width="360" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="464" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Container</text>
+          <text x="480" y="480" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">runs the LLM</text>
+        </g>
+
+        <!-- Hook -->
+        <g>
+          <rect x="90" y="536" width="300" height="64" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <text x="240" y="560" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">libamvgpu.so</text>
+          <text x="240" y="576" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">LD_AUDIT hook · enforces VRAM cap</text>
+        </g>
+
+        <!-- ROCm -->
+        <g>
+          <rect x="570" y="536" width="300" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="720" y="560" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">ROCm runtime</text>
+          <text x="720" y="576" fill="#5a748f" font-size="8.5" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">applies the CU mask</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

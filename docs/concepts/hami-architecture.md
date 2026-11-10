@@ -6,34 +6,7 @@ After completing the HAMi installation, the cluster is no longer an ordinary Kub
 
 The cluster after installation consists of 5 layers, each providing services to the layer above:
 
-```mermaid
-%% title: HAMi Cluster 5-Layer Architecture
-flowchart TB
-    subgraph Infra["Kubernetes Infrastructure Layer"]
-        K8s["Kubernetes Control Plane"]
-        Cilium["Cilium Network"]
-    end
-    subgraph GPUStack["NVIDIA GPU Runtime Stack"]
-        Driver["NVIDIA Driver"]
-        Toolkit["Container Toolkit"]
-        DCGM["DCGM Exporter"]
-        GFD["GPU Feature Discovery"]
-    end
-    subgraph Scheduler["GPU Scheduling Layer"]
-        DevicePlugin["HAMi Device Plugin"]
-        SchedulerExt["HAMi Scheduler"]
-    end
-    subgraph Observe["Monitoring Layer"]
-        Prometheus["Prometheus"]
-    end
-    subgraph UI["Visualization Layer"]
-        WebUI["HAMi WebUI"]
-    end
-    GPUStack --> Scheduler
-    Scheduler --> K8s
-    GPUStack --> Observe
-    Observe --> UI
-```
+![HAMi Cluster 5-Layer Architecture](../images/hami-arch-cluster-layers.svg)
 
 Looking from bottom to top:
 
@@ -76,15 +49,7 @@ kube-system    cilium                      cilium-x.x.x                       de
 
 The installation order has dependency relationships:
 
-```mermaid
-%% title: Helm Release Installation Dependencies
-flowchart LR
-    Cilium["cilium<br/>CNI Network"] --> GPUOp["gpu-operator<br/>GPU Runtime"]
-    GPUOp --> HAMi["hami<br/>GPU Scheduling"]
-    HAMi --> WebUI["my-hami-webui<br/>Visualization"]
-    Prometheus["prometheus<br/>Monitoring"] --> GPUOp
-    Prometheus --> WebUI
-```
+![Helm Release Installation Dependencies](../images/hami-arch-helm-deps.svg)
 
 Prometheus must be installed before GPU Operator and HAMi WebUI because they both depend on Prometheus for metrics collection and data provision.
 
@@ -156,31 +121,7 @@ Created by the hami Helm Release. The core problem this layer solves is: **enabl
 | **hami-scheduler** | Deployment, the HAMi scheduler. It registers as a Kubernetes Scheduler Extender and participates in GPU scheduling decisions for Pods. Supports advanced features such as binpack/spread strategies, priority scheduling, and GPU resource quotas |
 | **hami-device-plugin** | DaemonSet (one per GPU node), replaces the native NVIDIA device-plugin. It registers custom GPU resources (VRAM, compute) with kubelet and performs VRAM partitioning and device mounting when Pods are created |
 
-```mermaid
-%% title: HAMi GPU Scheduling Flow
-flowchart TB
-    subgraph User["User Submits Workload"]
-        Pod["Pod<br/>request: 2GB VRAM"]
-    end
-
-    subgraph K8sScheduler["Kubernetes Scheduling Flow"]
-        KS["kube-scheduler<br/>Filter + Score"]
-        HS["hami-scheduler<br/>GPU Scheduling Enhancement"]
-    end
-
-    subgraph Node["On Node"]
-        Kubelet["kubelet"]
-        HDP["hami-device-plugin"]
-        GPU["GPU Hardware"]
-    end
-
-    Pod --> KS
-    KS -->|"Calls Extender"| HS
-    HS -->|"Returns scheduling decision"| KS
-    KS -->|"Binds to node"| Kubelet
-    Kubelet -->|"Creates container"| HDP
-    HDP -->|"Partitions VRAM<br/>Mounts device"| GPU
-```
+![HAMi GPU Scheduling Flow](../images/hami-arch-scheduling-flow.svg)
 
 **Without them**:
 
@@ -217,94 +158,7 @@ Created by the prometheus Helm Release.
 
 The following shows the complete connection relationships between all components after installation:
 
-```mermaid
-%% title: Complete System Architecture
-flowchart TB
-    subgraph Hardware["Hardware Layer"]
-        GPU["Tesla T4 GPU"]
-        CPU["CPU / Memory / Disk"]
-        NIC["Network Card"]
-    end
-
-    subgraph K8sCore["Kubernetes Control Plane"]
-        API["kube-apiserver"]
-        KS["kube-scheduler"]
-        CM["kube-controller-manager"]
-        ETCD["etcd"]
-        DNS["CoreDNS"]
-        Proxy["kube-proxy"]
-    end
-
-    subgraph Network["Network Layer"]
-        Cilium["cilium DaemonSet"]
-        CiliumOp["cilium-operator"]
-    end
-
-    subgraph GPURuntime["NVIDIA GPU Runtime Stack"]
-        Driver["nvidia-driver-daemonset"]
-        Toolkit["nvidia-container-toolkit"]
-        DCGM["dcgm-exporter"]
-        GFD["gpu-feature-discovery"]
-        Validator["validator"]
-    end
-
-    subgraph HAMiLayer["HAMi GPU Scheduling Layer"]
-        HAMiDP["hami-device-plugin"]
-        HAMiSched["hami-scheduler"]
-    end
-
-    subgraph Monitor["Monitoring Layer"]
-        Prom["Prometheus Server"]
-        PromOp["Prometheus Operator"]
-        KSM["kube-state-metrics"]
-        NodeExp["node-exporter"]
-        Alert["Alertmanager"]
-    end
-
-    subgraph Visualization["Visualization Layer"]
-        WebUI["HAMi WebUI"]
-    end
-
-    subgraph Workloads["AI Workloads"]
-        Train["Training Tasks"]
-        Infer["Inference Services"]
-    end
-
-    %% Hardware to Runtime
-    GPU -->|"Kernel driver"| Driver
-    CPU --> NodeExp
-    NIC --> Cilium
-
-    %% Runtime internal
-    Driver --> Toolkit
-    Driver --> DCGM
-    Driver --> GFD
-    Driver --> Validator
-
-    %% Runtime to K8s
-    Toolkit -->|"Registers nvidia runtime"| API
-    GFD -->|"Applies GPU Labels"| API
-
-    %% HAMi to K8s
-    HAMiSched -->|"Scheduler Extender"| KS
-    HAMiDP -->|"Registers GPU resources"| API
-    KS --> API
-    CM --> API
-
-    %% Monitoring collection
-    DCGM -->|"GPU metrics"| Prom
-    NodeExp -->|"Node metrics"| Prom
-    KSM -->|"Cluster state metrics"| Prom
-    Prom --> Alert
-    PromOp --> Prom
-
-    %% Visualization
-    Prom -->|"Queries metrics"| WebUI
-
-    %% Workloads
-    Workloads -->|"Requests GPU resources"| API
-    Workloads -->|"Uses via Toolkit"| GPU
-```
+![Complete System Architecture](../images/hami-arch-system.svg)
 
 ---
 
@@ -312,33 +166,7 @@ flowchart TB
 
 Using a typical scenario, **submitting an inference Pod that requires 2GB of VRAM**, as an example, let's see how the layers collaborate:
 
-```mermaid
-%% title: Inference Pod Cross-Layer Collaboration
-sequenceDiagram
-    participant User as User
-    participant API as kube-apiserver
-    participant KS as kube-scheduler
-    participant HS as hami-scheduler
-    participant Kubelet as kubelet
-    participant HDP as hami-device-plugin
-    participant Driver as NVIDIA Driver
-    participant Prom as Prometheus
-
-    User->>API: Submit Pod (request: 2GB VRAM)
-    API->>KS: Trigger scheduling
-    KS->>HS: Call Extender, query GPU scheduling recommendation
-    HS->>HS: Query node GPU resource annotations, calculate optimal node
-    HS-->>KS: Return recommended node
-    KS->>API: Bind Pod to target node
-    API->>Kubelet: Notify to create Pod
-    Kubelet->>HDP: Request GPU resource allocation
-    HDP->>HDP: Execute VRAM partitioning (allocate 2GB from physical GPU)
-    HDP->>Driver: Complete device mounting via NVIDIA libraries
-    HDP-->>Kubelet: Return allocation result
-    Kubelet->>Kubelet: Start container
-    Note over Prom: DCGM Exporter continuously collects GPU metrics
-    Prom->>Prom: Scrape GPU utilization, VRAM usage, and other metrics
-```
+![Inference Pod Cross-Layer Collaboration](../images/hami-arch-inference-seq.svg)
 
 Throughout this process, each layer fulfills its role: Kubernetes provides the scheduling framework and Pod lifecycle management, the GPU Runtime Stack provides hardware access capabilities, HAMi makes GPU-level scheduling decisions and resource partitioning in the middle, and Prometheus continuously collects metrics in the background.
 

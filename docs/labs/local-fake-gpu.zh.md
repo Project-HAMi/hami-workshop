@@ -19,16 +19,7 @@
 
 整个本地安装过程分 7 步：
 
-```mermaid
-%% title: 本地 Fake GPU 安装全景图
-flowchart LR
-    Step1["步骤1<br/>确认本地环境"] --> Step2["步骤2<br/>安装 fake-gpu-operator"]
-    Step2 --> Step3["步骤3<br/>安装 HAMi"]
-    Step3 --> Step4["步骤4<br/>安装 Prometheus"]
-    Step4 --> Step5["步骤5<br/>运行模拟 GPU 工作负载"]
-    Step5 --> Step6["步骤6<br/>安装 HAMi WebUI"]
-    Step6 --> Step7["步骤7<br/>观察 HAMi 和 fake GPU"]
-```
+![本地 Fake GPU 安装全景图](../images/fake-gpu-lab-steps-zh.svg)
 
 | 步骤 | 目的 | 解决什么问题 |
 | ------ | ------ | ------------- |

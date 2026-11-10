@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 768" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="hacl-title hacl-desc" id="hami-arch-cluster-layers-zh-root">
+        <title id="hacl-title">HAMi 集群，五层</title>
+        <desc id="hacl-desc">顶层是 Kubernetes 基础设施，NVIDIA GPU 运行时栈接入 HAMi 调度层，监控数据流向 HAMi WebUI。</desc>
+        <defs>
+      <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
+      #hami-arch-cluster-layers-zh-root { font-family: 'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif; }
+      #hami-arch-cluster-layers-zh-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#hami-arch-cluster-layers-zh-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="hami-arch-cluster-layers-zh-hacl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="hami-arch-cluster-layers-zh-hacl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="hami-arch-cluster-layers-zh-hacl-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Bands -->
+        <rect x="60" y="36" width="840" height="116" rx="8" fill="#15324d" stroke="#15324d" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.10"/>
+        <text x="76" y="58" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">KUBERNETES 基础设施</text>
+
+        <rect x="60" y="180" width="840" height="116" rx="8" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.10"/>
+        <text x="76" y="202" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">NVIDIA GPU 运行时栈</text>
+
+        <rect x="60" y="324" width="840" height="116" rx="8" fill="#15324d" stroke="#15324d" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.10"/>
+        <text x="76" y="346" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">GPU 调度</text>
+
+        <rect x="60" y="468" width="840" height="116" rx="8" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.10"/>
+        <text x="76" y="490" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">监控</text>
+
+        <rect x="60" y="612" width="840" height="116" rx="8" fill="#15324d" stroke="#15324d" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.10"/>
+        <text x="76" y="634" fill="#15324d" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" letter-spacing="0.14em" fill-opacity="0.40">可视化</text>
+
+        <!-- Arrows first -->
+        <path d="M 174,272 V 310 Q 174,318 182,318 H 292 Q 300,318 300,326 V 364"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hami-arch-cluster-layers-zh-hacl-arrow)"/>
+        <path d="M 660,364 V 326 Q 660,318 652,318 H 488 Q 480,318 480,310 V 128"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hami-arch-cluster-layers-zh-hacl-arrow)"/>
+        <path d="M 582,272 V 288 Q 582,296 574,296 H 528 Q 520,296 520,304 V 508"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hami-arch-cluster-layers-zh-hacl-arrow)"/>
+        <line x1="480" y1="560" x2="480" y2="652" stroke="#5a748f" stroke-width="1.2" marker-end="url(#hami-arch-cluster-layers-zh-hacl-arrow)"/>
+
+        <!-- Infrastructure chips -->
+        <g>
+          <rect x="140" y="76" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="240" y="98" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Cilium Network</text>
+          <text x="240" y="114" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">CNI</text>
+        </g>
+        <g>
+          <rect x="380" y="76" width="200" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="480" y="98" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">K8s Control Plane</text>
+          <text x="480" y="114" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">apiserver + scheduler</text>
+        </g>
+
+        <!-- GPU runtime chips -->
+        <g>
+          <rect x="80" y="220" width="188" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="174" y="242" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">NVIDIA Driver</text>
+          <text x="174" y="258" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">内核模块</text>
+        </g>
+        <g>
+          <rect x="284" y="220" width="188" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="378" y="242" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Container Toolkit</text>
+          <text x="378" y="258" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">运行时注入</text>
+        </g>
+        <g>
+          <rect x="488" y="220" width="188" height="52" rx="6" fill="#ffffff" stroke="#39c6f4" stroke-width="1.2"/>
+          <text x="582" y="242" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">DCGM Exporter</text>
+          <text x="582" y="258" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">GPU 指标</text>
+        </g>
+        <g>
+          <rect x="692" y="220" width="188" height="52" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="786" y="242" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">GPU Feature Discovery</text>
+          <text x="786" y="258" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">节点标签</text>
+        </g>
+
+        <!-- HAMi scheduling chips (focal) -->
+        <g>
+          <rect x="180" y="364" width="240" height="52" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="188" y="370" width="36" height="12" rx="2" fill="#10d05d" stroke="#10d05d" stroke-width="0.8" fill-opacity="0.12" stroke-opacity="0.60"/>
+          <text x="206" y="379" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="300" y="398" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">HAMi Device Plugin</text>
+        </g>
+        <g>
+          <rect x="540" y="364" width="240" height="52" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="548" y="370" width="36" height="12" rx="2" fill="#10d05d" stroke="#10d05d" stroke-width="0.8" fill-opacity="0.12" stroke-opacity="0.60"/>
+          <text x="566" y="379" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="660" y="398" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">HAMi Scheduler</text>
+        </g>
+
+        <!-- Monitoring chip -->
+        <g>
+          <rect x="340" y="508" width="280" height="52" rx="6" fill="#ffffff" stroke="#39c6f4" stroke-width="1.2"/>
+          <text x="480" y="530" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Prometheus</text>
+          <text x="480" y="546" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">指标 + 告警</text>
+        </g>
+
+        <!-- Visualization chip -->
+        <g>
+          <rect x="340" y="652" width="280" height="52" rx="6" fill="#ffffff" stroke="#39c6f4" stroke-width="1.2"/>
+          <text x="480" y="674" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">HAMi WebUI</text>
+          <text x="480" y="690" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">GPU 利用率视图</text>
+        </g>
+      </svg>

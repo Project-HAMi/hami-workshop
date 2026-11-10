@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="hamisched-title hamisched-desc" id="gpu-stack-hami-scheduling-root">
+        <title id="hamisched-title">HAMi enhanced scheduling chain</title>
+        <desc id="hamisched-desc">With HAMi: the HAMi device plugin advertises fractional resources, and the HAMi scheduler extender places Pods with VRAM and core shares instead of whole GPUs.</desc>
+        <defs>
+      <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
+      #gpu-stack-hami-scheduling-root { font-family: 'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif; }
+      #gpu-stack-hami-scheduling-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#gpu-stack-hami-scheduling-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="gpu-stack-hami-scheduling-hamisched-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="gpu-stack-hami-scheduling-hamisched-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="gpu-stack-hami-scheduling-hamisched-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Arrows first: HAMi path accent -->
+        <line x1="258" y1="116" x2="294" y2="116" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-hami-scheduling-hamisched-arrow)"/>
+        <line x1="462" y1="116" x2="498" y2="116" stroke="#0a8f3d" stroke-width="1.4" marker-end="url(#gpu-stack-hami-scheduling-hamisched-arrow-accent)"/>
+        <line x1="666" y1="116" x2="702" y2="116" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-hami-scheduling-hamisched-arrow)"/>
+        <path d="M 786,148 V 192 Q 786,200 778,200 H 692 Q 684,200 684,208 V 252"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-hami-scheduling-hamisched-arrow)"/>
+        <line x1="600" y1="284" x2="564" y2="284" stroke="#0a8f3d" stroke-width="1.4" marker-end="url(#gpu-stack-hami-scheduling-hamisched-arrow-accent)"/>
+        <line x1="396" y1="284" x2="360" y2="284" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-hami-scheduling-hamisched-arrow)"/>
+
+        <!-- Row 1: node plane -->
+        <g>
+          <rect x="90" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="174" y="112" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">GPU</text>
+          <text x="174" y="128" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">hardware</text>
+        </g>
+        <g>
+          <rect x="294" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="378" y="112" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Driver</text>
+          <text x="378" y="128" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">kernel module</text>
+        </g>
+        <g>
+          <rect x="498" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="506" y="90" width="36" height="12" rx="2" fill="#10d05d" stroke="#10d05d" stroke-width="0.8" fill-opacity="0.12" stroke-opacity="0.60"/>
+          <text x="524" y="99" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="582" y="120" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">HAMi Device Plugin</text>
+          <text x="582" y="136" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">fractions + VRAM</text>
+        </g>
+        <g>
+          <rect x="702" y="84" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="786" y="112" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">kubelet</text>
+          <text x="786" y="128" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">node agent</text>
+        </g>
+
+        <!-- Row 2: control plane -->
+        <g>
+          <rect x="600" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="684" y="280" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Kubernetes API</text>
+          <text x="684" y="296" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">cluster state</text>
+        </g>
+        <g>
+          <rect x="396" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="404" y="258" width="36" height="12" rx="2" fill="#10d05d" stroke="#10d05d" stroke-width="0.8" fill-opacity="0.12" stroke-opacity="0.60"/>
+          <text x="422" y="267" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">HAMI</text>
+          <text x="480" y="288" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">HAMi Scheduler</text>
+          <text x="480" y="304" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">extender, shared GPUs</text>
+        </g>
+        <g>
+          <rect x="192" y="252" width="168" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="200" y="258" width="36" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="218" y="267" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">WORKLOAD</text>
+          <text x="276" y="288" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans', 'Segoe UI', sans-serif" text-anchor="middle">Pod</text>
+          <text x="276" y="304" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">gets a GPU slice</text>
+        </g>
+      </svg>

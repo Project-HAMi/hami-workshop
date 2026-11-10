@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fanin-title fanin-desc" id="gpu-stack-tools-fanin-zh-root">
+        <title id="fanin-title">管理工具调用链</title>
+        <desc id="fanin-desc">nvidia-smi、DCGM 和 Kubernetes device plugin 汇入 NVML，经 libnvidia-ml.so 与 nvidia.ko 到达 GPU。</desc>
+        <defs>
+      <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
+      #gpu-stack-tools-fanin-zh-root { font-family: 'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif; }
+      #gpu-stack-tools-fanin-zh-root .diagram-container { width: 100%; overflow-x: auto; }
+      @media print {
+#gpu-stack-tools-fanin-zh-root .diagram-container { overflow-x: visible; }
+}</style>
+          <marker id="gpu-stack-tools-fanin-zh-fanin-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a748f"/></marker>
+          <marker id="gpu-stack-tools-fanin-zh-fanin-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0a8f3d"/></marker>
+          <marker id="gpu-stack-tools-fanin-zh-fanin-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7c8cff"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f8fb"/>
+
+        <!-- Arrows first (fan-in to NVML, then chain right and down) -->
+        <path d="M 288,88 H 392 Q 400,88 400,96 V 147 Q 400,155 408,155 H 420"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-tools-fanin-zh-fanin-arrow)"/>
+        <line x1="288" y1="200" x2="420" y2="200" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-tools-fanin-zh-fanin-arrow)"/>
+        <path d="M 288,312 H 392 Q 400,312 400,304 V 253 Q 400,245 408,245 H 420"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-tools-fanin-zh-fanin-arrow)"/>
+        <line x1="596" y1="200" x2="640" y2="200" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-tools-fanin-zh-fanin-arrow)"/>
+        <path d="M 780,200 H 812 Q 820,200 820,192 V 160 Q 820,152 828,152 H 836"
+              fill="none" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-tools-fanin-zh-fanin-arrow)"/>
+        <line x1="872" y1="184" x2="872" y2="248" stroke="#5a748f" stroke-width="1.2" marker-end="url(#gpu-stack-tools-fanin-zh-fanin-arrow)"/>
+
+        <!-- Callers -->
+        <g>
+          <rect x="72" y="56" width="216" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="80" y="62" width="36" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="98" y="71" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">CLI</text>
+          <text x="180" y="92" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">nvidia-smi</text>
+          <text x="180" y="108" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">管理工具</text>
+        </g>
+        <g>
+          <rect x="72" y="168" width="216" height="64" rx="6" fill="#ffffff" stroke="#39c6f4" stroke-width="1.2"/>
+          <rect x="80" y="174" width="48" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="104" y="183" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">TELEMETRY</text>
+          <text x="180" y="204" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">DCGM</text>
+          <text x="180" y="220" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">GPU 诊断</text>
+        </g>
+        <g>
+          <rect x="72" y="280" width="216" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="80" y="286" width="40" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="100" y="295" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">K8S</text>
+          <text x="180" y="316" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">Device Plugin</text>
+          <text x="180" y="332" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">kubelet 插件</text>
+        </g>
+
+        <!-- NVML hub (tall, three attach points) -->
+        <g>
+          <rect x="420" y="110" width="176" height="180" rx="6" fill="#ffffff" stroke="#10d05d" stroke-width="1.4"/>
+          <rect x="428" y="116" width="40" height="12" rx="2" fill="#10d05d" stroke="#10d05d" stroke-width="0.8" fill-opacity="0.12" stroke-opacity="0.60"/>
+          <text x="448" y="125" fill="#0a8f3d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+          <text x="508" y="196" fill="#15324d" font-size="13" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">NVML</text>
+          <text x="508" y="212" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">管理接口</text>
+        </g>
+
+        <!-- Library -->
+        <g>
+          <rect x="640" y="168" width="140" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <rect x="648" y="174" width="36" height="12" rx="2" fill="none" stroke="#15324d" stroke-width="0.8" stroke-opacity="0.40"/>
+          <text x="666" y="183" fill="#15324d" font-size="7" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle" letter-spacing="0.08em" fill-opacity="0.80">LIB</text>
+          <text x="710" y="204" fill="#15324d" font-size="11" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">libnvidia-ml.so</text>
+          <text x="710" y="220" fill="#5a748f" font-size="9" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">用户态库</text>
+        </g>
+
+        <!-- Kernel module + GPU column -->
+        <g>
+          <rect x="836" y="120" width="72" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="872" y="148" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">nvidia.ko</text>
+          <text x="872" y="164" fill="#5a748f" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">内核</text>
+        </g>
+        <g>
+          <rect x="836" y="248" width="72" height="64" rx="6" fill="#ffffff" stroke="#d5dee8" stroke-width="1"/>
+          <text x="872" y="276" fill="#15324d" font-size="12" font-weight="600" font-family="'Source Sans 3', 'Noto Sans SC', 'PingFang SC', 'Segoe UI', sans-serif" text-anchor="middle">GPU</text>
+          <text x="872" y="292" fill="#5a748f" font-size="8" font-family="'IBM Plex Mono', 'PingFang SC', 'SFMono-Regular', Consolas, monospace" text-anchor="middle">硬件</text>
+        </g>
+      </svg>

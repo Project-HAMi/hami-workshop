@@ -17,7 +17,7 @@ Always activate venv first for manual commands: `source .venv/bin/activate`
 
 MkDocs Material site with bilingual support via `mkdocs-static-i18n` plugin.
 
-**Key config:** `mkdocs.yml` — i18n plugin config, nav structure, mermaid superfences, emoji extensions.
+**Key config:** `mkdocs.yml` — i18n plugin config, nav structure, emoji extensions.
 
 **Bilingual convention:**
 
@@ -30,16 +30,22 @@ MkDocs Material site with bilingual support via `mkdocs-static-i18n` plugin.
 
 - `docs/concepts/` — background knowledge (GPU stack, drivers, HAMi architecture)
 - `docs/labs/` — step-by-step lab instructions
-- `docs/images/` — screenshots referenced by labs
-- `docs/stylesheets/extra.css` — HAMi theme color `rgba(16, 208, 93, 1)` + mermaid figure styling
-- `docs/javascripts/mermaid-zoom.js` — custom mermaid renderer with click-to-zoom lightbox, figure captions from `%% title:` comments
+- `docs/images/` — screenshots and diagram SVGs referenced by docs
+- `docs/stylesheets/extra.css` — HAMi theme color `rgba(16, 208, 93, 1)` + SVG sizing
+- `examples/diagrams/` — diagram-design HTML sources (`<slug>.html` + `<slug>-zh.html`)
 - `examples/` — numbered lab code/manifests (e.g. `02-local-fake-gpu/fake-gpu-pod.yaml`)
 
-**Mermaid diagram convention:**
+**Diagram convention (diagram-design skill):**
 
-- Title configured as first-line comment: `%% title: Diagram Title Here`
-- JS extracts title, shows as `<figcaption>` below diagram and in lightbox overlay
-- SVG forced full-width via CSS override on `.md-typeset .mermaid-figure` (material defaults to `width: fit-content`)
+- Diagrams are hand-authored HTML with inline SVG via the `diagram-design` skill, not mermaid
+- Sources: `examples/diagrams/<slug>.html` (English) and `<slug>-zh.html` (Chinese, same geometry, translated labels, Noto Sans SC / PingFang SC fallback)
+- Export both to `docs/images/<slug>.svg` / `<slug>-zh.svg` with the skill's `export_svg.py` (no PNG export: no Playwright available)
+- Reference from docs as `![Title](../images/<slug>.svg)`; zh pages use the `-zh` SVG
+- Tokens come from `BRAND.md`: paper `#f5f8fb`, surface `#ffffff`, border `#d5dee8`, heading `#15324d`, muted `#5a748f`, ink-at-opacity `rgba(21,50,77,x)` for bands and eyebrows
+- HAMi accent: box stroke `#10d05d`, tint `rgba(16,208,93,0.12)`, green text and arrows `#0a8f3d` (`#10d05d` fails text contrast). Scheduling (kube-scheduler, extender calls) uses indigo `#7c8cff`; observability (DCGM, Prometheus, WebUI) uses blue `#39c6f4`; everything else stays neutral
+- Fonts: Space Grotesk (titles), Source Sans 3 (node names, callouts), IBM Plex Mono (sublabels, eyebrows, arrow labels)
+- Accent (green) marks at most 2 focal elements per diagram (usually the HAMi components)
+- SVGs are light-only; in the slate theme they show as a light card
 
 **Deployment:** Netlify via `netlify.toml`. Build command: `pip install -r requirements.txt && mkdocs build`. Publish dir: `site/`.
 
@@ -47,5 +53,5 @@ MkDocs Material site with bilingual support via `mkdocs-static-i18n` plugin.
 
 - No em-dashes (—) in any language. Use commas, colons, or periods instead.
 - Write natural prose, avoid AI-sounding patterns.
-- All mermaid diagrams must have `%% title:` comments.
+- Diagram labels in English pages stay English, zh pages get fully translated SVGs.
 - When adding new labs, create both `.md` and `.zh.md`, add to `examples/NN-lab-name/`, update nav in mkdocs.yml.

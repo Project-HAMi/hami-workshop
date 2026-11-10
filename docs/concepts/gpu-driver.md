@@ -26,20 +26,7 @@ Each line represents a loaded kernel module. The columns are: module name, memor
 
 The NVIDIA driver consists of multiple kernel modules with dependencies between them:
 
-```mermaid
-%% title: NVIDIA Kernel Module Hierarchy
-flowchart TB
-    subgraph LinuxKernel["Linux Kernel"]
-        NVIDIA["nvidia - Core GPU Driver"]
-        UVM["nvidia_uvm - Unified Virtual Memory"]
-        MODESET["nvidia_modeset - Display Mode Management"]
-        ECC["ecc - ECC Error Handling"]
-        MODESET --> NVIDIA
-        UVM --> NVIDIA
-        ECC --> NVIDIA
-    end
-    NVIDIA --> GPU["NVIDIA GPU"]
-```
+![NVIDIA Kernel Module Hierarchy](../images/gpu-driver-kernel-modules.svg)
 
 ### Module Descriptions
 
@@ -54,23 +41,7 @@ flowchart TB
 
 GPU drivers follow the standard Linux layered architecture: user space communicates with kernel space modules through libraries, which ultimately operate the hardware.
 
-```mermaid
-%% title: Linux GPU Driver Architecture
-flowchart TB
-    subgraph User["User Space"]
-        CLI["CLI Tools (nvidia-smi)"]
-        Lib["User-Space Library (libnvidia-ml.so)"]
-    end
-    subgraph Kernel["Kernel Space"]
-        Module["Kernel Module (nvidia.ko)"]
-    end
-    subgraph Hardware["Hardware"]
-        HW["GPU Device"]
-    end
-    CLI --> Lib
-    Lib --> Module
-    Module --> HW
-```
+![Linux GPU Driver Architecture](../images/gpu-driver-architecture.svg)
 
 Call chain:
 
