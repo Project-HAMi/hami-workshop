@@ -1,7 +1,3 @@
-global:
-  # Master build after v2.10.0. Matches the chart checked out at the same commit.
-  imageTag: "33b7220"
-
 scheduler:
   kubeScheduler:
     image:
