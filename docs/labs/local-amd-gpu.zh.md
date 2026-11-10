@@ -7,7 +7,7 @@
 ## 你将得到什么
 
 - 一个 kind 集群，节点里有本机的 `/dev/kfd` 和 `/dev/dri`
-- HAMi master（v2.10.0 之后）的调度器，以及 AMD device plugin `main` 分支
+- HAMi 2.11.0 调度器和 AMD device plugin 0.0.4，均使用官方发布的 Helm chart
 - GPU 以 `amd.com/gpu` 上报，并可以用 `amd.com/gpucores` 和 `amd.com/gpumem` 切分
 - 两个 llama.cpp 服务在同一块 GPU 上运行 Qwen3-0.6B，各自限制为一半计算单元和 2048 MiB 显存
 - 一次失败的显存分配，证明容器内的显存限制确实生效
@@ -147,20 +147,16 @@ renderD128
 
 ## 步骤 3: 安装 HAMi
 
-本实验使用 HAMi master，因为 AMD 相关修复是在 v2.10.0 之后合入的。Helm 仓库只发布正式版，所以要从 git 检出 chart，并把镜像固定到同一个提交。HAMi 为每个 master 提交发布 `projecthami/hami:<短 sha>` 镜像。
+本实验需要 HAMi 2.11.0 或更高版本：所依赖的 AMD 修复是在 v2.10.0 之后合入的。直接从 HAMi Helm 仓库安装正式版 chart。
 
 ```bash
-git clone https://github.com/Project-HAMi/HAMi
-git -C HAMi checkout 33b7220
+helm repo add hami-charts https://project-hami.github.io/HAMi/
+helm repo update hami-charts
 ```
 
 `examples/03-local-amd-gpu/hami-values.yaml`：
 
 ```yaml
-global:
-  # Master build after v2.10.0. Matches the chart checked out at the same commit.
-  imageTag: "33b7220"
-
 scheduler:
   kubeScheduler:
     image:
@@ -177,7 +173,7 @@ devicePlugin:
 > 在中国大陆，删掉 `registry` 和 `repository` 两行，使用 chart 默认的阿里云镜像源。
 
 ```bash
-helm install hami ./HAMi/charts/hami -n kube-system \
+helm install hami hami-charts/hami --version 2.11.0 -n kube-system \
     -f examples/03-local-amd-gpu/hami-values.yaml --wait --timeout 10m
 kubectl -n kube-system get pods -l app.kubernetes.io/instance=hami
 ```
@@ -189,13 +185,11 @@ hami-scheduler-6dcdc7bd9b-ld9zq   2/2     Running   0          3m10s
 
 ## 步骤 4: 安装 AMD device plugin
 
-device plugin 的 chart 和镜像必须来自同一个提交。它的 CI 为 `main` 上每个提交发布 `ghcr.io/project-hami/amd-device-plugin:sha-<短 sha>`。
+安装 0.0.4 版本。chart 默认的镜像标签就是它的 app 版本，所以 chart 与镜像（`ghcr.io/project-hami/amd-device-plugin:0.0.4`）始终一致。
 
 ```bash
-git clone https://github.com/Project-HAMi/amd-device-plugin
-git -C amd-device-plugin checkout 35c84ab
-helm install amd-gpu ./amd-device-plugin/helm/amd-gpu -n kube-system \
-    --set dp.image.tag=sha-35c84ab
+helm install amd-gpu -n kube-system \
+    https://github.com/Project-HAMi/amd-device-plugin/releases/download/amd-gpu-helm-0.0.4/amd-gpu-0.0.4.tgz
 kubectl -n kube-system wait --for=condition=Ready pod -l name=amd-gpu-dp-ds --timeout=60m
 ```
 
@@ -408,9 +402,9 @@ kubectl apply -f examples/03-local-amd-gpu/qwen3-vllm.yaml
 
 ```bash
 for img in \
-  docker.io/projecthami/hami:33b7220 \
+  docker.io/projecthami/hami:v2.11.0 \
   registry.k8s.io/kube-scheduler:v1.36.1 \
-  ghcr.io/project-hami/amd-device-plugin:sha-35c84ab \
+  ghcr.io/project-hami/amd-device-plugin:0.0.4 \
   docker.io/rocm/dev-ubuntu-24.04:7.2.4 \
   ghcr.io/fishing-agents/hami-workshop:qwen3-0.6b-llamacpp-v0.7.0-rocm7.2.4; do
   docker exec hami-amd-control-plane crictl pull $img

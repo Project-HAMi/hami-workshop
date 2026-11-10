@@ -7,7 +7,7 @@ If you don't have an AMD GPU, use [Lab 2: Local Fake GPU Setup](local-fake-gpu.m
 ## What You'll Get
 
 - A kind cluster whose node has `/dev/kfd` and `/dev/dri` from your machine
-- The HAMi scheduler from HAMi master (after v2.10.0) and the AMD device plugin from its `main` branch
+- The HAMi 2.11.0 scheduler and the AMD device plugin 0.0.4, both from their published Helm charts
 - Your GPU published as `amd.com/gpu`, with `amd.com/gpucores` and `amd.com/gpumem` for slicing
 - Two llama.cpp servers running Qwen3-0.6B on the same GPU, each limited to half the compute units and 2048 MiB of VRAM
 - A failed allocation that shows the memory limit is enforced inside the container
@@ -147,20 +147,16 @@ renderD128
 
 ## Step 3: Install HAMi
 
-This lab uses HAMi master, because AMD fixes landed after v2.10.0. The Helm repository only publishes releases, so install the chart from a git checkout and pin the image to the same commit. HAMi publishes an image for every master commit as `projecthami/hami:<short sha>`.
+This lab needs HAMi 2.11.0 or later: the AMD fixes it relies on landed after v2.10.0. Install the released chart from the HAMi Helm repository.
 
 ```bash
-git clone https://github.com/Project-HAMi/HAMi
-git -C HAMi checkout 33b7220
+helm repo add hami-charts https://project-hami.github.io/HAMi/
+helm repo update hami-charts
 ```
 
 `examples/03-local-amd-gpu/hami-values.yaml`:
 
 ```yaml
-global:
-  # Master build after v2.10.0. Matches the chart checked out at the same commit.
-  imageTag: "33b7220"
-
 scheduler:
   kubeScheduler:
     image:
@@ -177,7 +173,7 @@ devicePlugin:
 > In mainland China, delete the two `registry` and `repository` lines to keep the chart's default mirror.
 
 ```bash
-helm install hami ./HAMi/charts/hami -n kube-system \
+helm install hami hami-charts/hami --version 2.11.0 -n kube-system \
     -f examples/03-local-amd-gpu/hami-values.yaml --wait --timeout 10m
 kubectl -n kube-system get pods -l app.kubernetes.io/instance=hami
 ```
@@ -189,13 +185,11 @@ hami-scheduler-6dcdc7bd9b-ld9zq   2/2     Running   0          3m10s
 
 ## Step 4: Install the AMD Device Plugin
 
-The device plugin chart and image must come from the same commit. Its CI publishes `ghcr.io/project-hami/amd-device-plugin:sha-<short sha>` for every commit on `main`.
+Install release 0.0.4. The chart's default image tag is its app version, so the chart and the image (`ghcr.io/project-hami/amd-device-plugin:0.0.4`) always match.
 
 ```bash
-git clone https://github.com/Project-HAMi/amd-device-plugin
-git -C amd-device-plugin checkout 35c84ab
-helm install amd-gpu ./amd-device-plugin/helm/amd-gpu -n kube-system \
-    --set dp.image.tag=sha-35c84ab
+helm install amd-gpu -n kube-system \
+    https://github.com/Project-HAMi/amd-device-plugin/releases/download/amd-gpu-helm-0.0.4/amd-gpu-0.0.4.tgz
 kubectl -n kube-system wait --for=condition=Ready pod -l name=amd-gpu-dp-ds --timeout=60m
 ```
 
@@ -408,9 +402,9 @@ To pull everything into the kind node before the workshop, after Step 2:
 
 ```bash
 for img in \
-  docker.io/projecthami/hami:33b7220 \
+  docker.io/projecthami/hami:v2.11.0 \
   registry.k8s.io/kube-scheduler:v1.36.1 \
-  ghcr.io/project-hami/amd-device-plugin:sha-35c84ab \
+  ghcr.io/project-hami/amd-device-plugin:0.0.4 \
   docker.io/rocm/dev-ubuntu-24.04:7.2.4 \
   ghcr.io/fishing-agents/hami-workshop:qwen3-0.6b-llamacpp-v0.7.0-rocm7.2.4; do
   docker exec hami-amd-control-plane crictl pull $img
