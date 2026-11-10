@@ -120,6 +120,27 @@ done
 
 binpack 把两个 Pod 放在同一张卡上，spread 则每张卡放一个。
 
+### Mutex：从空闲卡开始
+
+`hami.io/gpu-scheduler-policy: mutex`（HAMi v2.10.0 新增）是一个过滤器：只有没有任何租户的卡才是候选。卡上哪怕只有一个很小的负载，也会被排除。保持 spread 的两个 Pod 运行，每张卡一个：
+
+```bash
+kubectl apply -f mutex.yaml
+kubectl get events --field-selector involvedObject.name=mutex-1 | tail -1
+# 0/1 nodes are available: 1 2/2 ExclusiveDeviceAllocateConflict.
+kubectl delete pod spread-2
+kubectl wait --for=condition=Ready pod/mutex-1 --timeout=120s
+kubectl get pod mutex-1 -o jsonpath='{.metadata.annotations.hami\.io/vgpu-devices-allocated}{"\n"}'
+# GPU-mock-0,NVIDIA,15000,30:;
+kubectl delete -f spread.yaml -f mutex.yaml --ignore-not-found
+```
+
+两张卡的显存都够 `mutex-1` 使用，但都不是空的，所以它要等到有一张卡空出来。
+
+- Mutex **只在放置时检查**。之后没有 `mutex` 的 Pod 仍然可以加入这张卡。要在 Pod 整个生命周期内独占一张卡，请申请它的全部显存和算力，或用 `nvidia.com/use-gpuuuid` 固定。
+- 自 v2.10.0 起策略可以组合：先执行过滤器（`mutex`、`topology-aware`），再按书写顺序执行排序键（`binpack`、`spread`、`numa`）。`mutex,binpack,numa` 先选空闲卡，再在其中选装得最满的，NUMA 作为平局判定。
+- NVIDIA 上的 `mutex,topology-aware`：先筛出空闲卡，再在其中选 NVLink 连接最好的一组。如果最佳组里有卡正被占用，Pod 会得到较差的一组或保持 Pending。
+
 ### 拓扑信息从哪里来
 
 调度器从不直接读取硬件。各厂商的设备插件在节点上读取硬件信息并写成节点注解，调度器据此给卡打分：
@@ -131,7 +152,54 @@ binpack 把两个 Pod 放在同一张卡上，spread 则每张卡放一个。
 - **MetaX：** 厂商插件写入 `metax-tech.com/gpu.topology.scores` 和 `.losses`。优先 MetaXLink，其次 PCIe switch。
 - **昆仑芯、AWS Neuron：** 没有链路数据。布局固定，调度器根据卡的序号推导。
 
-## 实验 4：默认调度器之外
+### CPU 与 GPU 在同一个 NUMA 节点（阅读）
+
+调度器选 GPU，kubelet 的 Topology Manager 选 CPU。自 HAMi v2.11.0 起，两者不一致时设备插件会请求调度器重新匹配（refit），让 CPU、GPU 和 HAMi 的记账落在同一个 NUMA 节点上。kind 只有一个 NUMA 节点，因此这部分仅作阅读。
+
+```yaml
+# kubelet 配置
+cpuManagerPolicy: static
+topologyManagerPolicy: single-numa-node
+topologyManagerScope: container
+```
+
+```yaml
+metadata:
+  annotations:
+    hami.io/numa-alignment: best-effort   # 或 strict
+```
+
+- Helm：`devices.nvidia.enableNumaTopology`、`devicePlugin.numaRefit.enabled`，以及按节点配置的 `enablegetpreferredallocation`。默认全部关闭。
+- `best-effort`：refit 失败时保留 kubelet 的选择并记录日志。`strict`：分配失败。
+- 仅适用于整数 CPU 的 Guaranteed QoS Pod，且为 hami-core 模式。详见 [NUMA 对齐指南](https://project-hami.io/docs/userguide/nvidia-device/numa-alignment)。
+
+## 实验 4：Flexible MIG（阅读）
+
+MIG 需要 Ampere 或更新的 GPU，mock 卡无法创建 GPU 实例。
+
+- **静态 MIG：** NVIDIA MIG Manager。整卡布局需提前选定，修改就要排空节点。Pod 申请 `nvidia.com/mig-1g.10gb`。
+- **动态 MIG，HAMi v2.5.0：** `knownMigGeometries` 按型号列出整卡模板。调度器选第一个合适的模板，设备插件用 mig-parted 应用。新的 profile 组合意味着切换模板，所以卡必须先空出来。
+- **Flexible MIG，HAMi v2.10.0：** 不再需要模板。profile 和合法位置来自 NVML，调度器在 `hami.io/vgpu-mig-allocations` 中预留满足 `gpumem` 请求的最小允许 profile，设备插件在 `Allocate` 时创建实例，并在 Pod 结束时删除。无需排空。
+- **v2.11.0：** 每个 MIG 实例一份 CDI spec（v2.10.0 的 MIG 无法配合 CDI 设备注入使用），带回溯的放置打分，`nvidia.com/mig-profile-preference`，以及通过 `devicePlugin.reportNodeCapacity` 支持 Cluster Autoscaler。
+
+```yaml
+# 节点配置："operatingmode": "mig"
+nvidia:
+  migProfileAllowlist:
+    - models: ["A100-SXM4-40GB"]
+      profiles: ["1g.5gb", "2g.10gb", "3g.20gb", "7g.40gb"]
+```
+
+```yaml
+metadata:
+  annotations:
+    nvidia.com/vgpu-mode: "mig"
+# limits: nvidia.com/gpu: 1, nvidia.com/gpumem: 8000  -> 2g.10gb
+```
+
+Pod 写法与实验 2 相同。有空闲切片但没有合法的连续位置时，Pod 会保持 Pending，HAMi 不会移动正在运行的实例。HAMi 与 NVIDIA MIG Manager 不能管理同一张 GPU。详见 [动态 MIG 支持](https://project-hami.io/docs/userguide/nvidia-device/dynamic-mig-support)。
+
+## 实验 5：默认调度器之外
 
 HAMi 是容量模型加上隔离库 HAMi-core。其他调度器可以替换放置逻辑，同时保留隔离：
 
@@ -139,6 +207,29 @@ HAMi 是容量模型加上隔离库 HAMi-core。其他调度器可以替换放�
 
 - **KAI Scheduler**（v0.16.4+）：`global.gpuSharing=true` 和 `binder.plugins.hamicore.enabled=true`。KAI 负责放置，HAMi-core 根据 `gpu-fraction` 或 `gpu-memory` 限制显存。
 - **Volcano**：`deviceshare` 插件加 volcano-vgpu-device-plugin，资源为 `volcano.sh/vgpu-*`。在共享 GPU 上提供 gang 调度和队列上限。每个 GPU 节点只运行一条设备插件路径。可尝试 [Volcano vGPU 教程](https://project-hami.io/tutorials/labs/volcano-vgpu-gang-queue)。
+
+### 安装 Volcano vGPU 插件
+
+参考 [volcano-vgpu-device-plugin README](https://github.com/Project-HAMi/volcano-vgpu-device-plugin)。插件 v1.13.0 需要 Volcano v1.15.0 或更高版本。在 `volcano-scheduler-configmap`（命名空间 `volcano-system`）中启用 vGPU：
+
+```yaml
+- name: deviceshare
+  arguments:
+    deviceshare.VGPUEnable: true
+    deviceshare.SchedulePolicy: binpack  # 或 spread
+```
+
+目前还没有发布 Helm 仓库，需要从源码目录安装。`nvmlMock.enabled=true` 可以在没有 GPU 的集群上运行，足以检查调度和注册：
+
+```bash
+git clone https://github.com/Project-HAMi/volcano-vgpu-device-plugin
+cd volcano-vgpu-device-plugin
+helm install volcano-vgpu-device-plugin deployments/helm/volcano-vgpu-device-plugin \
+  --set nvmlMock.enabled=true
+kubectl get node <node> -o jsonpath='{.status.allocatable}'
+```
+
+应能看到 `volcano.sh/vgpu-number` 和 `volcano.sh/vgpu-memory`。不要在运行 HAMi 设备插件的节点上安装它。
 
 ### DRA
 
@@ -165,6 +256,33 @@ spec:
 ![HAMi-DRA](../images/hami-lab-hami-dra.svg)
 
 它需要 Kubernetes 1.34+，以及 containerd 或 CRI-O 中的 CDI，因此在本实验中仅作阅读。
+
+## v2.11.0 新功能（阅读）
+
+### Remote GPU
+
+在没有 GPU、也没有驱动的节点上运行 CUDA，GPU 由 [Lupine](https://github.com/lupinemachines) 通过网络提供。配置为 `operatingmode: remote` 的 GPU 节点作为 Lupine 服务器，而不是公布本地设备。在客户端，init 容器提供 Lupine 客户端库和 `nvidia-smi`，HAMi 注入 `LUPINE_SERVER`。
+
+```yaml
+# 在无 GPU 节点上运行 vLLM
+resources:
+  limits:
+    nvidia.com/remote-gpu: 2               # 预留整台服务器
+    nvidia.com/remote-gpu-memory: 20480    # 每卡上限，由 HAMi-core 限制
+```
+
+通过 `devices.remotegpu.enabled` 启用。服务器可以按 Node 标签分池，用 `hami.io/remote-server` 选择。客户端和服务器节点必须分开，支持的镜像为 CUDA 和 vLLM 0.19 至 0.26。示例：[HAMi examples/remotegpu](https://github.com/Project-HAMi/HAMi/tree/master/examples/remotegpu)。
+
+### AMD Instinct 共享
+
+与 NVIDIA 相同的资源模型，容器内由 amd-hami-core 强制限制：
+
+- **显存：** `amd.com/gpumem` 或 `amd.com/gpumem-percentage`。
+- **算力：** `amd.com/gpucores` 通过 `HSA_CU_MASK` 设置计算单元份额。
+- **放置：** `amd.com/numa-bind`，用 `amd.com/link-bind` 选择 XGMI 互联的卡，以及 `binpack`、`spread`、`mutex` 和 `topology-aware` 策略。
+- **节点侧：** amd-device-plugin v0.0.4 支持 SPX、DPX、QPX 和 CPX 计算分区。amd-dra-driver 在 DRA 路径上提供同样的限制。
+
+详见 [AMD GPU 指南](https://project-hami.io/docs/next/userguide/amd-device/enable-amd-gpu-sharing)。
 
 ## 收尾：预留不等于使用
 

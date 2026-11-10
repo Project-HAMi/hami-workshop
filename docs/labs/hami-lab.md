@@ -120,6 +120,27 @@ done
 
 binpack puts both Pods on the same card, spread puts one on each.
 
+### Mutex: start on an idle card
+
+`hami.io/gpu-scheduler-policy: mutex` (new in HAMi v2.10.0) is a filter: only cards with no tenants are candidates. One small workload on a card is enough to rule it out. Keep the spread Pods running, one on each card:
+
+```bash
+kubectl apply -f mutex.yaml
+kubectl get events --field-selector involvedObject.name=mutex-1 | tail -1
+# 0/1 nodes are available: 1 2/2 ExclusiveDeviceAllocateConflict.
+kubectl delete pod spread-2
+kubectl wait --for=condition=Ready pod/mutex-1 --timeout=120s
+kubectl get pod mutex-1 -o jsonpath='{.metadata.annotations.hami\.io/vgpu-devices-allocated}{"\n"}'
+# GPU-mock-0,NVIDIA,15000,30:;
+kubectl delete -f spread.yaml -f mutex.yaml --ignore-not-found
+```
+
+Both cards have room for `mutex-1`'s memory, but neither is empty, so it waits until one is.
+
+- Mutex is checked **at placement only**. A later Pod without `mutex` can still join the card. To keep a card for the Pod's lifetime, request all of its memory and cores, or pin it with `nvidia.com/use-gpuuuid`.
+- Since v2.10.0 policies chain: filters first (`mutex`, `topology-aware`), then sort keys in the order written (`binpack`, `spread`, `numa`). `mutex,binpack,numa` takes an idle card, the best packed of those, with NUMA as the tiebreaker.
+- `mutex,topology-aware` on NVIDIA: idle cards first, then the best NVLink-connected set among them. If a card in the best set is busy, the Pod gets a worse set or stays Pending.
+
 ### Where topology information comes from
 
 The scheduler never reads the hardware. Each vendor's device plugin reads it on the node and writes node annotations, and the scheduler scores cards from them:
@@ -131,7 +152,54 @@ The scheduler never reads the hardware. Each vendor's device plugin reads it on 
 - **MetaX:** the vendor plugin writes `metax-tech.com/gpu.topology.scores` and `.losses`. MetaXLink first, then PCIe switch.
 - **Kunlunxin, AWS Neuron:** no link data. The layout is fixed, so the scheduler derives it from the card index.
 
-## Lab 4: Beyond the default scheduler
+### CPU and GPU on the same NUMA node (read-along)
+
+The scheduler picks the GPU, kubelet's Topology Manager picks the CPUs. Since HAMi v2.11.0 the device plugin asks the scheduler to refit when the two disagree, so CPUs, the GPU and HAMi's accounting end up on the same NUMA node. kind has a single NUMA node, so this is read-along.
+
+```yaml
+# kubelet config
+cpuManagerPolicy: static
+topologyManagerPolicy: single-numa-node
+topologyManagerScope: container
+```
+
+```yaml
+metadata:
+  annotations:
+    hami.io/numa-alignment: best-effort   # or strict
+```
+
+- Helm: `devices.nvidia.enableNumaTopology`, `devicePlugin.numaRefit.enabled`, and per node `enablegetpreferredallocation`. All off by default.
+- `best-effort`: if the refit fails, kubelet's choice stands and is logged. `strict`: the allocation fails.
+- Only Guaranteed QoS Pods with integer CPUs, in hami-core mode. See the [NUMA alignment guide](https://project-hami.io/docs/userguide/nvidia-device/numa-alignment).
+
+## Lab 4: Flexible MIG (read-along)
+
+MIG needs an Ampere or newer GPU, and the mock cards cannot create GPU instances.
+
+- **Static MIG:** NVIDIA MIG Manager. A whole-GPU layout chosen up front, and changing it means draining. Pods ask for `nvidia.com/mig-1g.10gb`.
+- **Dynamic MIG, HAMi v2.5.0:** `knownMigGeometries` lists whole-card templates per model. The scheduler takes the first template that fits and the device plugin applies it with mig-parted. A new profile mix means switching the template, so the card has to be empty first.
+- **Flexible MIG, HAMi v2.10.0:** no templates. Profiles and legal placements come from NVML, the scheduler reserves the smallest allowed profile that fits the `gpumem` request in `hami.io/vgpu-mig-allocations`, and the device plugin creates the instance at `Allocate` and removes it when the Pod ends. No drain.
+- **v2.11.0:** a CDI spec per MIG instance (v2.10.0 MIG did not work with CDI device injection), placement scoring with backtracking, `nvidia.com/mig-profile-preference`, and Cluster Autoscaler support through `devicePlugin.reportNodeCapacity`.
+
+```yaml
+# node config: "operatingmode": "mig"
+nvidia:
+  migProfileAllowlist:
+    - models: ["A100-SXM4-40GB"]
+      profiles: ["1g.5gb", "2g.10gb", "3g.20gb", "7g.40gb"]
+```
+
+```yaml
+metadata:
+  annotations:
+    nvidia.com/vgpu-mode: "mig"
+# limits: nvidia.com/gpu: 1, nvidia.com/gpumem: 8000  -> 2g.10gb
+```
+
+The Pod spec is the same as in Lab 2. Free slices without a legal contiguous placement leave the Pod Pending, and HAMi never moves a running instance. HAMi and NVIDIA MIG Manager must not manage the same GPU. See [Dynamic MIG support](https://project-hami.io/docs/userguide/nvidia-device/dynamic-mig-support).
+
+## Lab 5: Beyond the default scheduler
 
 HAMi is a capacity model plus HAMi-core, the isolation library. Other schedulers can replace the placement and keep the isolation:
 
@@ -139,6 +207,29 @@ HAMi is a capacity model plus HAMi-core, the isolation library. Other schedulers
 
 - **KAI Scheduler** (v0.16.4+): `global.gpuSharing=true` and `binder.plugins.hamicore.enabled=true`. KAI places, HAMi-core caps memory from `gpu-fraction` or `gpu-memory`.
 - **Volcano**: the `deviceshare` plugin plus the volcano-vgpu-device-plugin, resources `volcano.sh/vgpu-*`. Gang scheduling and queue caps on shared GPUs. Run only one device plugin path per GPU node. Try the [Volcano vGPU tutorial](https://project-hami.io/tutorials/labs/volcano-vgpu-gang-queue).
+
+### Install the Volcano vGPU plugin
+
+From the [volcano-vgpu-device-plugin README](https://github.com/Project-HAMi/volcano-vgpu-device-plugin). Plugin v1.13.0 needs Volcano v1.15.0 or later. In `volcano-scheduler-configmap` (namespace `volcano-system`) enable vGPU:
+
+```yaml
+- name: deviceshare
+  arguments:
+    deviceshare.VGPUEnable: true
+    deviceshare.SchedulePolicy: binpack  # or spread
+```
+
+No Helm repository is published yet, so install from a checkout. `nvmlMock.enabled=true` runs it without GPUs, which is enough to check scheduling and registration:
+
+```bash
+git clone https://github.com/Project-HAMi/volcano-vgpu-device-plugin
+cd volcano-vgpu-device-plugin
+helm install volcano-vgpu-device-plugin deployments/helm/volcano-vgpu-device-plugin \
+  --set nvmlMock.enabled=true
+kubectl get node <node> -o jsonpath='{.status.allocatable}'
+```
+
+`volcano.sh/vgpu-number` and `volcano.sh/vgpu-memory` should be listed. Do not install it on a node that runs the HAMi device plugin.
 
 ### DRA
 
@@ -165,6 +256,33 @@ spec:
 ![HAMi-DRA](../images/hami-lab-hami-dra.svg)
 
 It needs Kubernetes 1.34+ and CDI in containerd or CRI-O, so it is a read-along in this lab.
+
+## New in v2.11.0 (read-along)
+
+### Remote GPU
+
+CUDA on a node with no GPU and no driver, served over the network by [Lupine](https://github.com/lupinemachines). GPU nodes with `operatingmode: remote` serve Lupine instead of advertising local devices. On the client, an init container delivers the Lupine client libraries and `nvidia-smi`, and HAMi injects `LUPINE_SERVER`.
+
+```yaml
+# vLLM on a GPU-less node
+resources:
+  limits:
+    nvidia.com/remote-gpu: 2               # reserves a whole server
+    nvidia.com/remote-gpu-memory: 20480    # per GPU, enforced by HAMi-core
+```
+
+Enable with `devices.remotegpu.enabled`. Servers can be pooled by Node label and picked with `hami.io/remote-server`. Client and server nodes must be separate, and supported images are CUDA and vLLM 0.19 to 0.26. Examples: [HAMi examples/remotegpu](https://github.com/Project-HAMi/HAMi/tree/master/examples/remotegpu).
+
+### AMD Instinct sharing
+
+The NVIDIA resource model with hard limits in the container, enforced by amd-hami-core:
+
+- **Memory:** `amd.com/gpumem` or `amd.com/gpumem-percentage`.
+- **Compute:** `amd.com/gpucores` sets the compute unit share through `HSA_CU_MASK`.
+- **Placement:** `amd.com/numa-bind`, XGMI-linked cards with `amd.com/link-bind`, and the `binpack`, `spread`, `mutex` and `topology-aware` policies.
+- **Node side:** amd-device-plugin v0.0.4 adds SPX, DPX, QPX and CPX compute partitions. amd-dra-driver brings the same limits to DRA.
+
+See the [AMD GPU guide](https://project-hami.io/docs/next/userguide/amd-device/enable-amd-gpu-sharing).
 
 ## Wrap-up: reserved is not used
 
