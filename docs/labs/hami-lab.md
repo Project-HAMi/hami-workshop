@@ -340,6 +340,58 @@ make verify && make -C server verify
 
 Commits need `git commit -s`. Look for `good first issue` and open a draft PR.
 
+## Troubleshooting
+
+### macOS: give the VM enough room
+
+kind runs every node as a container inside the Docker VM, so the VM needs 4 CPU and 8 GB.
+
+- **Docker Desktop:** Settings, Resources, Advanced: CPU limit 4, memory limit 8 GB, then Apply & restart.
+- **Colima:** the default VM has 2 CPU and 2 GB. Restart it larger:
+
+```bash
+colima stop
+colima start --cpu 4 --memory 8 --vm-type vz
+```
+
+`--vm-type` only applies to a new VM. If your existing VM uses qemu, `colima delete` first (this throws away pulled images).
+
+### `kind load` fails with `content digest ... not found`
+
+Docker's containerd image store keeps multi-arch images that `kind load docker-image` cannot import ([kind#3795](https://github.com/kubernetes-sigs/kind/issues/3795)). `setup.sh` works around it, but your own `kind load` calls may hit it. Check which store you have:
+
+```bash
+docker info -f '{{ .DriverStatus }}'   # io.containerd.snapshotter.v1 means the containerd store
+```
+
+To switch it off:
+
+- **Docker Desktop:** Settings, General, untick "Use containerd for pulling and storing images", then Apply & restart.
+- **Colima:** `colima start --edit` and set the Docker daemon config:
+
+```yaml
+docker:
+  features:
+    containerd-snapshotter: false
+```
+
+Images pulled into one store are not visible in the other, so pull again after switching.
+
+### Pods fail with `too many open files`
+
+The VM's inotify limits are too low for the HAMi pods and kind ([kind known issues](https://kind.sigs.k8s.io/docs/user/known-issues/#pod-errors-due-to-too-many-open-files)). Raise them inside the VM, this lasts until the VM restarts:
+
+```bash
+# Colima
+colima ssh -- sudo sysctl -w fs.inotify.max_user_watches=524288 fs.inotify.max_user_instances=512
+# Docker Desktop or OrbStack
+docker run --rm --privileged alpine sysctl -w fs.inotify.max_user_watches=524288 fs.inotify.max_user_instances=512
+```
+
+### `kind create cluster` cannot find Docker
+
+`docker context ls` must mark the VM you just started (`colima`, `desktop-linux` or `orbstack`) as active. Switch with `docker context use colima`.
+
 ## Clean up
 
 ```bash

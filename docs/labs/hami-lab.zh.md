@@ -340,6 +340,58 @@ make verify && make -C server verify
 
 提交需要 `git commit -s`。找 `good first issue`，然后提一个 draft PR。
 
+## 故障排查
+
+### macOS：给虚拟机足够的资源
+
+kind 把每个节点作为容器跑在 Docker 虚拟机里，虚拟机需要 4 CPU、8 GB 内存。
+
+- **Docker Desktop：** Settings、Resources、Advanced：CPU limit 设为 4，memory limit 设为 8 GB，然后 Apply & restart。
+- **Colima：** 默认虚拟机只有 2 CPU、2 GB。用更大的配置重启：
+
+```bash
+colima stop
+colima start --cpu 4 --memory 8 --vm-type vz
+```
+
+`--vm-type` 只对新建的虚拟机生效。如果现有虚拟机用的是 qemu，先执行 `colima delete`（会删除已拉取的镜像）。
+
+### `kind load` 报错 `content digest ... not found`
+
+Docker 的 containerd 镜像存储保存的是多架构镜像，`kind load docker-image` 无法导入（[kind#3795](https://github.com/kubernetes-sigs/kind/issues/3795)）。`setup.sh` 已经绕过了这个问题，但你自己执行 `kind load` 时可能会遇到。查看当前使用的存储：
+
+```bash
+docker info -f '{{ .DriverStatus }}'   # 出现 io.containerd.snapshotter.v1 表示使用 containerd 存储
+```
+
+关闭方法：
+
+- **Docker Desktop：** Settings、General，取消勾选 "Use containerd for pulling and storing images"，然后 Apply & restart。
+- **Colima：** 执行 `colima start --edit`，设置 Docker 守护进程配置：
+
+```yaml
+docker:
+  features:
+    containerd-snapshotter: false
+```
+
+两种存储里的镜像互不可见，切换后需要重新拉取。
+
+### Pod 报错 `too many open files`
+
+虚拟机的 inotify 限制对 HAMi 的 Pod 和 kind 来说太低（[kind 已知问题](https://kind.sigs.k8s.io/docs/user/known-issues/#pod-errors-due-to-too-many-open-files)）。在虚拟机内调高，重启虚拟机后失效：
+
+```bash
+# Colima
+colima ssh -- sudo sysctl -w fs.inotify.max_user_watches=524288 fs.inotify.max_user_instances=512
+# Docker Desktop 或 OrbStack
+docker run --rm --privileged alpine sysctl -w fs.inotify.max_user_watches=524288 fs.inotify.max_user_instances=512
+```
+
+### `kind create cluster` 找不到 Docker
+
+`docker context ls` 中当前激活的必须是你刚启动的虚拟机（`colima`、`desktop-linux` 或 `orbstack`）。用 `docker context use colima` 切换。
+
 ## 清理
 
 ```bash
