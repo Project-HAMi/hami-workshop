@@ -49,6 +49,7 @@ plugins:
       nav_translations:
         Home: Home
         About: About
+        Hands-on Course: Hands-on Course
         Concepts: Concepts
         Labs: Labs
     - locale: zh
@@ -58,6 +59,7 @@ plugins:
       nav_translations:
         Home: 首页
         About: 关于
+        Hands-on Course: 实战课程
         Concepts: 概念
         Labs: 实验
 
@@ -75,6 +77,18 @@ nav:
   - labs/hami-lab.md
   - labs/containerdays-singapore.md
   - labs/local-amd-gpu.md
+  - labs/hami-core-colab.md
+- Hands-on Course:
+  - course/index.md
+  - course/01-setup.md
+  - course/02-one-gpu-one-pod.md
+  - course/03-lets-just-share-it.md
+  - course/04-enter-hami.md
+  - course/05-more-cards.md
+  - course/06-real-models.md
+  - course/07-seeing-it.md
+  - course/08-many-teams.md
+  - course/09-something-broke.md
 
 extra_css:
 - stylesheets/extra.css

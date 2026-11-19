@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: train-
+spec:
+  containers:
+    - name: train
+      image: busybox:1.36
+      command: ["sleep", "infinity"]
+      resources:
+        limits:
+          nvidia.com/gpu: 2
+          nvidia.com/gpumem: 10000
