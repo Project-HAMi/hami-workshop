@@ -11,7 +11,14 @@ MONITOR_VERSION=${MONITOR_VERSION:-0.2.0}
 step() { printf '\n==> %s\n' "$*"; }
 
 step "kind cluster ${CLUSTER}"
-kind get clusters | grep -qx "${CLUSTER}" || kind create cluster --name "${CLUSTER}"
+lab_kubeconfig=$(mktemp)
+trap 'rm -f "${lab_kubeconfig}"' EXIT
+export KUBECONFIG="${lab_kubeconfig}"
+if kind get clusters | grep -Fxq -- "${CLUSTER}"; then
+  kind get kubeconfig --name "${CLUSTER}" > "${KUBECONFIG}"
+else
+  kind create cluster --name "${CLUSTER}" --kubeconfig "${KUBECONFIG}"
+fi
 kubectl label node "${NODE}" gpu=on --overwrite
 
 step "Pre-pulled lab images into ${CLUSTER}"
