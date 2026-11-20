@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: small-1
+  annotations:
+    hami.io/gpu-scheduler-policy: binpack
+spec:
+  containers:
+    - name: model
+      image: busybox:1.36
+      command: ["sleep", "infinity"]
+      resources:
+        limits:
+          nvidia.com/gpu: 1
+          nvidia.com/gpumem: 15000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: small-2
+  annotations:
+    hami.io/gpu-scheduler-policy: binpack
+spec:
+  containers:
+    - name: model
+      image: busybox:1.36
+      command: ["sleep", "infinity"]
+      resources:
+        limits:
+          nvidia.com/gpu: 1
+          nvidia.com/gpumem: 15000

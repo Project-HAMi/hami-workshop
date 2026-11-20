@@ -36,6 +36,13 @@ Hands-on exercises.
 - [Lab 2: Local Fake GPU Setup](labs/local-fake-gpu.md): Set up HAMi locally on macOS.
 - [ContainerDays 2026 Singapore](labs/containerdays-singapore.md): Share fake GPUs, tune scheduling policies, meet KAI Scheduler, Volcano and DRA. No GPU needed.
 - [Lab 3: Local AMD GPU (optional)](labs/local-amd-gpu.md): For people with an AMD GPU. Share a real GPU between two small LLMs with HAMi.
+- [Real GPU Isolation on Colab](labs/hami-core-colab.md): A 45-minute lab on a free Colab T4. Watch HAMi-core hold programs to their memory and compute share.
+
+### :material-school: Hands-on Course
+
+Follow a small AI team from one shared GPU to HAMi, on a free Colab GPU and a kind cluster on your laptop.
+
+- [Hands-on Course overview](course/index.md): the story, the two environments, and all nine chapters
 
 ## About HAMi
 

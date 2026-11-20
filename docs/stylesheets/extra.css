@@ -28,3 +28,71 @@
   text-align: center;
   width: 100%;
 }
+
+/* Hands-on course: command output blocks, marked with ```{.text .output} */
+.md-typeset .output {
+  border: 1px dashed var(--md-default-fg-color--lighter);
+  border-left: 3px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.1rem;
+}
+.md-typeset .output::before {
+  content: "Output";
+  display: block;
+  padding: 0.5em 1.2em 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--light);
+}
+html[lang^="zh"] .md-typeset .output::before {
+  content: "输出";
+}
+.md-typeset .output pre,
+.md-typeset .output pre > code {
+  margin-top: 0;
+  background-color: transparent;
+}
+.md-typeset .output .md-code__nav {
+  display: none;
+}
+
+/* Hands-on course: where a step runs, in chapters that use Colab and kind */
+.md-typeset .run-on {
+  padding: 0.5em 0.9em;
+  border-left: 4px solid;
+  border-radius: 0.2rem;
+  font-size: 0.75rem;
+}
+.md-typeset .run-on-colab {
+  border-color: #f9ab00;
+  background-color: rgba(249, 171, 0, 0.12);
+}
+.md-typeset .run-on-kind {
+  border-color: #326ce5;
+  background-color: rgba(50, 108, 229, 0.12);
+}
+
+/* Hands-on course: Open in Colab button at the top of a page, in the color of the Colab run-on line */
+.md-typeset .md-button.colab-button {
+  padding: 0.35em 1.1em;
+  border: 1px solid #f9ab00;
+  border-radius: 999px;
+  background-color: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: background-color 125ms, box-shadow 125ms, transform 125ms;
+}
+.md-typeset .md-button.colab-button .twemoji {
+  color: #f9ab00;
+}
+.md-typeset .md-button.colab-button:hover,
+.md-typeset .md-button.colab-button:focus {
+  border-color: #f9ab00;
+  background-color: rgba(249, 171, 0, 0.12);
+  color: var(--md-default-fg-color);
+  box-shadow: 0 2px 6px rgba(249, 171, 0, 0.3);
+  transform: translateY(-1px);
+}

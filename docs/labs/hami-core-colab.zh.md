@@ -1,0 +1,320 @@
+# 在 Colab 上看真实的 GPU 隔离：45 分钟上手 HAMi-core
+
+[:simple-googlecolab: 在 Colab 中打开本实验](https://colab.research.google.com/github/Project-HAMi/hami-workshop/blob/main/notebooks/zh/hami-core-colab.ipynb){ .md-button .colab-button target="_blank" }
+
+在 45 分钟里，你会在一张真实的 GPU 上运行几个程序，看它们互相抢占显存和算力。然后加载 HAMi-core，也就是 HAMi 放进每个 GPU 容器里的那个库，把一个 Pod 会拿到的限制交给它，看每个程序都只用自己的那一份。
+
+所有操作都在浏览器里的 Google Colab 上完成，Colab 免费提供一张 NVIDIA T4。
+
+于 2026-11-19 在 Colab 上测试，环境为 Tesla T4（驱动 580.82.07）、PyTorch 2.14.1+cu130 和 HAMi-core commit `1721252`（即 HAMi v2.11.0 自带的版本）。
+
+## 45 分钟安排
+
+| 时间 | 环节 | 你会收获什么 |
+| --- | --- | --- |
+| 0:00 | 开始 | 一个运行在 T4 上的 Colab notebook，以及从源码编译好的 HAMi-core |
+| 0:05 | 实验 1：先看到问题 | 一张卡上的两个程序互相抢占显存和算力 |
+| 0:15 | 实验 2：你来扮演 Device Plugin | 同样的程序，被 HAMi-core 限制在各自的显存和算力份额内 |
+| 0:30 | 实验 3：管住吵闹的邻居 | 训练任务被限制在自己的份额内，旁边的测速程序受到的影响变小 |
+| 0:40 | 总结 | 限制的边界，以及接下来可以尝试的内容 |
+
+## 开始之前
+
+- 一个 Google 账号和一个浏览器，电脑上不需要安装任何东西。
+
+Colab 的免费 GPU 不保证一定能分到。如果暂时分不到 T4，过一段时间再试。
+
+## 开始：编译 HAMi-core
+
+:simple-googlecolab: **在 Colab 上运行**
+{: .run-on .run-on-colab }
+
+HAMi 把 HAMi-core 打包在 Device Plugin 的镜像里。这里你从源码编译它，只需要几秒钟：
+
+```python
+!rm -rf /content/HAMi-core && git clone -q https://github.com/Project-HAMi/HAMi-core /content/HAMi-core
+!cd /content/HAMi-core && git checkout -q 17212525d27ac156955ab940c5d51df33d9e0d09 && git log --oneline -1
+!cd /content/HAMi-core && mkdir -p build && cd build && (cmake .. -DDLSYM_HOOK_ENABLE=1 -DMULTIPROCESS_LIMIT_ENABLE=1 -DHOOK_MEMINFO_ENABLE=1 -DHOOK_NVML_ENABLE=1 -DCMAKE_BUILD_TYPE=Debug -DTEST_DEVICE_ID=0 && make -j$(nproc) vgpu) > /content/build.log 2>&1; echo "build exit code: $?"
+!ls -la /content/HAMi-core/build/libvgpu.so
+!python -c "import torch; print('torch', torch.__version__)"
+```
+
+```{.text .output}
+1721252 (HEAD) Merge pull request #391 from alwaysprince05/fix/vmm-release-while-mapped
+build exit code: 0
+-rwxr-xr-x 1 root root 829488 Nov 19 07:37 /content/HAMi-core/build/libvgpu.so
+torch 2.14.1+cu130
+```
+
+这些选项和 HAMi-core 自带的 `build.sh` 一致。`make vgpu` 只编译 `libvgpu.so` 这个库，跳过 HAMi-core 的测试程序。实验 2 会用到这个库。
+
+## 实验 1：先看到问题
+
+:simple-googlecolab: **在 Colab 上运行**
+{: .run-on .run-on-colab }
+
+本实验里的每个程序代表一个 Pod。在 Kubernetes 里它们会运行在不同的容器中，这里它们是同一张卡上的不同进程。对 GPU 来说，两种情况看到的都是这些进程。
+
+第一个程序代替模型：它把一些权重加载到显存里，然后一直等待，就像推理服务一直持有模型一样。
+
+```python
+%%writefile /content/model.py
+import sys, time, torch
+name, gib = sys.argv[1], float(sys.argv[2])
+free, total = torch.cuda.mem_get_info()
+print(f"{name} sees {total / 2**20:.0f} MiB of GPU memory", flush=True)
+weights = torch.empty(int(gib * 2**30), dtype=torch.uint8, device="cuda")
+print(f"{name} loaded {gib:g} GiB of weights on {torch.cuda.get_device_name(0)}", flush=True)
+time.sleep(365 * 24 * 3600)
+```
+
+第二个程序以 1 GiB 为单位不断申请显存，直到卡被占满：
+
+```python
+%%writefile /content/greedy.py
+import time, torch
+chunks = []
+while True:
+    try:
+        chunks.append(torch.empty(2**30, dtype=torch.uint8, device="cuda"))
+    except torch.cuda.OutOfMemoryError:
+        break
+print(f"greedy holds {len(chunks)} GiB of GPU memory", flush=True)
+time.sleep(365 * 24 * 3600)
+```
+
+### 显存
+
+启动两个 2 GiB 的模型和 greedy，然后再来第三个模型：
+
+```python
+!nohup python /content/model.py model-a 2 > /content/model-a.log 2>&1 &
+!nohup python /content/model.py model-b 2 > /content/model-b.log 2>&1 &
+!sleep 15 && cat /content/model-a.log /content/model-b.log
+!nohup python /content/greedy.py > /content/greedy.log 2>&1 &
+!sleep 15 && grep greedy /content/greedy.log
+!python /content/model.py model-c 2 2>&1 | tail -1 | cut -c1-190
+```
+
+```{.text .output}
+model-a sees 14913 MiB of GPU memory
+model-a loaded 2 GiB of weights on Tesla T4
+model-b sees 14913 MiB of GPU memory
+model-b loaded 2 GiB of weights on Tesla T4
+greedy holds 10 GiB of GPU memory
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.00 GiB. GPU 0 has a total capacity of 14.56 GiB of which 165.75 MiB is free. Process 1249 has 2.10 GiB memory in use. Process
+```
+
+每个程序看到的都是整张卡。`greedy` 占走了 10 GiB，`model-c` 报 `CUDA out of memory` 失败。在开启了 time-slicing 的集群里，这四个都是只向 Kubernetes 申请了一份的 Pod。调度器数的是份数，GPU 上根本没有份数这个概念。
+
+```python
+!pkill -f '/content/(model|greedy).py'
+!sleep 5
+```
+
+### 算力
+
+一个测量矩阵乘法速度的测速程序，和一个只做矩阵乘法的训练任务：
+
+```python
+%%writefile /content/bench.py
+import time, torch
+a = torch.randn(4096, 4096, device="cuda", dtype=torch.float16)
+b = torch.randn(4096, 4096, device="cuda", dtype=torch.float16)
+while True:
+    start, n = time.time(), 0
+    while time.time() - start < 5:
+        for _ in range(10):
+            torch.matmul(a, b)
+        torch.cuda.synchronize()
+        n += 10
+    tflops = n * 2 * 4096**3 / (time.time() - start) / 1e12
+    print(f"{time.strftime('%H:%M:%S')} {tflops:.1f} TFLOPS", flush=True)
+```
+
+```python
+%%writefile /content/training.py
+import torch
+a = torch.randn(4096, 4096, device="cuda", dtype=torch.float16)
+b = torch.randn(4096, 4096, device="cuda", dtype=torch.float16)
+print("training started", flush=True)
+while True:
+    torch.matmul(a, b)
+```
+
+先让测速程序单独跑 20 秒，再在旁边启动训练任务：
+
+```python
+!nohup python /content/bench.py > /content/bench.log 2>&1 &
+!sleep 20
+!nohup python /content/training.py > /content/training.log 2>&1 &
+!sleep 20 && cat /content/bench.log
+!pkill -f '/content/(bench|training).py'
+!sleep 5
+```
+
+```{.text .output}
+07:38:20 23.7 TFLOPS
+07:38:25 24.2 TFLOPS
+07:38:30 24.1 TFLOPS
+07:38:35 24.1 TFLOPS
+07:38:40 13.2 TFLOPS
+07:38:45 10.9 TFLOPS
+07:38:50 10.8 TFLOPS
+```
+
+测速程序单独运行时约 24 TFLOPS，`training` 一启动就降到约 11 TFLOPS。测速程序本身什么都没变。GPU 在两个繁忙的进程之间来回切换，每个大约分到一半的时间。
+
+## 实验 2：你来扮演 Device Plugin
+
+:simple-googlecolab: **在 Colab 上运行**
+{: .run-on .run-on-colab }
+
+一个 Pod 向 HAMi 申请 `nvidia.com/gpumem: 4096` 和 `nvidia.com/gpucores: 30` 时，HAMi 的 Device Plugin 交给它的容器的是这些：
+
+| Device Plugin 传入的 | 取值 | HAMi-core 拿它做什么 |
+| --- | --- | --- |
+| `CUDA_DEVICE_MEMORY_LIMIT_0` | `4096m` | 第一张可见 GPU 的显存限制 |
+| `CUDA_DEVICE_SM_LIMIT` | `30` | 算力限制，按 GPU 利用率的百分比计算 |
+| `CUDA_DEVICE_MEMORY_SHARED_CACHE` | 一个文件路径，每个容器一个 | 容器里所有进程记录各自用量的地方 |
+| `/etc/ld.so.preload` | `libvgpu.so` 的路径 | 让每个进程都加载 HAMi-core |
+
+Colab 上没有 Kubernetes，所以由你来扮演 Device Plugin。你自己设置这些变量，并用 `LD_PRELOAD` 加载 HAMi-core。`LD_PRELOAD` 对一个进程起的作用，就是 `/etc/ld.so.preload` 对整个容器起的作用。
+
+### 显存
+
+重做显存实验，这次每个程序都有 4096 MiB 的限制和自己的缓存文件：
+
+```python
+!LD_PRELOAD=/content/HAMi-core/build/libvgpu.so \
+  CUDA_DEVICE_MEMORY_LIMIT_0=4096m \
+  CUDA_DEVICE_MEMORY_SHARED_CACHE=/tmp/model-a.cache \
+  nohup python /content/model.py model-a 2 > /content/model-a.log 2>&1 &
+!LD_PRELOAD=/content/HAMi-core/build/libvgpu.so \
+  CUDA_DEVICE_MEMORY_LIMIT_0=4096m \
+  CUDA_DEVICE_MEMORY_SHARED_CACHE=/tmp/greedy.cache \
+  nohup python /content/greedy.py > /content/greedy.log 2>&1 &
+!sleep 15 && grep model-a /content/model-a.log && grep greedy /content/greedy.log
+!LD_PRELOAD=/content/HAMi-core/build/libvgpu.so \
+  CUDA_DEVICE_MEMORY_LIMIT_0=4096m \
+  CUDA_DEVICE_MEMORY_SHARED_CACHE=/tmp/model-c.cache \
+  nohup python /content/model.py model-c 2 > /content/model-c.log 2>&1 &
+!sleep 15 && grep model-c /content/model-c.log
+```
+
+```{.text .output}
+model-a sees 4096 MiB of GPU memory
+model-a loaded 2 GiB of weights on Tesla T4
+greedy holds 3 GiB of GPU memory
+model-c sees 4096 MiB of GPU memory
+model-c loaded 2 GiB of weights on Tesla T4
+```
+
+`model-a` 和 `model-c` 看到的是一张 4096 MiB 的卡，都加载了权重。`greedy` 停在了 3 GiB：限制把 CUDA context（约 100 MiB）也算在内，所以第 4 块 1 GiB 会超过 4096 MiB。实验 1 里失败的 `model-c` 现在能加载了，因为 `greedy` 只能拿走自己那一份。
+
+`nvidia-smi` 通过 NVML 读取显存，而 NVML 也被 HAMi-core 拦截了。对比一下宿主机看到的样子，和 `model-a` 切片里看到的样子：
+
+```python
+!nvidia-smi --query-gpu=memory.used,memory.total --format=csv
+!LD_PRELOAD=/content/HAMi-core/build/libvgpu.so \
+  CUDA_DEVICE_MEMORY_LIMIT_0=4096m \
+  CUDA_DEVICE_MEMORY_SHARED_CACHE=/tmp/model-a.cache \
+  nvidia-smi --query-gpu=memory.used,memory.total --format=csv 2>/dev/null
+!pkill -f '/content/(model|greedy).py'
+!sleep 5
+```
+
+```{.text .output}
+memory.used [MiB], memory.total [MiB]
+7477 MiB, 15360 MiB
+memory.used [MiB], memory.total [MiB]
+2150 MiB, 4096 MiB
+```
+
+宿主机看到的是真实的 15360 MiB，已用部分包括三个程序的显存。从 `model-a` 的切片里看，这张卡只有 4096 MiB，已用的只有 `model-a` 自己的 2150 MiB。GPU 本身并没有被切分，HAMi-core 改变的是一个 Pod 里的程序能看到什么、能拿走多少。
+
+### 算力
+
+给测速程序加上一个申请了 `nvidia.com/gpucores: 30` 的 Pod 会拿到的限制，运行期间每秒采样一次 GPU 利用率：
+
+```python
+!LD_PRELOAD=/content/HAMi-core/build/libvgpu.so \
+  CUDA_DEVICE_SM_LIMIT=30 \
+  CUDA_DEVICE_MEMORY_SHARED_CACHE=/tmp/bench.cache \
+  nohup python /content/bench.py > /content/bench-30.log 2>&1 &
+!sleep 5 && timeout 20 nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader -l 1 | tr '\n' ' '; echo
+!pkill -f /content/bench.py
+!sleep 5 && grep TFLOPS /content/bench-30.log
+```
+
+```{.text .output}
+19 % 36 % 39 % 36 % 35 % 31 % 21 % 24 % 34 % 39 % 36 % 26 % 26 % 23 % 22 % 34 % 39 % 36 % 32 % 21 %
+07:39:42 6.0 TFLOPS
+07:39:47 6.8 TFLOPS
+07:39:52 6.8 TFLOPS
+07:39:57 6.5 TFLOPS
+```
+
+利用率在 19% 到 39% 之间跳动，平均值是 30%。HAMi-core 控制的是 kernel 的启动：一个后台线程每 120 毫秒通过 NVML 读取一次进程的利用率，据此给出更多或更少的启动机会，所以限制在一段时间内的平均值上成立。测速程序保留了约 6.5 TFLOPS，略低于实验 1 里单独运行时的 30%。
+
+## 实验 3：管住吵闹的邻居
+
+:simple-googlecolab: **在 Colab 上运行**
+{: .run-on .run-on-colab }
+
+回到实验 1 的问题：测速程序旁边一启动训练任务，速度就掉到一半都不到。实验 2 已经展示了算力限制是怎么工作的，现在把它用在真正该用的地方，也就是那个吵闹的邻居身上。
+
+重做实验 1 的实验：先让测速程序单独运行，再在旁边启动训练任务。这一次，训练任务拿到的是一个申请了 `nvidia.com/gpucores: 30` 的 Pod 会拿到的限制，测速程序不加任何限制：
+
+```python
+!nohup python /content/bench.py > /content/bench.log 2>&1 &
+!sleep 20
+!LD_PRELOAD=/content/HAMi-core/build/libvgpu.so \
+  CUDA_DEVICE_SM_LIMIT=30 \
+  CUDA_DEVICE_MEMORY_SHARED_CACHE=/tmp/training.cache \
+  nohup python /content/training.py > /content/training.log 2>&1 &
+!sleep 20 && cat /content/bench.log
+!pkill -f '/content/(bench|training).py'
+!sleep 5
+```
+
+```{.text .output}
+07:40:12 23.5 TFLOPS
+07:40:17 23.7 TFLOPS
+07:40:22 23.5 TFLOPS
+07:40:27 23.2 TFLOPS
+07:40:32 19.8 TFLOPS
+07:40:37 17.5 TFLOPS
+07:40:42 15.3 TFLOPS
+```
+
+测速程序单独运行时约 23.5 TFLOPS，和实验 1 一样。旁边加上被限制的训练任务后，它保持在 15 到 20 TFLOPS 之间。实验 1 里它降到了约 11 TFLOPS。训练任务仍然会拿走属于它的那份 GPU，所以测速程序回不到满速，但保住了更多速度，而且测速程序本身什么都不用改。
+
+在集群里，训练 Pod 申请 `nvidia.com/gpucores: 30` 时也是同样的效果，旁边的 Pod 拿到这张卡剩下的部分。
+
+## 总结
+
+- **显存是按 Pod 的硬限制。** HAMi-core 拒绝任何超出限制的申请，并把限制值当作卡的大小报告出去。限制包括 CUDA context，容器里的所有进程通过缓存文件共用这份限制。
+- **算力是一个平均值。** HAMi-core 控制 kernel 的启动，让利用率在一段时间内的平均值落在限制上。单次采样会围绕它波动，吞吐只是大致跟着变。
+- **卡本身没有被切分。** 宿主机看到的仍然是一整张卡。隔离由容器里的一个库来实现，所以 HAMi 能用在 T4 这样不支持 MIG 的 GPU 上。
+- **在集群里，这些变量不需要你自己设置。** HAMi 的 Device Plugin 会根据 Pod 申请的 `nvidia.com/gpumem` 和 `nvidia.com/gpucores`，为每个容器设置好。集群那一侧见 [实战课程第 4 章](../course/04-enter-hami.md)。
+
+<!-- markdownlint-disable MD046 -->
+
+??? question "一个申请了 `nvidia.com/gpumem: 4096` 的 Pod 里运行着一个推理引擎，它会预留 0.9 的显存。它会预留多少？在同一张卡上不用 HAMi，它又会预留多少？"
+
+    约 3686 MiB，也就是 HAMi-core 报告的总显存 4096 MiB 的 0.9。不用 HAMi 时，引擎看到的是整张 T4，CUDA 报告的总量是 14913 MiB，它会预留约 13420 MiB。比例一直是 0.9，它乘的总量随 HAMi 的限制而变。
+
+<!-- markdownlint-enable MD046 -->
+
+接下来：
+
+- [实战课程](../course/index.md)：九章完整的故事，从 GPU 软件栈一直到配额和排障
+- [HAMi-core](https://github.com/Project-HAMi/HAMi-core){:target="_blank"}：`libvgpu.so` 的源码
+
+## 清理
+
+:simple-googlecolab: **在 Colab 上运行**
+{: .run-on .run-on-colab }
+
+做完后，选择 **代码执行程序 → 断开连接并删除运行时**，释放运行时。Colab 会清除上面的所有内容。

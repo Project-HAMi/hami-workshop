@@ -30,6 +30,7 @@ MkDocs Material site with bilingual support via `mkdocs-static-i18n` plugin.
 
 - `docs/concepts/` — background knowledge (GPU stack, drivers, HAMi architecture)
 - `docs/labs/` — step-by-step lab instructions
+- `docs/course/` — Hands-on Course chapters. Pages are the source: `notebooks/{en,zh}/*.ipynb` are generated from them with `python3 notebooks/page2nb.py <page> <notebook>`, never edited by hand. Diagrams in these pages are draw.io files in `examples/diagrams/` with light and `-dark` SVG exports, used with `#only-light` and `#only-dark`
 - `docs/images/` — screenshots and diagram SVGs referenced by docs
 - `docs/stylesheets/extra.css` — HAMi theme color `rgba(16, 208, 93, 1)` + SVG sizing
 - `examples/diagrams/` — diagram-design HTML sources (`<slug>.html` + `<slug>-zh.html`)

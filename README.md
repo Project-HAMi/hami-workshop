@@ -32,10 +32,12 @@ Requires Python 3.12+.
 docs/
   concepts/        Background knowledge (GPU stack, drivers, HAMi architecture)
   labs/             Step-by-step lab instructions
+  path/             Hands-on Course chapters (Colab + kind)
   images/           Screenshots
   stylesheets/      Theme overrides
   javascripts/      Mermaid diagram rendering and zoom
 examples/           Lab code, manifests, and configs (numbered by lab)
+notebooks/          Colab notebooks generated from docs/course pages (notebooks/page2nb.py)
 mkdocs.yml          Site configuration, i18n, navigation
 ```
 
