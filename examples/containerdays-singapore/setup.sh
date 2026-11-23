@@ -60,5 +60,9 @@ for _ in $(seq 1 30); do
   [ -n "${mem}" ] && break
   sleep 5
 done
+if [ -z "${mem}" ]; then
+  echo "Timed out waiting for nvidia.com/gpumem on ${NODE}." >&2
+  exit 1
+fi
 kubectl get node "${NODE}" -o json | jq '.status.allocatable|with_entries(select(.key|test("nvidia.com")))'
 echo "Expect gpu=20, gpumem=81920, gpucores=200. Ready for Lab 2."
