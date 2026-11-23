@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: model-a
+spec:
+  containers:
+    - name: model
+      image: busybox:1.36
+      command: ["sleep", "infinity"]
+      resources:
+        limits:
+          nvidia.com/gpu: 1
+          nvidia.com/gpumem: 4096
+          nvidia.com/gpucores: 30

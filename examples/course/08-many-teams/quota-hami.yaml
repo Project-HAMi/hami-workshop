@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: gpu
+  namespace: team-a
+spec:
+  hard:
+    limits.nvidia.com/gpumem: "30000"
