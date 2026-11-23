@@ -2,6 +2,9 @@
 
 The Hands-on Course teaches HAMi from the problem up. You follow a small AI team that starts with one GPU and runs into one problem after another: a small model takes a whole card, shared cards let models fight over memory and compute, and a growing cluster needs scheduling, monitoring, and quotas. Each chapter lets you see the problem first, then explains the principle behind it, then shows how HAMi solves it.
 
+![Course map: nine chapters in three parts. Part 1 shows the problem on one card, Part 2 fixes it with HAMi, Part 3 runs it for several teams. Each chapter is marked with where it runs, Colab or kind, and how long it takes](../images/course-map.svg#only-light)
+![Course map: nine chapters in three parts. Part 1 shows the problem on one card, Part 2 fixes it with HAMi, Part 3 runs it for several teams. Each chapter is marked with where it runs, Colab or kind, and how long it takes](../images/course-map-dark.svg#only-dark)
+
 ## Where It Runs
 
 Every chapter uses one or both of two environments. Neither needs a GPU of your own.

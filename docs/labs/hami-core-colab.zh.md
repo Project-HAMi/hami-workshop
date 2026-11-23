@@ -181,6 +181,9 @@ while True:
 
 Colab 上没有 Kubernetes，所以由你来扮演 Device Plugin。你自己设置这些变量，并用 `LD_PRELOAD` 加载 HAMi-core。`LD_PRELOAD` 对一个进程起的作用，就是 `/etc/ld.so.preload` 对整个容器起的作用。
 
+![在集群里，HAMi 的 Device Plugin 把 Pod 的申请变成环境变量和 /etc/ld.so.preload。在 Colab 上，由你自己设置同样的环境变量和 LD_PRELOAD。两种情况下，libvgpu.so 都夹在程序和 CUDA 驱动之间，拒绝超出上限的显存分配，并推迟 kernel 的启动](../images/hami-core-preload-zh.svg#only-light)
+![在集群里，HAMi 的 Device Plugin 把 Pod 的申请变成环境变量和 /etc/ld.so.preload。在 Colab 上，由你自己设置同样的环境变量和 LD_PRELOAD。两种情况下，libvgpu.so 都夹在程序和 CUDA 驱动之间，拒绝超出上限的显存分配，并推迟 kernel 的启动](../images/hami-core-preload-zh-dark.svg#only-dark)
+
 ### 显存
 
 重做显存实验，这次每个程序都有 4096 MiB 的限制和自己的缓存文件：

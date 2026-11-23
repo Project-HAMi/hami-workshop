@@ -181,6 +181,9 @@ When a Pod asks HAMi for `nvidia.com/gpumem: 4096` and `nvidia.com/gpucores: 30`
 
 Colab has no Kubernetes, so you take the device plugin's place. You set the variables yourself and load HAMi-core with `LD_PRELOAD`, which does for one process what `/etc/ld.so.preload` does for a container.
 
+![In a cluster, HAMi's device plugin turns the Pod's request into environment variables and /etc/ld.so.preload. On Colab, you set the same variables and LD_PRELOAD yourself. Either way, libvgpu.so sits between the program and the CUDA driver, refuses memory over the limit, and holds back kernel launches](../images/hami-core-preload.svg#only-light)
+![In a cluster, HAMi's device plugin turns the Pod's request into environment variables and /etc/ld.so.preload. On Colab, you set the same variables and LD_PRELOAD yourself. Either way, libvgpu.so sits between the program and the CUDA driver, refuses memory over the limit, and holds back kernel launches](../images/hami-core-preload-dark.svg#only-dark)
+
 ### Memory
 
 Repeat the memory experiment, now with a 4096 MiB limit and a cache file for each program:
