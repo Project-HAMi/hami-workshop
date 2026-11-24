@@ -11,7 +11,14 @@ MONITOR_SRC=${MONITOR_SRC:-./hami-mock-monitor}
 step() { printf '\n==> %s\n' "$*"; }
 
 step "kind cluster ${CLUSTER}"
-kind get clusters | grep -qx "${CLUSTER}" || kind create cluster --name "${CLUSTER}"
+if ! kind get clusters | grep -Fxq -- "${CLUSTER}"; then
+  kind create cluster --name "${CLUSTER}"
+fi
+
+lab_kubeconfig=$(mktemp)
+trap 'rm -f "${lab_kubeconfig}"' EXIT
+kind get kubeconfig --name "${CLUSTER}" > "${lab_kubeconfig}"
+export KUBECONFIG="${lab_kubeconfig}"
 kubectl label node "${NODE}" gpu=on --overwrite
 
 step "Pre-pulled lab images into ${CLUSTER}"
