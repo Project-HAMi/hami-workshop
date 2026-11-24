@@ -25,7 +25,7 @@ def site_links(text):
     # links to other pages, relative to this page -> the published site
     def page_url(m):
         target = os.path.normpath(os.path.join(os.path.dirname(src), m.group(1)))
-        rel = os.path.relpath(target, "docs")[:-3]
+        rel = os.path.relpath(target, "docs")[:-3].replace("\\", "/")
         rel = "" if rel == "index" else rel[:-len("index")] if rel.endswith("/index") else rel + "/"
         return f"]({SITE}{rel}{m.group(2) or ''})"
     return re.sub(r"\]\(((?:\.\./)*[\w/-]+\.md)(#[\w-]+)?\)", page_url, text)
@@ -51,10 +51,11 @@ while i < len(lines):
         lang = m.group(1) or m.group(2)
         body = []
         i += 1
-        while not lines[i].startswith("```"):
+        while i < len(lines) and not lines[i].startswith("```"):
             body.append(lines[i])
             i += 1
-        i += 1
+        if i < len(lines):
+            i += 1
         prev, last_lang = last_lang, lang
         if lang == "python":
             flush_md()
